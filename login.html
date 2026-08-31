@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NIDANA — Secure Login | Clinical Trial Management System</title>
+    <meta name="description" content="Secure login to NIDANA Ayurveda CTMS. Blockchain-backed clinical trial compliance system."/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: { extend: {
+                fontFamily: { heading: ["Manrope","sans-serif"], body: ["Hanken Grotesk","sans-serif"] },
+                colors: {
+                    primary: "#002045", "primary-container": "#1a365d",
+                    secondary: "#0a6c44", surface: "#f8f9ff",
+                    "on-surface": "#0d1c2e", "on-surface-variant": "#43474e",
+                    error: "#ba1a1a", outline: "#74777f", "outline-variant": "#c4c6cf",
+                }
+            }}
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0&display=swap" rel="stylesheet"/>
+    <style>
+        *{font-family:"Hanken Grotesk",sans-serif}
+        h1,h2,h3{font-family:"Manrope",sans-serif}
+        body{min-height:100vh;overflow-x:hidden}
+        .login-bg{background:linear-gradient(-45deg,#f8f9ff,#e5eeff,#d4e4fc,#c8f7e0,#eff4ff);background-size:400% 400%;animation:gradient-shift 18s ease infinite}
+        .dark .login-bg{background:linear-gradient(-45deg,#050d1a,#0a1830,#0d2040,#0a2a1a,#050d1a);background-size:400% 400%}
+        @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        .glass{background:rgba(255,255,255,0.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.4);box-shadow:0 8px 40px rgba(0,32,69,0.12)}
+        .dark .glass{background:rgba(10,20,40,0.75);border:1px solid rgba(255,255,255,0.08);box-shadow:0 8px 40px rgba(0,0,0,0.5)}
+        .role-card{cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);border:2px solid transparent;position:relative;overflow:hidden}
+        .role-card:hover{transform:translateY(-4px) scale(1.03);border-color:rgba(26,54,93,0.3)}
+        .role-card.selected{border-color:#1a365d;box-shadow:0 0 0 3px rgba(26,54,93,0.15),0 12px 30px rgba(0,32,69,0.2)}
+        .dark .role-card.selected{border-color:#adc7f7;box-shadow:0 0 0 3px rgba(173,199,247,0.2)}
+        .particle{position:fixed;pointer-events:none;opacity:0;animation:float-up linear infinite}
+        @keyframes float-up{0%{opacity:0;transform:translateY(100vh) rotate(0deg)}10%{opacity:0.25}90%{opacity:0.15}100%{opacity:0;transform:translateY(-10vh) rotate(360deg)}}
+        .input-field{transition:all 0.3s ease;background:rgba(255,255,255,0.6);border:1.5px solid rgba(116,119,127,0.3);width:100%;padding:12px 16px;border-radius:12px;color:#0d1c2e;font-size:14px;outline:none}
+        .input-field:focus{border-color:#1a365d;box-shadow:0 0 0 3px rgba(26,54,93,0.1);background:rgba(255,255,255,0.9)}
+        .dark .input-field{background:rgba(255,255,255,0.08);color:#e8f1ff;border-color:rgba(255,255,255,0.15)}
+        .dark .input-field:focus{border-color:#adc7f7;box-shadow:0 0 0 3px rgba(173,199,247,0.15)}
+        .input-field::placeholder{color:#74777f}
+        .login-btn{background:linear-gradient(135deg,#1a365d,#002045);color:white;width:100%;padding:14px;border-radius:12px;font-weight:700;font-size:15px;letter-spacing:0.05em;cursor:pointer;border:none;transition:all 0.3s ease;position:relative;overflow:hidden}
+        .login-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,32,69,0.4)}
+        .login-btn:active{transform:translateY(0)}
+        .login-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+        .toggle-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(116,119,127,0.3);background:rgba(255,255,255,0.5);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s}
+        .toggle-btn:hover{background:rgba(255,255,255,0.8);border-color:#1a365d}
+        .dark .toggle-btn{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2)}
+        @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+        .shake{animation:shake 0.5s ease}
+        @keyframes logo-pulse{0%,100%{filter:drop-shadow(0 0 8px rgba(10,108,68,0.3))}50%{filter:drop-shadow(0 0 16px rgba(10,108,68,0.6))}}
+        .logo-animated{animation:logo-pulse 3s ease-in-out infinite}
+        .fade-in{animation:fadeIn 0.7s ease-out}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        ::-webkit-scrollbar{width:4px}
+        ::-webkit-scrollbar-thumb{background:rgba(26,54,93,0.2);border-radius:2px}
+    </style>
+</head>
+<body class="login-bg flex items-center justify-center min-h-screen p-4 transition-colors duration-500">
+
+<div id="particles"></div>
+
+<!-- Top Controls -->
+<div class="fixed top-4 right-4 flex items-center gap-2 z-50">
+    <button id="langBtn" onclick="toggleLanguage()" class="toggle-btn text-sm font-bold" style="color:#002045" title="Toggle Language">
+        <span id="langIcon">हि</span>
+    </button>
+    <button onclick="toggleDark()" class="toggle-btn" title="Toggle Dark Mode">
+        <span class="material-symbols-outlined" style="font-size:20px;color:#43474e" id="darkIcon">dark_mode</span>
+    </button>
+</div>
+
+<!-- Main Login Container -->
+<div class="w-full max-w-2xl fade-in">
+    <div class="text-center mb-8">
+        <div class="flex justify-center mb-4">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" alt="NIDANA Logo" class="h-14 w-auto object-contain logo-animated"/>
+        </div>
+        <h1 style="font-family:Manrope,sans-serif;font-size:2.5rem;font-weight:900;color:#002045">NIDANA</h1>
+        <p class="text-sm mt-1" style="color:#43474e" data-i18n="subtitle">Clinical Trial Management System · Blockchain Secured</p>
+        <div class="flex items-center justify-center gap-2 mt-2">
+            <div class="w-1.5 h-1.5 rounded-full animate-pulse" style="background:#0a6c44"></div>
+            <span class="text-xs font-bold" style="color:#0a6c44" data-i18n="network_status">Hyperledger Fabric Network Active</span>
+        </div>
+    </div>
+
+    <div class="glass rounded-3xl p-8">
+        <h2 style="font-family:Manrope,sans-serif;font-size:1.25rem;font-weight:700;color:#002045" class="mb-1" data-i18n="select_role">Select Your Role</h2>
+        <p class="text-sm mb-5" style="color:#43474e" data-i18n="select_role_desc">Choose your organizational role to access the appropriate dashboard</p>
+
+        <!-- Role Cards -->
+        <div class="grid grid-cols-3 gap-3 mb-6" id="roleGrid">
+            <div class="role-card glass rounded-xl p-4 text-center" data-role="Lead Doctor" onclick="selectRole(this)">
+                <div class="w-10 h-10 mx-auto mb-2 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#2563eb,#1e3a8a)">
+                    <span class="material-symbols-outlined" style="color:white;font-size:20px">stethoscope</span>
+                </div>
+                <div class="text-xs font-bold" style="color:#002045" data-i18n-key="role_lead_doctor">Lead Doctor</div>
+                <div class="text-xs mt-0.5" style="color:#43474e;font-size:10px" data-i18n-key="role_lead_doctor_desc">Full Clinical Access</div>
+            </div>
+            <div class="role-card glass rounded-xl p-4 text-center" data-role="Ethics Committee" onclick="selectRole(this)">
+                <div class="w-10 h-10 mx-auto mb-2 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#059669,#064e3b)">
+                    <span class="material-symbols-outlined" style="color:white;font-size:20px">gavel</span>
+                </div>
+                <div class="text-xs font-bold" style="color:#002045" data-i18n-key="role_ethics">Ethics Committee</div>
+                <div class="text-xs mt-0.5" style="color:#43474e;font-size:10px" data-i18n-key="role_ethics_desc">IEC & Approvals</div>
+            </div>
+            <div class="role-card glass rounded-xl p-4 text-center" data-role="Pharmacovigilance" onclick="selectRole(this)">
+                <div class="w-10 h-10 mx-auto mb-2 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#ea580c,#991b1b)">
+                    <span class="material-symbols-outlined" style="color:white;font-size:20px">medical_services</span>
+                </div>
+                <div class="text-xs font-bold" style="color:#002045" data-i18n-key="role_pharma">Pharmacovigilance</div>
+                <div class="text-xs mt-0.5" style="color:#43474e;font-size:10px" data-i18n-key="role_pharma_desc">Safety & AE Tracking</div>
+            </div>
+            <div class="role-card glass rounded-xl p-4 text-center" data-role="Leadership" onclick="selectRole(this)">
+                <div class="w-10 h-10 mx-auto mb-2 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#7c3aed,#4c1d95)">
+                    <span class="material-symbols-outlined" style="color:white;font-size:20px">trending_up</span>
+                </div>
+                <div class="text-xs font-bold" style="color:#002045" data-i18n-key="role_leadership">Leadership</div>
+                <div class="text-xs mt-0.5" style="color:#43474e;font-size:10px" data-i18n-key="role_leadership_desc">KPIs & Overview</div>
+            </div>
+            <div class="role-card glass rounded-xl p-4 text-center col-span-2" data-role="Admin" onclick="selectRole(this)">
+                <div class="w-10 h-10 mx-auto mb-2 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#475569,#1e293b)">
+                    <span class="material-symbols-outlined" style="color:white;font-size:20px">admin_panel_settings</span>
+                </div>
+                <div class="text-xs font-bold" style="color:#002045" data-i18n-key="role_admin">Administrator</div>
+                <div class="text-xs mt-0.5" style="color:#43474e;font-size:10px" data-i18n-key="role_admin_desc">Full System Control</div>
+            </div>
+        </div>
+
+        <!-- Credentials -->
+        <div class="space-y-3 mb-4" id="credentialsSection">
+            <div>
+                <label class="text-xs font-bold mb-1.5 block uppercase tracking-wider" style="color:#43474e" data-i18n="username_label">Username</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2" style="color:#74777f;font-size:18px">person</span>
+                    <input id="username" type="text" class="input-field" style="padding-left:40px" placeholder="Enter your username" data-i18n-placeholder="username_placeholder"/>
+                </div>
+            </div>
+            <div>
+                <label class="text-xs font-bold mb-1.5 block uppercase tracking-wider" style="color:#43474e" data-i18n="password_label">Password</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2" style="color:#74777f;font-size:18px">lock</span>
+                    <input id="password" type="password" class="input-field" style="padding-left:40px;padding-right:40px" placeholder="Enter your password" data-i18n-placeholder="password_placeholder" onkeydown="if(event.key==='Enter') doLogin()"/>
+                    <button onclick="togglePasswordVis()" class="absolute right-3 top-1/2 -translate-y-1/2 transition-colors">
+                        <span class="material-symbols-outlined" style="color:#74777f;font-size:18px" id="pwEye">visibility</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error -->
+        <div id="errorMsg" class="hidden mb-3 p-3 rounded-xl text-sm flex items-center gap-2" style="background:#fff1f2;border:1px solid #fecdd3;color:#be123c">
+            <span class="material-symbols-outlined" style="font-size:16px">error</span>
+            <span id="errorText">Invalid credentials</span>
+        </div>
+
+        <!-- Login Button -->
+        <button id="loginBtn" onclick="doLogin()" class="login-btn" disabled>
+            <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px">login</span>
+            <span data-i18n="login_btn">Sign In Securely</span>
+        </button>
+
+        <!-- Demo hint -->
+        <div class="mt-4 p-3 rounded-xl" style="background:#eff6ff;border:1px solid #bfdbfe">
+            <p class="text-xs flex items-center gap-1.5" style="color:#43474e">
+                <span class="material-symbols-outlined" style="font-size:14px;color:#0a6c44">info</span>
+                <span data-i18n="demo_hint"><strong>Demo:</strong> Select role → username: <code style="background:white;padding:0 4px;border-radius:4px">demo</code> / password: <code style="background:white;padding:0 4px;border-radius:4px">nidana2024</code></span>
+            </p>
+        </div>
+    </div>
+
+    <div class="text-center mt-6 text-xs" style="color:#74777f">
+        <div class="flex items-center justify-center gap-2 mb-1">
+            <span class="material-symbols-outlined" style="font-size:14px;color:#0a6c44">verified_user</span>
+            <span data-i18n="footer_security">All sessions logged on Hyperledger Fabric blockchain</span>
+        </div>
+        <div data-i18n="footer_compliance">GCP-Ayurveda • CDSCO • ICMR-NIA • ALCOA++ Compliant</div>
+    </div>
+</div>
+
+<script>
+const I18N = {
+    en: {
+        subtitle:"Clinical Trial Management System · Blockchain Secured",
+        network_status:"Hyperledger Fabric Network Active",
+        select_role:"Select Your Role",
+        select_role_desc:"Choose your organizational role to access the appropriate dashboard",
+        username_label:"Username",password_label:"Password",
+        username_placeholder:"Enter your username",password_placeholder:"Enter your password",
+        login_btn:"Sign In Securely",
+        demo_hint:"<strong>Demo:</strong> Select role → username: <code style='background:white;padding:0 4px;border-radius:4px'>demo</code> / password: <code style='background:white;padding:0 4px;border-radius:4px'>nidana2024</code>",
+        footer_security:"All sessions logged on Hyperledger Fabric blockchain",
+        footer_compliance:"GCP-Ayurveda • CDSCO • ICMR-NIA • ALCOA++ Compliant",
+        role_lead_doctor:"Lead Doctor",role_lead_doctor_desc:"Full Clinical Access",
+        role_ethics:"Ethics Committee",role_ethics_desc:"IEC & Approvals",
+        role_pharma:"Pharmacovigilance",role_pharma_desc:"Safety & AE Tracking",
+        role_leadership:"Leadership",role_leadership_desc:"KPIs & Overview",
+        role_admin:"Administrator",role_admin_desc:"Full System Control",
+        invalid_creds:"Invalid username or password. Try demo / nidana2024",
+        select_role_err:"Please select a role first",
+        logging_in:"Signing in...",
+    },
+    hi: {
+        subtitle:"क्लीनिकल परीक्षण प्रबंधन प्रणाली · ब्लॉकचेन सुरक्षित",
+        network_status:"हाइपरलेजर फैब्रिक नेटवर्क सक्रिय",
+        select_role:"अपनी भूमिका चुनें",
+        select_role_desc:"उचित डैशबोर्ड एक्सेस करने के लिए अपनी भूमिका चुनें",
+        username_label:"उपयोगकर्ता नाम",password_label:"पासवर्ड",
+        username_placeholder:"उपयोगकर्ता नाम दर्ज करें",password_placeholder:"पासवर्ड दर्ज करें",
+        login_btn:"सुरक्षित लॉगिन करें",
+        demo_hint:"<strong>डेमो:</strong> भूमिका चुनें → उपयोगकर्ता: <code style='background:white;padding:0 4px;border-radius:4px'>demo</code> / पासवर्ड: <code style='background:white;padding:0 4px;border-radius:4px'>nidana2024</code>",
+        footer_security:"सभी सत्र हाइपरलेजर ब्लॉकचेन पर लॉग किए गए",
+        footer_compliance:"GCP-आयुर्वेद • CDSCO • ICMR-NIA • ALCOA++ अनुपालित",
+        role_lead_doctor:"मुख्य चिकित्सक",role_lead_doctor_desc:"पूर्ण क्लीनिकल एक्सेस",
+        role_ethics:"नैतिकता समिति",role_ethics_desc:"IEC और अनुमोदन",
+        role_pharma:"फार्माकोविजिलेंस",role_pharma_desc:"सुरक्षा और AE ट्रैकिंग",
+        role_leadership:"नेतृत्व",role_leadership_desc:"KPI और अवलोकन",
+        role_admin:"प्रशासक",role_admin_desc:"पूर्ण सिस्टम नियंत्रण",
+        invalid_creds:"गलत उपयोगकर्ता नाम या पासवर्ड",
+        select_role_err:"कृपया पहले एक भूमिका चुनें",
+        logging_in:"लॉगिन हो रहा है...",
+    }
+};
+
+const DEMO = {"demo":"nidana2024","doctor":"doc123","admin":"admin123","ethics":"eth123","pharma":"pharma123"};
+let lang = localStorage.getItem("nidana_lang") || "en";
+let dark = localStorage.getItem("nidana_dark") === "true";
+let currentRole = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+    if(dark){document.documentElement.classList.add("dark"); applyDarkStyles();}
+    document.getElementById("darkIcon").textContent = dark ? "light_mode" : "dark_mode";
+    document.getElementById("langIcon").textContent = lang === "en" ? "हि" : "En";
+    applyLang(lang);
+    createParticles();
+    if(sessionStorage.getItem("nidana_user")){window.location.href="code.html";}
+});
+
+function selectRole(card){
+    document.querySelectorAll(".role-card").forEach(c=>c.classList.remove("selected"));
+    card.classList.add("selected");
+    currentRole = card.dataset.role;
+    document.getElementById("loginBtn").disabled = false;
+}
+
+function doLogin(){
+    const t = I18N[lang];
+    if(!currentRole){showError(t.select_role_err);return;}
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value;
+    if(!DEMO[u] || DEMO[u] !== p){
+        showError(t.invalid_creds);
+        const cs = document.getElementById("credentialsSection");
+        cs.classList.add("shake");
+        setTimeout(()=>cs.classList.remove("shake"),600);
+        return;
+    }
+    const btn = document.getElementById("loginBtn");
+    btn.disabled = true;
+    btn.innerHTML = "<span class='material-symbols-outlined' style='font-size:16px;vertical-align:middle;margin-right:4px;animation:spin 1s linear infinite'>progress_activity</span>" + t.logging_in;
+    sessionStorage.setItem("nidana_user", JSON.stringify({username:u, role:currentRole, loginTime:new Date().toISOString()}));
+    setTimeout(()=>{window.location.href="code.html";}, 1200);
+}
+
+function showError(msg){
+    const el = document.getElementById("errorMsg");
+    document.getElementById("errorText").textContent = msg;
+    el.classList.remove("hidden");
+    setTimeout(()=>el.classList.add("hidden"), 4000);
+}
+
+function togglePasswordVis(){
+    const pw = document.getElementById("password");
+    const eye = document.getElementById("pwEye");
+    if(pw.type === "password"){pw.type="text";eye.textContent="visibility_off";}
+    else{pw.type="password";eye.textContent="visibility";}
+}
+
+function toggleDark(){
+    dark = !dark;
+    document.documentElement.classList.toggle("dark", dark);
+    document.getElementById("darkIcon").textContent = dark ? "light_mode" : "dark_mode";
+    localStorage.setItem("nidana_dark", dark);
+    if(dark) applyDarkStyles(); else removeDarkStyles();
+}
+
+function applyDarkStyles(){
+    document.body.style.background="";
+    document.querySelectorAll("[style*='color:#002045']").forEach(el=>el.style.color="#adc7f7");
+    document.querySelectorAll("[style*='color:#43474e']").forEach(el=>el.style.color="#9ba5b5");
+}
+function removeDarkStyles(){
+    document.querySelectorAll("[style*='color:#adc7f7']").forEach(el=>el.style.color="#002045");
+    document.querySelectorAll("[style*='color:#9ba5b5']").forEach(el=>el.style.color="#43474e");
+}
+
+function toggleLanguage(){
+    lang = lang === "en" ? "hi" : "en";
+    localStorage.setItem("nidana_lang", lang);
+    document.getElementById("langIcon").textContent = lang === "en" ? "हि" : "En";
+    applyLang(lang);
+}
+
+function applyLang(l){
+    const t = I18N[l];
+    document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;if(t[k])el.innerHTML=t[k];});
+    document.querySelectorAll("[data-i18n-key]").forEach(el=>{const k=el.dataset.i18nKey;if(t[k])el.innerHTML=t[k];});
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{const k=el.dataset.i18nPlaceholder;if(t[k])el.placeholder=t[k];});
+    document.documentElement.lang = l;
+}
+
+function createParticles(){
+    const c = document.getElementById("particles");
+    const svgs = [
+        `<svg width="18" height="18" viewBox="0 0 20 20"><path d="M10 1C10 1 6 6 6 10C6 14 10 19 10 19C10 19 14 14 14 10C14 6 10 1 10 1Z" fill="rgba(159,245,193,0.25)" stroke="rgba(10,108,68,0.2)" stroke-width="0.5"/></svg>`,
+        `<svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="rgba(173,199,247,0.3)"/></svg>`,
+        `<svg width="6" height="6" viewBox="0 0 6 6"><rect width="5" height="5" rx="1" fill="rgba(255,184,102,0.25)"/></svg>`,
+    ];
+    for(let i=0;i<20;i++){
+        const d = document.createElement("div");
+        d.className="particle";
+        d.innerHTML=svgs[Math.floor(Math.random()*svgs.length)];
+        d.style.left=Math.random()*100+"%";
+        d.style.animationDuration=(18+Math.random()*20)+"s";
+        d.style.animationDelay=Math.random()*15+"s";
+        c.appendChild(d);
+    }
+}
+</script>
+</body>
+</html>

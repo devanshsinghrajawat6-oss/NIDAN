@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>NIDANA - Clinical Insight & Natural Precision | Ayurveda CTMS</title>
+    <meta name="description" content="NIDANA: Enterprise-grade Ayurveda Clinical Trial Management System. Blockchain-backed regulatory compliance, real-time safety monitoring, and herbal research oversight."/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#9ff5c1",
+                        "on-secondary-fixed": "#002111",
+                        "tertiary": "#321b00",
+                        "on-surface-variant": "#43474e",
+                        "inverse-primary": "#adc7f7",
+                        "surface-bright": "#f8f9ff",
+                        "surface-variant": "#d4e4fc",
+                        "on-primary-fixed": "#001b3c",
+                        "on-tertiary-fixed-variant": "#673d00",
+                        "surface-container-high": "#dce9ff",
+                        "secondary-fixed": "#9ff5c1",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#83d8a6",
+                        "primary-container": "#1a365d",
+                        "outline-variant": "#c4c6cf",
+                        "surface-container": "#e5eeff",
+                        "background": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-container-highest": "#d4e4fc",
+                        "surface-dim": "#ccdbf4",
+                        "secondary": "#0a6c44",
+                        "on-background": "#0d1c2e",
+                        "inverse-surface": "#223144",
+                        "surface": "#f8f9ff",
+                        "tertiary-fixed-dim": "#ffb866",
+                        "primary": "#002045",
+                        "surface-container-low": "#eff4ff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#2b1700",
+                        "surface-tint": "#455f88",
+                        "outline": "#74777f",
+                        "on-secondary-container": "#167249",
+                        "on-surface": "#0d1c2e",
+                        "primary-fixed-dim": "#adc7f7",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "on-primary-container": "#86a0cd",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#005231",
+                        "tertiary-fixed": "#ffddba",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#d6e3ff",
+                        "on-tertiary-container": "#d4903b",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#4f2e00",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": { "DEFAULT": "0.25rem", "sm": "0.125rem", "md": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    "spacing": { "gutter": "24px", "margin-mobile": "16px", "max-width": "1440px", "unit": "4px", "margin-desktop": "40px" },
+                    "fontFamily": { "label-md": ["Hanken Grotesk"], "body-sm": ["Hanken Grotesk"], "headline-lg-mobile": ["Manrope"], "body-md": ["Hanken Grotesk"], "headline-lg": ["Manrope"], "headline-md": ["Manrope"], "display-lg": ["Manrope"], "label-bold": ["Hanken Grotesk"], "body-lg": ["Hanken Grotesk"] },
+                    "fontSize": {
+                        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, #1a365d 0%, #002045 100%);
+            color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 700; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; border: none;
+            box-shadow: 0 4px 15px rgba(26, 54, 93, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(26, 54, 93, 0.45); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.3); transform: scale(0); animation: ripple-anim 0.6s linear; pointer-events: none; }
+        @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+        .btn-secondary {
+            background: transparent; border: 2px solid #1a365d; color: #1a365d; padding: 10px 28px; border-radius: 8px; font-weight: 700; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+        }
+        .btn-secondary:hover { background: #1a365d; color: #fff; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(26, 54, 93, 0.25); }
+
+        /* Hover Lift */
+        .hover-lift { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hover-lift:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 40px rgba(26, 54, 93, 0.12); }
+
+        /* Glassmorphism */
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .glass-dark { background: rgba(26, 54, 93, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+
+        /* Floating Particles */
+        .particle-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+        .particle {
+            position: absolute; opacity: 0; animation: float-particle linear infinite;
+        }
+        @keyframes float-particle {
+            0% { opacity: 0; transform: translateY(100vh) rotate(0deg) scale(0.5); }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.4; }
+            100% { opacity: 0; transform: translateY(-10vh) rotate(360deg) scale(1); }
+        }
+
+        /* Scroll Reveal */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-left { opacity: 0; transform: translateX(-60px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal-left.active { opacity: 1; transform: translateX(0); }
+        .reveal-right { opacity: 0; transform: translateX(60px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal-right.active { opacity: 1; transform: translateX(0); }
+        .reveal-scale { opacity: 0; transform: scale(0.8); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal-scale.active { opacity: 1; transform: scale(1); }
+
+        /* Animated Gradient BG */
+        .gradient-bg {
+            background: linear-gradient(-45deg, #f8f9ff, #e5eeff, #d4e4fc, #eff4ff);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+        }
+        @keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* Mobile Menu */
+        .mobile-menu { transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .mobile-menu.open { transform: translateX(0); }
+        .mobile-overlay { opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .mobile-overlay.open { opacity: 1; visibility: visible; }
+
+        /* Modal */
+        .modal-overlay { opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+        .modal-content { transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .modal-overlay.open .modal-content { transform: scale(1) translateY(0); }
+
+        /* Cookie Banner */
+        .cookie-banner { transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .cookie-banner.show { transform: translateY(0); }
+
+        /* Pulse glow */
+        .glow-pulse { animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow {
+            from { box-shadow: 0 0 10px rgba(10, 108, 68, 0.2), 0 0 20px rgba(10, 108, 68, 0.1); }
+            to { box-shadow: 0 0 20px rgba(10, 108, 68, 0.4), 0 0 40px rgba(10, 108, 68, 0.2); }
+        }
+
+        /* Counter animation */
+        .counter { display: inline-block; }
+
+        /* Floating badge */
+        .float-badge { animation: float-badge 3s ease-in-out infinite; }
+        @keyframes float-badge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+        /* Shimmer */
+        .shimmer { background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%); background-size: 200% 100%; animation: shimmer 2s infinite; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+        /* Leaf SVG animations */
+        .leaf-sway { animation: leaf-sway 4s ease-in-out infinite; transform-origin: bottom center; }
+        @keyframes leaf-sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+
+        /* ── Dark Mode ─────────────────────────────────────────────────────── */
+        .dark body { background:none; }
+        .dark .gradient-bg { background: linear-gradient(-45deg,#050d1a,#0a1830,#0d2040,#050d1a) !important; background-size:400% 400% !important; animation: gradient-shift 15s ease infinite !important; }
+        .dark .glass { background:rgba(10,20,40,0.8) !important; border-color:rgba(255,255,255,0.08) !important; }
+        .dark .glass-dark { background:rgba(5,10,25,0.92) !important; }
+        .dark header { background:rgba(5,10,25,0.85) !important; border-color:rgba(255,255,255,0.08) !important; }
+        .dark .text-primary,.dark [class*="text-primary"] { color:#adc7f7 !important; }
+        .dark .text-on-surface-variant,[class*="text-on-surface-variant"] { color:#8fb8d8; }
+        .dark .text-secondary { color:#6ee09e !important; }
+        .dark h1,.dark h2,.dark h3,.dark h4 { color:#c8deff !important; }
+        .dark p,.dark li,.dark span:not(.material-symbols-outlined):not([class*="text-secondary"]):not([class*="text-white"]) { color:#94afd4; }
+        .dark .btn-secondary { border-color:rgba(100,150,255,0.5) !important; color:#adc7f7 !important; }
+        .dark .btn-secondary:hover { background:rgba(100,150,255,0.2) !important; color:#c8deff !important; }
+        .dark .btn-primary { background: linear-gradient(135deg,#3a6bc7,#1a4a9e) !important; box-shadow: 0 4px 20px rgba(58,107,199,0.4) !important; }
+        .dark [class*="bg-secondary-container"] { background:rgba(10,108,68,0.15) !important; }
+        .dark [class*="bg-surface-container"] { background:rgba(255,255,255,0.05) !important; }
+        .dark [class*="bg-primary-fixed"] { background:rgba(26,54,93,0.2) !important; }
+        .dark [class*="bg-tertiary-fixed"] { background:rgba(79,46,0,0.2) !important; }
+        .dark [class*="border-outline-variant"] { border-color:rgba(255,255,255,0.1) !important; }
+        .dark footer { background:rgba(5,10,25,0.95) !important; }
+        .dark input, .dark select, .dark textarea { background:rgba(255,255,255,0.07) !important; border-color:rgba(100,150,255,0.25) !important; color:#e4efff !important; }
+        .dark input::placeholder { color:rgba(180,210,255,0.4) !important; }
+        /* Dark mode toggle button */
+        .dark-toggle-btn { width:38px; height:38px; border-radius:50%; border:none; background:rgba(255,255,255,0.12); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.3s; color:#43474e; flex-shrink:0; }
+        .dark .dark-toggle-btn { background:rgba(255,255,255,0.15); color:#c8deff; }
+        .dark-toggle-btn:hover { background:rgba(255,255,255,0.9); color:#002045; transform:scale(1.1); }
+        .dark .dark-toggle-btn:hover { background:rgba(255,255,255,0.25); color:#fff; }
+        /* Chatbot */
+        .chatbot-fab-land { position:fixed; bottom:24px; right:24px; width:60px; height:60px; background:linear-gradient(135deg,#1a365d,#0a6c44); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 28px rgba(0,32,69,0.35); border:none; animation:fab-pulse-land 3s ease-in-out infinite; z-index:1001; transition:all 0.3s; }
+        .dark .chatbot-fab-land { box-shadow:0 8px 28px rgba(58,107,199,0.45); }
+        .chatbot-fab-land:hover { transform:scale(1.12); }
+        @keyframes fab-pulse-land { 0%,100%{box-shadow:0 8px 28px rgba(0,32,69,0.35),0 0 0 0 rgba(26,54,93,0.3)}50%{box-shadow:0 8px 28px rgba(0,32,69,0.35),0 0 0 14px rgba(26,54,93,0)} }
+        .chatbot-win-land { position:fixed; bottom:96px; right:24px; width:370px; max-height:540px; background:rgba(255,255,255,0.94); backdrop-filter:blur(24px); border:1px solid rgba(255,255,255,0.4); border-radius:22px; box-shadow:0 20px 60px rgba(0,32,69,0.2); display:flex; flex-direction:column; transform:translateY(20px) scale(0.95); opacity:0; visibility:hidden; transition:all 0.3s cubic-bezier(0.4,0,0.2,1); z-index:1000; }
+        .dark .chatbot-win-land { background:rgba(10,20,40,0.94); border-color:rgba(255,255,255,0.1); }
+        .chatbot-win-land.open { transform:translateY(0) scale(1); opacity:1; visibility:visible; }
+        .typing-dot-land { width:6px; height:6px; border-radius:50%; background:#1a365d; animation:typing-land 1.4s infinite ease-in-out; display:inline-block; }
+        .typing-dot-land:nth-child(2){animation-delay:0.2s}.typing-dot-land:nth-child(3){animation-delay:0.4s}
+        @keyframes typing-land{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+        /* Fix text selection cursor on interactive elements */
+        button, a, [onclick], .btn-primary, .btn-secondary, .chatbot-fab-land { outline: none !important; user-select: none !important; -webkit-user-select: none !important; -moz-user-select: none !important; }
+    </style>
+</head>
+<body class="gradient-bg text-on-background antialiased min-h-screen font-body-md flex flex-col selection:bg-secondary-container selection:text-primary">
+
+    <!-- Floating Flower & Leaf Particles -->
+    <div class="particle-container" id="particleContainer"></div>
+
+    <!-- Cookie Consent Banner -->
+    <div class="cookie-banner fixed bottom-0 left-0 right-0 z-[100] p-4" id="cookieBanner">
+        <div class="max-w-5xl mx-auto glass rounded-2xl p-6 shadow-2xl flex flex-col md:flex-row items-center gap-4">
+            <div class="flex items-center gap-3 flex-1">
+                <span class="material-symbols-outlined text-secondary text-3xl">cookie</span>
+                <div>
+                    <h4 class="font-bold text-primary text-sm mb-1">🔒 Privacy & Data Protection Notice</h4>
+                    <p class="text-body-sm text-on-surface-variant">This platform handles sensitive clinical trial data. We use essential cookies for security and session management in compliance with <strong>ICMR-NIA</strong> and <strong>HIPAA</strong> guidelines. By proceeding, you acknowledge our data privacy policies.</p>
+                </div>
+            </div>
+            <div class="flex gap-3 flex-shrink-0">
+                <button onclick="acceptCookies()" class="btn-primary text-xs px-5 py-2">Accept & Proceed</button>
+                <button onclick="document.getElementById('privacyModal').classList.add('open')" class="btn-secondary text-xs px-5 py-2">Privacy Policy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal-overlay fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50" id="privacyModal">
+        <div class="modal-content glass rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-8 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-headline-md font-headline-md text-primary">Privacy & Data Protection Policy</h3>
+                <button onclick="this.closest('.modal-overlay').classList.remove('open')" class="text-on-surface-variant hover:text-primary p-2 rounded-full hover:bg-surface-container transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="space-y-4 text-body-md text-on-surface-variant">
+                <div class="bg-secondary-container/20 border border-secondary-container rounded-xl p-4">
+                    <h4 class="font-bold text-primary mb-2 flex items-center gap-2"><span class="material-symbols-outlined text-secondary">verified_user</span> Regulatory Compliance</h4>
+                    <p>NIDANA complies with: <strong>GCP-Ayurveda (Ministry of Ayush)</strong>, <strong>CDSCO New Drugs & Clinical Trials Rules 2019</strong>, <strong>ICMR-NIA Ethical Guidelines</strong>, <strong>ALCOA++ Data Integrity Standards</strong>, <strong>CTRI Registration Mandates</strong>, and <strong>IEC Approval Requirements</strong>.</p>
+                </div>
+                <div class="bg-primary-fixed/30 border border-primary-fixed-dim rounded-xl p-4">
+                    <h4 class="font-bold text-primary mb-2 flex items-center gap-2"><span class="material-symbols-outlined text-primary">security</span> Data Security</h4>
+                    <ul class="list-disc list-inside space-y-1 text-body-sm">
+                        <li>Patient identifiers are <strong>pseudonymized/hashed</strong> on the blockchain (SHA-256)</li>
+                        <li>End-to-end encryption for all data in transit and at rest</li>
+                        <li>Role-Based Access Control (RBAC) via Fabric MSP identities</li>
+                        <li>Immutable audit logs for every regulated action (non-repudiation)</li>
+                        <li>Hyperledger Fabric permissioned blockchain with Raft consensus</li>
+                    </ul>
+                </div>
+                <div class="bg-tertiary-fixed/30 border border-tertiary-fixed-dim rounded-xl p-4">
+                    <h4 class="font-bold text-primary mb-2 flex items-center gap-2"><span class="material-symbols-outlined text-tertiary-container">gavel</span> Patient PII Protection</h4>
+                    <p>Patient Personally Identifiable Information (PII) is <strong>never stored in plaintext</strong> on the blockchain. Only hashed references are recorded on-chain; actual PII resides in a separate access-controlled, encrypted off-chain system.</p>
+                </div>
+            </div>
+            <button onclick="this.closest('.modal-overlay').classList.remove('open')" class="btn-primary w-full mt-6 justify-center">I Understand</button>
+        </div>
+    </div>
+
+    <!-- Demo Request Modal -->
+    <div class="modal-overlay fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50" id="demoModal">
+        <div class="modal-content glass rounded-2xl max-w-lg w-full p-8 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-headline-md font-headline-md text-primary">Request a Demo</h3>
+                <button onclick="this.closest('.modal-overlay').classList.remove('open')" class="text-on-surface-variant hover:text-primary p-2 rounded-full hover:bg-surface-container transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form onsubmit="handleDemoSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="text-label-bold font-label-bold text-primary uppercase tracking-wider block mb-2">Full Name</label>
+                    <input type="text" required class="w-full px-4 py-3 border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white/80 text-body-md" placeholder="Dr. Priya Sharma"/>
+                </div>
+                <div>
+                    <label class="text-label-bold font-label-bold text-primary uppercase tracking-wider block mb-2">Organization</label>
+                    <input type="text" required class="w-full px-4 py-3 border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white/80 text-body-md" placeholder="AIIA New Delhi"/>
+                </div>
+                <div>
+                    <label class="text-label-bold font-label-bold text-primary uppercase tracking-wider block mb-2">Email</label>
+                    <input type="email" required class="w-full px-4 py-3 border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white/80 text-body-md" placeholder="researcher@institution.edu"/>
+                </div>
+                <div>
+                    <label class="text-label-bold font-label-bold text-primary uppercase tracking-wider block mb-2">Role</label>
+                    <select class="w-full px-4 py-3 border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white/80 text-body-md">
+                        <option>Principal Investigator</option>
+                        <option>Ethics Committee Member</option>
+                        <option>Research Administrator</option>
+                        <option>Pharmacovigilance Officer</option>
+                        <option>Herb Supplier / Quality</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary w-full justify-center text-sm py-4">
+                    <span class="material-symbols-outlined text-[18px]">send</span> Submit Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Security Disclaimer Modal (before accessing dashboard) -->
+    <div class="modal-overlay fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50" id="securityModal">
+        <div class="modal-content glass-dark text-white rounded-2xl max-w-lg w-full p-8 shadow-2xl">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined text-secondary-fixed text-2xl">shield</span>
+                </div>
+                <div>
+                    <h3 class="text-headline-md font-headline-md">Security Notice</h3>
+                    <p class="text-body-sm text-white/70">Regulatory Compliance Gateway</p>
+                </div>
+            </div>
+            <div class="space-y-3 mb-6">
+                <div class="flex items-start gap-3 bg-white/5 rounded-xl p-3">
+                    <span class="material-symbols-outlined text-secondary-fixed mt-0.5">lock</span>
+                    <p class="text-body-sm text-white/80">This portal contains <strong>protected clinical trial data</strong> governed by CDSCO and ICMR-NIA regulations. Unauthorized access is prohibited.</p>
+                </div>
+                <div class="flex items-start gap-3 bg-white/5 rounded-xl p-3">
+                    <span class="material-symbols-outlined text-tertiary-fixed-dim mt-0.5">monitoring</span>
+                    <p class="text-body-sm text-white/80">All actions are <strong>logged immutably</strong> on the Hyperledger Fabric blockchain and may be audited by regulatory authorities.</p>
+                </div>
+                <div class="flex items-start gap-3 bg-white/5 rounded-xl p-3">
+                    <span class="material-symbols-outlined text-primary-fixed-dim mt-0.5">fingerprint</span>
+                    <p class="text-body-sm text-white/80">Your session is authenticated via <strong>Fabric CA (Certificate Authority)</strong> with Role-Based Access Control (RBAC).</p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="proceedToDashboard()" class="btn-primary flex-1 justify-center" style="background: linear-gradient(135deg, #0a6c44, #005231);">
+                    <span class="material-symbols-outlined text-[18px]">verified_user</span> Acknowledge & Proceed
+                </button>
+                <button onclick="document.getElementById('securityModal').classList.remove('open')" class="btn-secondary flex-1 justify-center border-white/30 text-white hover:bg-white/10 hover:text-white">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header / Navigation -->
+    <header class="w-full glass border-b border-outline-variant/50 sticky top-0 z-50">
+        <div class="max-w-max-width mx-auto px-margin-mobile md:px-gutter lg:px-margin-desktop h-20 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <img alt="NIDANA Logo" class="h-10 w-auto object-contain transition-transform group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv"/>
+                <span class="text-headline-md font-headline-md font-black text-primary">NIDANA</span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex gap-8 items-center">
+                <a href="#features" class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all hover:after:w-full">Features</a>
+                <a href="#compliance" class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all hover:after:w-full">Compliance</a>
+                <a href="#blockchain" class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all hover:after:w-full">Blockchain</a>
+                <a href="#research" class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all hover:after:w-full">Research</a>
+                <button onclick="showSecurityModal()" class="btn-primary" id="accessPortalBtn">
+                    Access Portal <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </button>
+                <!-- Dark Mode Toggle -->
+                <button onclick="toggleLandingDark()" class="dark-toggle-btn" id="landingDarkBtn" title="Toggle Dark Mode">
+                    <span class="material-symbols-outlined" style="font-size:20px" id="landingDarkIcon">dark_mode</span>
+                </button>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-on-surface-variant p-2" onclick="toggleMobileMenu()">
+                <span class="material-symbols-outlined" id="menuIcon">menu</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay fixed inset-0 bg-black/50 z-[55]" id="mobileOverlay" onclick="toggleMobileMenu()"></div>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu fixed top-0 right-0 h-full w-72 glass z-[60] flex flex-col p-6 gap-4" id="mobileMenu">
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-headline-md font-headline-md text-primary font-black">NIDANA</span>
+            <button onclick="toggleMobileMenu()" class="p-2 text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <a href="#features" onclick="toggleMobileMenu()" class="text-body-md text-on-surface-variant hover:text-primary py-3 border-b border-outline-variant/30 transition-colors">Features</a>
+        <a href="#compliance" onclick="toggleMobileMenu()" class="text-body-md text-on-surface-variant hover:text-primary py-3 border-b border-outline-variant/30 transition-colors">Compliance</a>
+        <a href="#blockchain" onclick="toggleMobileMenu()" class="text-body-md text-on-surface-variant hover:text-primary py-3 border-b border-outline-variant/30 transition-colors">Blockchain</a>
+        <a href="#research" onclick="toggleMobileMenu()" class="text-body-md text-on-surface-variant hover:text-primary py-3 border-b border-outline-variant/30 transition-colors">Research</a>
+        <button onclick="showSecurityModal(); toggleMobileMenu();" class="btn-primary mt-4 justify-center">Access Portal</button>
+        <button onclick="toggleLandingDark()" class="btn-secondary mt-2 justify-center w-full flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]" id="mobileDarkIcon">dark_mode</span>
+            <span id="mobileDarkLabel">Dark Mode</span>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow relative z-10">
+
+        <!-- Hero Section -->
+        <section class="relative pt-20 pb-32 overflow-hidden">
+            <div class="max-w-max-width mx-auto px-margin-mobile md:px-gutter lg:px-margin-desktop grid lg:grid-cols-2 gap-12 items-center">
+                <div class="z-10 reveal-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary-container/30 text-on-secondary-container mb-6 border border-secondary-container glow-pulse">
+                        <span class="material-symbols-outlined text-[16px]">eco</span>
+                        <span class="text-label-bold font-label-bold">Enterprise Herbal Research • Blockchain-Backed</span>
+                    </div>
+                    <h1 class="text-display-lg font-display-lg text-primary mb-6 leading-tight">
+                        Where Scientific Rigor <br/>
+                        <span class="text-secondary">Meets Natural Wellness.</span>
+                    </h1>
+                    <p class="text-body-lg font-body-lg text-on-surface-variant mb-10 max-w-lg">
+                        The ultimate enterprise-grade medical research platform. NIDANA marries the cold precision of clinical data with the warm, holistic ethos of herbal medicine — secured by <strong>Hyperledger Fabric Blockchain</strong>.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="document.getElementById('demoModal').classList.add('open')" class="btn-primary">
+                            <span class="material-symbols-outlined text-[18px]">science</span> Request a Demo
+                        </button>
+                        <a href="#features" class="btn-secondary">
+                            <span class="material-symbols-outlined text-[18px]">explore</span> Explore Platform
+                        </a>
+                    </div>
+
+                    <!-- Live Stats Ticker -->
+                    <div class="mt-10 flex flex-wrap gap-6">
+                        <div class="text-center">
+                            <div class="text-headline-lg font-headline-lg text-primary counter" data-target="14">0</div>
+                            <div class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Active Studies</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-headline-lg font-headline-lg text-secondary counter" data-target="1248">0</div>
+                            <div class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Patients</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-headline-lg font-headline-lg text-primary counter" data-target="100">0</div>
+                            <div class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">% Compliance</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Visual -->
+                <div class="relative z-10 lg:h-[600px] flex justify-center lg:justify-end items-center reveal-right">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-surface-container-high to-surface-container rounded-full blur-3xl opacity-50 -z-10"></div>
+                    <div class="relative w-full max-w-lg glass rounded-2xl shadow-2xl overflow-hidden transform transition-all duration-700">
+                        <!-- Mock Header -->
+                        <div class="h-12 border-b border-outline-variant/30 flex items-center px-4 gap-2 bg-white/50">
+                            <div class="w-3 h-3 rounded-full bg-error"></div>
+                            <div class="w-3 h-3 rounded-full bg-tertiary-fixed-dim"></div>
+                            <div class="w-3 h-3 rounded-full bg-secondary"></div>
+                            <span class="ml-auto text-label-md text-on-surface-variant/50">NIDANA Dashboard</span>
+                        </div>
+                        <div class="p-6 grid grid-cols-2 gap-4">
+                            <div class="bg-gradient-to-br from-primary-container to-primary rounded-xl p-4 flex flex-col justify-between h-32">
+                                <span class="material-symbols-outlined text-white/50">science</span>
+                                <div>
+                                    <div class="text-white/70 text-[10px] font-bold uppercase tracking-wider mb-1">Active Studies</div>
+                                    <div class="text-white text-2xl font-bold font-headline-md counter" data-target="14">0</div>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-br from-secondary to-[#054d30] rounded-xl p-4 flex flex-col justify-between h-32">
+                                <span class="material-symbols-outlined text-white/50">group</span>
+                                <div>
+                                    <div class="text-white/70 text-[10px] font-bold uppercase tracking-wider mb-1">Patients Joined</div>
+                                    <div class="text-white text-2xl font-bold font-headline-md counter" data-target="1248">0</div>
+                                </div>
+                            </div>
+                            <div class="col-span-2 bg-white/80 border border-outline-variant/30 rounded-xl p-4">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+                                    <span class="text-label-bold font-label-bold text-primary">Blockchain Status</span>
+                                    <span class="ml-auto px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold">ACTIVE</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between"><span class="text-[11px] text-on-surface-variant">Chain Integrity</span><span class="text-[11px] text-secondary font-bold">VERIFIED ✓</span></div>
+                                    <div class="flex items-center justify-between"><span class="text-[11px] text-on-surface-variant">Consensus</span><span class="text-[11px] text-primary font-bold">Raft</span></div>
+                                    <div class="flex items-center justify-between"><span class="text-[11px] text-on-surface-variant">Orgs Connected</span><span class="text-[11px] text-primary font-bold">4 / 4</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decorational Background -->
+            <div class="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[800px] h-[800px] bg-primary-fixed rounded-full blur-[100px] opacity-20 -z-20"></div>
+            <div class="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-[600px] h-[600px] bg-secondary-container rounded-full blur-[100px] opacity-15 -z-20"></div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-24 bg-white/60">
+            <div class="max-w-max-width mx-auto px-margin-mobile md:px-gutter lg:px-margin-desktop">
+                <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-fixed/30 text-primary mb-4 border border-primary-fixed-dim/30">
+                        <span class="material-symbols-outlined text-[16px]">dashboard</span>
+                        <span class="text-label-bold font-label-bold">Platform Capabilities</span>
+                    </div>
+                    <h2 class="text-headline-lg font-headline-lg text-primary mb-4">Functional Minimalism for Complex Data</h2>
+                    <p class="text-body-lg font-body-lg text-on-surface-variant">
+                        Our strict grid system and clinical clarity reduce cognitive load, ensuring your high-density research findings remain legible and actionable.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="glass p-8 rounded-2xl hover-lift reveal" style="transition-delay: 0.1s;">
+                        <div class="w-14 h-14 bg-gradient-to-br from-primary-container to-primary text-white flex items-center justify-center rounded-xl mb-6 shadow-lg">
+                            <span class="material-symbols-outlined">work</span>
+                        </div>
+                        <h3 class="text-headline-md font-headline-md text-primary mb-3">Study Portfolio</h3>
+                        <p class="text-body-md font-body-md text-on-surface-variant">
+                            Manage all ongoing botanical and clinical trials from a single pane of glass. Easily filter by stage, phase, and therapeutic area.
+                        </p>
+                    </div>
+
+                    <div class="glass p-8 rounded-2xl hover-lift reveal" style="transition-delay: 0.2s;">
+                        <div class="w-14 h-14 bg-gradient-to-br from-secondary to-[#054d30] text-white flex items-center justify-center rounded-xl mb-6 shadow-lg">
+                            <span class="material-symbols-outlined">medical_services</span>
+                        </div>
+                        <h3 class="text-headline-md font-headline-md text-primary mb-3">Safety Tracker</h3>
+                        <p class="text-body-md font-body-md text-on-surface-variant">
+                            Real-time monitoring of adverse events with urgent signal detection. Ensure patient safety with automated compliance alerts.
+                        </p>
+                    </div>
+
+                    <div class="glass p-8 rounded-2xl hover-lift reveal" style="transition-delay: 0.3s;">
+                        <div class="w-14 h-14 bg-gradient-to-br from-tertiary-container to-tertiary text-white flex items-center justify-center rounded-xl mb-6 shadow-lg">
+                            <span class="material-symbols-outlined">translate</span>
+                        </div>
+                        <h3 class="text-headline-md font-headline-md text-primary mb-3">Multilingual e-Consent</h3>
+                        <p class="text-body-md font-body-md text-on-surface-variant">
+                            Bridge the gap in global research with built-in, culturally adapted consent forms, completely integrated into your workflow.
+                        </p>
+                    </div>
+
+                    <div class="glass p-8 rounded-2xl hover-lift reveal" style="transition-delay: 0.4s;">
+                        <div class="w-14 h-14 bg-gradient-to-br from-error to-[#93000a] text-white flex items-center justify-center rounded-xl mb-6 shadow-lg">
+                            <span class="material-symbols-outlined">warning</span>
+                        </div>
+                        <h3 class="text-headline-md font-headline-md text-primary mb-3">SAE Alert Engine</h3>
+                        <p class="text-body-md font-body-md text-on-surface-variant">
+                            24-hour time-bound SAE reporting enforcement. Automatic IEC notification with blockchain-logged compliance checks.
+                        </p>
+                    </div>
+
+                    <div class="glass p-8 rounded-2xl hover-lift reveal" style="transition-delay: 0.5s;">
+                        <div class="w-14 h-14 bg-gradient-to-br from-primary-fixed-dim to-inverse-primary text-primary flex items-center justify-center rounded-xl mb-6 shadow-lg">
+                            <span class="material-symbols-outlined">history</span>
+                        </div>
+                        <h3 class="text-headline-md font-headline-md text-primary mb-3">Immutable Audit Trail</h3>
+                        <p class="text-body-md font-body-md text-on-surface-variant">
+                            Every regulated action logged on the Hyperledger Fabric ledger. Searchable by patient ID, batch ID, site ID, or investigator.
+                        </p>
+                    </div>
+
+                    <div class="glass p-8 rounded-2xl hover-lift reveal" style="transition-delay: 0.6s;">
+                        <div class="w-14 h-14 bg-gradient-to-br from-secondary-fixed-dim to-secondary text-white flex items-center justify-center rounded-xl mb-6 shadow-lg">
+                            <span class="material-symbols-outlined">eco</span>
+                        </div>
+                        <h3 class="text-headline-md font-headline-md text-primary mb-3">Herb Batch Traceability</h3>
+                        <p class="text-body-md font-body-md text-on-surface-variant">
+                            Track every herb from harvest to patient dosage. AYUSH Premium Mark certification with blockchain-verified supply chain.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blockchain Section -->
+        <section id="blockchain" class="py-24 bg-gradient-to-br from-primary-container via-primary to-[#001030] text-white relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.15\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+
+            <div class="max-w-max-width mx-auto px-margin-mobile md:px-gutter lg:px-margin-desktop relative z-10">
+                <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 mb-6 border border-white/20 float-badge">
+                        <span class="material-symbols-outlined text-[16px] text-secondary-fixed">link</span>
+                        <span class="text-label-bold font-label-bold text-white/90">Hyperledger Fabric Network</span>
+                    </div>
+                    <h2 class="text-headline-lg font-headline-lg mb-4">Blockchain-Powered Trust Layer</h2>
+                    <p class="text-body-lg font-body-lg text-white/70">
+                        Every regulated action is an immutable, permissioned, rule-validated ledger entry — enforced through chaincode, not just UI-level checks.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 text-center hover-lift reveal" style="transition-delay: 0.1s;">
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-3xl text-secondary-fixed">apartment</span>
+                        </div>
+                        <div class="text-headline-md font-headline-md mb-1">4</div>
+                        <div class="text-label-md font-label-md text-white/60 uppercase tracking-wider">Organizations</div>
+                        <p class="text-[11px] text-white/40 mt-2">Govt. Institute, Hospital, Ethics, Supplier</p>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 text-center hover-lift reveal" style="transition-delay: 0.2s;">
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-3xl text-tertiary-fixed-dim">hub</span>
+                        </div>
+                        <div class="text-headline-md font-headline-md mb-1">Raft</div>
+                        <div class="text-label-md font-label-md text-white/60 uppercase tracking-wider">Consensus</div>
+                        <p class="text-[11px] text-white/40 mt-2">Crash-fault tolerant ordering</p>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 text-center hover-lift reveal" style="transition-delay: 0.3s;">
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-3xl text-primary-fixed-dim">storage</span>
+                        </div>
+                        <div class="text-headline-md font-headline-md mb-1">CouchDB</div>
+                        <div class="text-label-md font-label-md text-white/60 uppercase tracking-wider">State Database</div>
+                        <p class="text-[11px] text-white/40 mt-2">Rich queries for compliance</p>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 text-center hover-lift reveal" style="transition-delay: 0.4s;">
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-3xl text-secondary-fixed">verified_user</span>
+                        </div>
+                        <div class="text-headline-md font-headline-md mb-1">SHA-256</div>
+                        <div class="text-label-md font-label-md text-white/60 uppercase tracking-wider">Hash Chain</div>
+                        <p class="text-[11px] text-white/40 mt-2">Immutable integrity verification</p>
+                    </div>
+                </div>
+
+                <!-- Chaincode Contracts -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 reveal">
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-5 flex items-center gap-4">
+                        <span class="material-symbols-outlined text-secondary-fixed">description</span>
+                        <div><div class="text-body-sm font-bold">ConsentContract</div><div class="text-[11px] text-white/50">e-Consent with IEC approval validation</div></div>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-5 flex items-center gap-4">
+                        <span class="material-symbols-outlined text-tertiary-fixed-dim">medication</span>
+                        <div><div class="text-body-sm font-bold">DosageLogContract</div><div class="text-[11px] text-white/50">Consent + batch pre-validation</div></div>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-5 flex items-center gap-4">
+                        <span class="material-symbols-outlined text-error-container">emergency</span>
+                        <div><div class="text-body-sm font-bold">AdverseEventContract</div><div class="text-[11px] text-white/50">24hr SAE notification enforcement</div></div>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-5 flex items-center gap-4">
+                        <span class="material-symbols-outlined text-primary-fixed-dim">local_shipping</span>
+                        <div><div class="text-body-sm font-bold">BatchTraceabilityContract</div><div class="text-[11px] text-white/50">Herb supply chain certification</div></div>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-5 flex items-center gap-4">
+                        <span class="material-symbols-outlined text-tertiary-fixed">rule</span>
+                        <div><div class="text-body-sm font-bold">ProtocolDeviationContract</div><div class="text-[11px] text-white/50">Dual-signature approval</div></div>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-5 flex items-center gap-4">
+                        <span class="material-symbols-outlined text-secondary-fixed">gavel</span>
+                        <div><div class="text-body-sm font-bold">ComplianceRuleEngine</div><div class="text-[11px] text-white/50">Shared validation library</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Compliance & Trust Section -->
+        <section id="compliance" class="py-24 bg-white/60 relative overflow-hidden">
+            <div class="max-w-max-width mx-auto px-margin-mobile md:px-gutter lg:px-margin-desktop relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+                <div class="reveal-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary-container/30 text-on-secondary-container mb-6 border border-secondary-container">
+                        <span class="material-symbols-outlined text-[16px]">gavel</span>
+                        <span class="text-label-bold font-label-bold">Regulatory Compliance</span>
+                    </div>
+                    <h2 class="text-headline-lg font-headline-lg text-primary mb-6">Built on a Foundation of Absolute Trust</h2>
+                    <p class="text-body-lg font-body-lg text-on-surface-variant mb-8">
+                        NIDANA provides a sturdy, reliable structure that evokes the feeling of a high-end medical laboratory. Our Ethics & CTRI Trackers guarantee seamless regulatory compliance across all phases.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3 text-body-md glass rounded-xl p-4">
+                            <span class="material-symbols-outlined text-secondary">check_circle</span>
+                            <div><strong>Comprehensive Audit Logs</strong><p class="text-body-sm text-on-surface-variant">Immutable blockchain-backed trail for every regulated action</p></div>
+                        </li>
+                        <li class="flex items-center gap-3 text-body-md glass rounded-xl p-4">
+                            <span class="material-symbols-outlined text-secondary">check_circle</span>
+                            <div><strong>Role-Based Access Control (RBAC)</strong><p class="text-body-sm text-on-surface-variant">Fabric MSP-based identity with 4 organization tiers</p></div>
+                        </li>
+                        <li class="flex items-center gap-3 text-body-md glass rounded-xl p-4">
+                            <span class="material-symbols-outlined text-secondary">check_circle</span>
+                            <div><strong>End-to-End Data Encryption</strong><p class="text-body-sm text-on-surface-variant">Patient PII hashed on-chain, encrypted at rest and in transit</p></div>
+                        </li>
+                        <li class="flex items-center gap-3 text-body-md glass rounded-xl p-4">
+                            <span class="material-symbols-outlined text-secondary">check_circle</span>
+                            <div><strong>GCP-Ayurveda & CDSCO Compliant</strong><p class="text-body-sm text-on-surface-variant">Ministry of Ayush guidelines, ICMR-NIA ethical standards</p></div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="reveal-right">
+                    <div class="glass rounded-2xl p-8 shadow-2xl">
+                        <div class="flex justify-between items-center mb-6 border-b border-outline-variant/30 pb-4">
+                            <h4 class="text-headline-md font-headline-md text-primary">Ethics Committee Status</h4>
+                            <span class="px-3 py-1 bg-secondary text-white rounded-full text-label-bold">Compliant</span>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center py-3 border-b border-outline-variant/20">
+                                <span class="text-on-surface-variant font-body-sm">Protocol ID: NID-2026-001</span>
+                                <span class="text-label-bold text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">verified</span> Approved</span>
+                            </div>
+                            <div class="flex justify-between items-center py-3 border-b border-outline-variant/20">
+                                <span class="text-on-surface-variant font-body-sm">CTRI Registration</span>
+                                <span class="text-label-bold text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">verified</span> CTRI/2026/03/074521</span>
+                            </div>
+                            <div class="flex justify-between items-center py-3 border-b border-outline-variant/20">
+                                <span class="text-on-surface-variant font-body-sm">IEC Approval</span>
+                                <span class="text-label-bold text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">verified</span> Valid until Jan 2027</span>
+                            </div>
+                            <div class="flex justify-between items-center py-3 border-b border-outline-variant/20">
+                                <span class="text-on-surface-variant font-body-sm">Blockchain Integrity</span>
+                                <span class="text-label-bold text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">verified</span> Verified ✓</span>
+                            </div>
+                            <div class="flex justify-between items-center py-3">
+                                <span class="text-on-surface-variant font-body-sm">Annual Review Due</span>
+                                <span class="text-label-bold text-tertiary-fixed-dim flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> in 45 Days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Research / Stats Section -->
+        <section id="research" class="py-24 gradient-bg">
+            <div class="max-w-max-width mx-auto px-margin-mobile md:px-gutter lg:px-margin-desktop">
+                <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+                    <h2 class="text-headline-lg font-headline-lg text-primary mb-4">Powering India's Herbal Research Revolution</h2>
+                    <p class="text-body-lg font-body-lg text-on-surface-variant">Trusted by leading government research institutes, universities, and AYUSH hospitals across the nation.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 reveal">
+                    <div class="glass rounded-2xl p-8 text-center hover-lift">
+                        <div class="text-display-lg font-display-lg text-primary counter" data-target="14">0</div>
+                        <div class="text-label-bold font-label-bold text-on-surface-variant uppercase tracking-wider mt-2">Active Trials</div>
+                    </div>
+                    <div class="glass rounded-2xl p-8 text-center hover-lift">
+                        <div class="text-display-lg font-display-lg text-secondary counter" data-target="6">0</div>
+                        <div class="text-label-bold font-label-bold text-on-surface-variant uppercase tracking-wider mt-2">Research Sites</div>
+                    </div>
+                    <div class="glass rounded-2xl p-8 text-center hover-lift">
+                        <div class="text-display-lg font-display-lg text-primary counter" data-target="1248">0</div>
+                        <div class="text-label-bold font-label-bold text-on-surface-variant uppercase tracking-wider mt-2">Patients Enrolled</div>
+                    </div>
+                    <div class="glass rounded-2xl p-8 text-center hover-lift">
+                        <div class="text-display-lg font-display-lg text-secondary counter" data-target="100">0</div>
+                        <div class="text-label-bold font-label-bold text-on-surface-variant uppercase tracking-wider mt-2">% Uptime</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="py-24 bg-white/60 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-secondary-container/10 via-transparent to-primary-fixed/10"></div>
+            <div class="max-w-3xl mx-auto px-margin-mobile relative z-10 reveal-scale">
+                <h2 class="text-display-lg font-display-lg text-primary mb-6">Ready to Elevate Your Research?</h2>
+                <p class="text-body-lg font-body-lg text-on-surface-variant mb-10">
+                    Join leading researchers bridging the gap between natural wellness and rigorous clinical data — backed by immutable blockchain trust.
+                </p>
+                <button onclick="showSecurityModal()" class="btn-primary text-lg px-10 py-5">
+                    Get Started Today <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white/80 border-t border-outline-variant/30 pt-16 pb-8 relative z-10">
+        <div class="max-w-max-width mx-auto px-margin-mobile md:px-gutter lg:px-margin-desktop">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-1">
+                    <a href="#" class="flex items-center gap-3 mb-4">
+                        <img alt="NIDANA Logo" class="h-8 w-auto grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv"/>
+                        <span class="text-headline-md font-headline-md font-black text-primary">NIDANA</span>
+                    </a>
+                    <p class="text-body-sm text-on-surface-variant mb-4">Clinical Insight & Natural Precision.</p>
+                    <div class="flex items-center gap-2 text-[11px] text-on-surface-variant">
+                        <span class="material-symbols-outlined text-secondary text-[14px]">verified_user</span>
+                        HIPAA · ICMR-NIA · CDSCO · GCP-Ayurveda · ALCOA++ Compliant
+                    </div>
+                </div>
+                <div>
+                    <h5 class="text-label-bold text-primary uppercase tracking-wider mb-4">Product</h5>
+                    <ul class="space-y-3">
+                        <li><a href="#features" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Features</a></li>
+                        <li><a href="#blockchain" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Blockchain</a></li>
+                        <li><a href="#compliance" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Security</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-label-bold text-primary uppercase tracking-wider mb-4">Resources</h5>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Documentation</a></li>
+                        <li><a href="#" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">API Reference</a></li>
+                        <li><a href="#" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Case Studies</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-label-bold text-primary uppercase tracking-wider mb-4">Company</h5>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">About Us</a></li>
+                        <li><a href="#" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Careers</a></li>
+                        <li><a href="#" class="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-outline-variant/30 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-body-sm text-on-surface-variant">&copy; 2026 NIDANA Platform. All rights reserved.</p>
+                <div class="flex gap-4">
+                    <a href="#" onclick="document.getElementById('privacyModal').classList.add('open'); return false;" class="text-on-surface-variant hover:text-primary transition-colors text-body-sm">Privacy Policy</a>
+                    <a href="#" class="text-on-surface-variant hover:text-primary transition-colors text-body-sm">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <!-- CHATBOT FAB -->
+    <button class="chatbot-fab-land" id="landChatFab" onclick="toggleLandingChatbot()" title="NIDANA AI Assistant">
+        <span class="material-symbols-outlined text-white" style="font-size:28px" id="landChatIcon">smart_toy</span>
+    </button>
+
+    <!-- CHATBOT WINDOW -->
+    <div class="chatbot-win-land" id="landChatWin">
+        <div class="flex items-center gap-3 p-4" style="border-bottom:1px solid rgba(116,119,127,0.15)">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#1a365d,#0a6c44)">
+                <span class="material-symbols-outlined text-white" style="font-size:18px">smart_toy</span>
+            </div>
+            <div class="flex-1">
+                <div class="text-sm font-bold" style="color:var(--primary)">NIDANA AI Assistant</div>
+                <div class="text-xs" style="color:var(--secondary)">● Online</div>
+            </div>
+            <button onclick="toggleLandingChatbot()" class="w-8 h-8 rounded-full flex items-center justify-center bg-black/5 hover:bg-black/10 transition-colors border-none cursor-pointer"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-2" id="landChatMsgs" style="min-height:280px;max-height:330px">
+        </div>
+        <div class="px-4 pb-2 flex flex-wrap gap-2" id="landQRArea">
+        </div>
+        <div class="p-3 flex items-center gap-2" style="border-top:1px solid rgba(116,119,127,0.15)">
+            <input id="landChatInput" class="flex-1 text-sm bg-transparent border-none outline-none text-on-surface-variant" placeholder="Ask about NIDANA..." onkeydown="if(event.key==='Enter') sendLandingMsg()"/>
+            <button onclick="sendLandingMsg()" class="w-8 h-8 rounded-full flex items-center justify-center border-none cursor-pointer" style="background:linear-gradient(135deg,#1a365d,#0a6c44)">
+                <span class="material-symbols-outlined text-white" style="font-size:16px">send</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+    // ═══════════════════════════════════════════════════════════════════════
+    // FLOWER & LEAF PARTICLE SYSTEM
+    // ═══════════════════════════════════════════════════════════════════════
+    function createParticles() {
+        const container = document.getElementById('particleContainer');
+        const particles = [
+            // Lotus petals
+            `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C12 2 8 8 8 12C8 16 12 22 12 22C12 22 16 16 16 12C16 8 12 2 12 2Z" fill="rgba(159,245,193,0.5)" stroke="rgba(10,108,68,0.3)" stroke-width="0.5"/></svg>`,
+            // Small leaf
+            `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 17C3 17 5 7 10 3C15 7 17 17 17 17C17 17 13 13 10 13C7 13 3 17 3 17Z" fill="rgba(10,108,68,0.15)" stroke="rgba(10,108,68,0.25)" stroke-width="0.5"/></svg>`,
+            // Flower petal
+            `<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><ellipse cx="9" cy="9" rx="4" ry="8" fill="rgba(214,227,255,0.4)" stroke="rgba(26,54,93,0.2)" stroke-width="0.5" transform="rotate(45 9 9)"/></svg>`,
+            // Tulsi leaf
+            `<svg width="16" height="22" viewBox="0 0 16 22" fill="none"><path d="M8 1C4 5 1 10 1 14C1 18 4 21 8 21C12 21 15 18 15 14C15 10 12 5 8 1Z" fill="rgba(131,216,166,0.3)" stroke="rgba(10,108,68,0.2)" stroke-width="0.5"/><line x1="8" y1="5" x2="8" y2="18" stroke="rgba(10,108,68,0.15)" stroke-width="0.5"/></svg>`,
+            // Small circle (pollen)
+            `<svg width="8" height="8" viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="3" fill="rgba(255,184,102,0.4)"/></svg>`,
+            // Neem leaf
+            `<svg width="14" height="20" viewBox="0 0 14 20" fill="none"><path d="M7 0C3 4 0 9 0 13C0 17 3 20 7 20C11 20 14 17 14 13C14 9 11 4 7 0Z" fill="rgba(10,108,68,0.12)" stroke="rgba(10,108,68,0.2)" stroke-width="0.5"/></svg>`,
+            // Jasmine petal
+            `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><ellipse cx="7" cy="7" rx="3" ry="6" fill="rgba(255,255,255,0.5)" stroke="rgba(196,198,207,0.4)" stroke-width="0.5"/></svg>`,
+        ];
+
+        for (let i = 0; i < 25; i++) {
+            const div = document.createElement('div');
+            div.className = 'particle';
+            div.innerHTML = particles[Math.floor(Math.random() * particles.length)];
+            div.style.left = Math.random() * 100 + '%';
+            div.style.animationDuration = (12 + Math.random() * 20) + 's';
+            div.style.animationDelay = Math.random() * 15 + 's';
+            div.style.fontSize = (0.6 + Math.random() * 1) + 'em';
+            container.appendChild(div);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // MOBILE MENU
+    // ═══════════════════════════════════════════════════════════════════════
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const overlay = document.getElementById('mobileOverlay');
+        const icon = document.getElementById('menuIcon');
+        menu.classList.toggle('open');
+        overlay.classList.toggle('open');
+        icon.textContent = menu.classList.contains('open') ? 'close' : 'menu';
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // MODALS & SECURITY
+    // ═══════════════════════════════════════════════════════════════════════
+    function showSecurityModal() {
+        document.getElementById('securityModal').classList.add('open');
+    }
+
+    function proceedToDashboard() {
+        document.getElementById('securityModal').classList.remove('open');
+        window.location.href = '/dashboard';
+    }
+
+    function handleDemoSubmit(e) {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Submitting...';
+        setTimeout(() => {
+            btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span> Submitted!';
+            btn.style.background = 'linear-gradient(135deg, #0a6c44, #005231)';
+            setTimeout(() => {
+                document.getElementById('demoModal').classList.remove('open');
+                btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">send</span> Submit Request';
+                btn.style.background = '';
+            }, 1500);
+        }, 1200);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // COOKIE CONSENT
+    // ═══════════════════════════════════════════════════════════════════════
+    function acceptCookies() {
+        localStorage.setItem('nidana_cookies_accepted', 'true');
+        document.getElementById('cookieBanner').classList.remove('show');
+    }
+
+    function checkCookieConsent() {
+        if (!localStorage.getItem('nidana_cookies_accepted')) {
+            setTimeout(() => {
+                document.getElementById('cookieBanner').classList.add('show');
+            }, 1500);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // COUNTER ANIMATION
+    // ═══════════════════════════════════════════════════════════════════════
+    function animateCounters() {
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            if (counter.dataset.animated) return;
+            const rect = counter.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                counter.dataset.animated = 'true';
+                const target = parseInt(counter.dataset.target);
+                let current = 0;
+                const increment = target / 60;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    counter.textContent = Math.floor(current).toLocaleString();
+                }, 30);
+            }
+        });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // SCROLL REVEAL
+    // ═══════════════════════════════════════════════════════════════════════
+    function handleScrollReveal() {
+        const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+        reveals.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight - 80) {
+                el.classList.add('active');
+            }
+        });
+        animateCounters();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // BUTTON RIPPLE EFFECT
+    // ═══════════════════════════════════════════════════════════════════════
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-primary');
+        if (!btn) return;
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        const rect = btn.getBoundingClientRect();
+        ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+        ripple.style.left = (e.clientX - rect.left - Math.max(rect.width, rect.height) / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - Math.max(rect.width, rect.height) / 2) + 'px';
+        btn.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+    });
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // SMOOTH SCROLL
+    // ═══════════════════════════════════════════════════════════════════════
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', () => {
+        createParticles();
+        checkCookieConsent();
+        handleScrollReveal();
+        window.addEventListener('scroll', handleScrollReveal);
+        // Init dark mode from localStorage (shared with dashboard)
+        if (localStorage.getItem('nidana_dark') === 'true') {
+            document.documentElement.classList.add('dark');
+            const di = document.getElementById('landingDarkIcon');
+            const mi = document.getElementById('mobileDarkIcon');
+            const ml = document.getElementById('mobileDarkLabel');
+            if (di) di.textContent = 'light_mode';
+            if (mi) mi.textContent = 'light_mode';
+            if (ml) ml.textContent = 'Light Mode';
+        }
+        // Chatbot greeting
+        setTimeout(() => addLandingBotMsg(LAND_KB.greet), 800);
+        renderLandingQR();
+    });
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // DARK MODE TOGGLE
+    // ═══════════════════════════════════════════════════════════════════════
+    function toggleLandingDark() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('nidana_dark', isDark);
+        const icon = isDark ? 'light_mode' : 'dark_mode';
+        const label = isDark ? 'Light Mode' : 'Dark Mode';
+        const di = document.getElementById('landingDarkIcon');
+        const mi = document.getElementById('mobileDarkIcon');
+        const ml = document.getElementById('mobileDarkLabel');
+        if (di) di.textContent = icon;
+        if (mi) mi.textContent = icon;
+        if (ml) ml.textContent = label;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // AI CHATBOT
+    // ═══════════════════════════════════════════════════════════════════════
+    let landChatOpen = false;
+    const LAND_KB = {
+        greet: "Hi! 👋 I'm the NIDANA AI Assistant. I can tell you about the platform, our blockchain compliance, Ayurveda research tools, or help you get started. What would you like to know?",
+        what: "NIDANA is an enterprise-grade Clinical Trial Management System built specifically for Ayurvedic medicine research. It combines rigorous GCP-Ayurveda compliance, Hyperledger Fabric blockchain immutability, and real-time safety monitoring — all in one platform.",
+        blockchain: "NIDANA uses Hyperledger Fabric — a permissioned blockchain with Raft consensus and CouchDB state DB. Every action (patient enrollment, consent, adverse event) creates an immutable, SHA-256 hashed block. This means regulators like CDSCO and ICMR-NIA can audit every action ever taken, with cryptographic proof.",
+        features: "Key features include:\n• 📊 Real-time compliance scoring (GCP-Ayurveda)\n• 🔗 Blockchain audit trails (Hyperledger Fabric)\n• 🌿 Herb formulation tracking & phytochemical data\n• ⚠️ Safety tracker with SAE 24-hour IEC alerts\n• 📝 Multilingual e-Consent with blockchain integrity\n• 🏛️ CTRI registration & IEC approval tracking\n• 🤖 AI-assisted research insights",
+        roles: "NIDANA supports 5 role-based access levels:\n• Lead Doctor — Full trial oversight\n• Ethics Committee — IEC approvals & CTRI compliance\n• Pharmacovigilance — Adverse event tracking\n• Leadership — High-level KPIs & reports\n• Administrator — System configuration & blockchain status",
+        compliance: "NIDANA is compliant with: GCP-Ayurveda (Ministry of Ayush), CDSCO New Drugs & Clinical Trials Rules 2019, ICMR-NIA Ethical Guidelines, CTRI Registration Mandates, and IEC Approval Requirements. The compliance score (0-100%) is auto-calculated from multiple checkpoints.",
+        get_started: "To get started: click \"Request a Demo\" to schedule a personalised walkthrough, or \"Access Portal\" to log in if you already have credentials. Your institution's admin will set up your role-based access.",
+        security: "Security highlights:\n• Patient PII is pseudonymised & SHA-256 hashed on-chain\n• End-to-end encryption for all data in transit & at rest\n• Role-Based Access Control via Fabric CA (Certificate Authority)\n• Immutable audit logs — non-repudiation guaranteed\n• Zero-knowledge architecture — only hashed references on blockchain",
+        ayurveda: "NIDANA is purpose-built for Ayurvedic research — it tracks herb formulations, botanical sources, phytochemical standardisation (e.g., KSM-66 ashwagandha, AKBA 30% boswellia), traditional indica­tions alongside modern clinical endpoints, and integrates with CTRI's Ayush category.",
+        demo: "Click the \"Request a Demo\" button on the landing page! Fill in your name, organisation, email, and role — our team will reach out within 24 hours to schedule a personalised walkthrough of the platform.",
+        fallback: "I'm not sure I understood that. You can ask me about: what NIDANA is, blockchain, features, roles, compliance, security, Ayurveda research, or how to get started."
+    };
+    const LAND_QR = ['What is NIDANA?', 'Key features?', 'How does blockchain work?', 'Security & compliance?', 'How to get started?'];
+
+    function toggleLandingChatbot() {
+        landChatOpen = !landChatOpen;
+        const win = document.getElementById('landChatWin');
+        const icon = document.getElementById('landChatIcon');
+        if (win) win.classList.toggle('open', landChatOpen);
+        if (icon) icon.textContent = landChatOpen ? 'close' : 'smart_toy';
+    }
+
+    function addLandingBotMsg(text) {
+        const msgs = document.getElementById('landChatMsgs');
+        if (!msgs) return;
+        const div = document.createElement('div');
+        div.style.cssText = 'max-width:85%;padding:10px 14px;border-radius:16px;border-bottom-left-radius:4px;font-size:13px;line-height:1.55;margin-bottom:8px;background:rgba(214,227,255,0.45);color:#0d1c2e;align-self:flex-start;white-space:pre-wrap';
+        div.textContent = text;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function addLandingUserMsg(text) {
+        const msgs = document.getElementById('landChatMsgs');
+        if (!msgs) return;
+        const div = document.createElement('div');
+        div.style.cssText = 'max-width:85%;padding:10px 14px;border-radius:16px;border-bottom-right-radius:4px;font-size:13px;line-height:1.55;margin-bottom:8px;background:linear-gradient(135deg,#1a365d,#002045);color:white;align-self:flex-end;margin-left:auto';
+        div.textContent = text;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function showLandingTyping() {
+        const msgs = document.getElementById('landChatMsgs');
+        const div = document.createElement('div');
+        div.id = 'landTyping';
+        div.style.cssText = 'display:flex;gap:4px;align-items:center;padding:10px 14px;border-radius:16px;border-bottom-left-radius:4px;background:rgba(214,227,255,0.45);width:fit-content;margin-bottom:8px';
+        div.innerHTML = '<div class="typing-dot-land"></div><div class="typing-dot-land"></div><div class="typing-dot-land"></div>';
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+        return div;
+    }
+
+    function getLandingBotResp(msg) {
+        const m = msg.toLowerCase();
+        if (/hello|hi|hey|namaste/.test(m)) return LAND_KB.greet;
+        if (/what is|nidana|about/.test(m)) return LAND_KB.what;
+        if (/blockchain|fabric|hyperledger|hash|block/.test(m)) return LAND_KB.blockchain;
+        if (/feature|capabilit|function|what can/.test(m)) return LAND_KB.features;
+        if (/role|access|who|doctor|pharmacovig|ethics|admin/.test(m)) return LAND_KB.roles;
+        if (/complian|gcp|cdsco|icmr|ctri|regulation/.test(m)) return LAND_KB.compliance;
+        if (/secur|privacy|encrypt|safe|pii/.test(m)) return LAND_KB.security;
+        if (/start|begin|login|how to|sign up|demo request/.test(m)) return LAND_KB.get_started;
+        if (/ayurved|herb|botanical|plant|ashwagandha|triphala/.test(m)) return LAND_KB.ayurveda;
+        if (/demo|schedule|trial|show me/.test(m)) return LAND_KB.demo;
+        return LAND_KB.fallback;
+    }
+
+    function sendLandingMsg() {
+        const input = document.getElementById('landChatInput');
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = '';
+        addLandingUserMsg(text);
+        document.getElementById('landQRArea').innerHTML = '';
+        const typing = showLandingTyping();
+        setTimeout(() => { typing.remove(); addLandingBotMsg(getLandingBotResp(text)); renderLandingQR(); }, 700 + Math.random() * 500);
+    }
+
+    function handleLandingQR(text) {
+        document.getElementById('landQRArea').innerHTML = '';
+        addLandingUserMsg(text);
+        const typing = showLandingTyping();
+        setTimeout(() => { typing.remove(); addLandingBotMsg(getLandingBotResp(text)); renderLandingQR(); }, 700);
+    }
+
+    function renderLandingQR() {
+        const qr = document.getElementById('landQRArea');
+        if (!qr) return;
+        qr.innerHTML = LAND_QR.map(r => `<button style="padding:4px 10px;border-radius:12px;border:1px solid rgba(26,54,93,0.2);background:rgba(214,227,255,0.3);font-size:11px;font-weight:600;color:#002045;cursor:pointer;white-space:nowrap" onclick="handleLandingQR('${r.replace(/'/g, "\\'")}')"> ${r}</button>`).join('');
+    }
+    </script>
+</body>
+</html>

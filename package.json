@@ -1,0 +1,9 @@
+{
+  "name": "nidana-ayurveda-ctms",
+  "version": "1.0.0",
+  "description": "Nidana Ayurveda Clinical Trial Compliance & Monitoring Dashboard",
+  "private": true,
+  "dependencies": {
+    "mongoose": "^8.0.0"
+  }
+}

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>NIDANA - Dashboard | Clinical Trial Compliance</title>
+    <meta name="description" content="NIDANA Dashboard: Real-time clinical trial monitoring, blockchain-backed compliance, and Ayurveda research oversight."/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-container": "#9ff5c1","on-secondary-fixed": "#002111","tertiary": "#321b00",
+                        "on-surface-variant": "#43474e","inverse-primary": "#adc7f7","surface-bright": "#f8f9ff",
+                        "surface-variant": "#d4e4fc","on-primary-fixed": "#001b3c","on-tertiary-fixed-variant": "#673d00",
+                        "surface-container-high": "#dce9ff","secondary-fixed": "#9ff5c1","on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#83d8a6","primary-container": "#1a365d","outline-variant": "#c4c6cf",
+                        "surface-container": "#e5eeff","background": "#f8f9ff","on-tertiary": "#ffffff",
+                        "error": "#ba1a1a","inverse-on-surface": "#eaf1ff","surface-container-highest": "#d4e4fc",
+                        "surface-dim": "#ccdbf4","secondary": "#0a6c44","on-background": "#0d1c2e",
+                        "inverse-surface": "#223144","surface": "#f8f9ff","tertiary-fixed-dim": "#ffb866",
+                        "primary": "#002045","surface-container-low": "#eff4ff","on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#2b1700","surface-tint": "#455f88","outline": "#74777f",
+                        "on-secondary-container": "#167249","on-surface": "#0d1c2e","primary-fixed-dim": "#adc7f7",
+                        "on-primary-fixed-variant": "#2d476f","on-primary-container": "#86a0cd",
+                        "on-error-container": "#93000a","on-secondary-fixed-variant": "#005231",
+                        "tertiary-fixed": "#ffddba","surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#d6e3ff","on-tertiary-container": "#d4903b",
+                        "error-container": "#ffdad6","tertiary-container": "#4f2e00","on-error": "#ffffff"
+                    },
+                    fontFamily: {"label-md":["Hanken Grotesk"],"body-sm":["Hanken Grotesk"],"headline-lg":["Manrope"],"headline-md":["Manrope"],"body-md":["Hanken Grotesk"],"body-lg":["Hanken Grotesk"],"label-bold":["Hanken Grotesk"]},
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24}
+        .particle-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+        .particle{position:absolute;opacity:0;animation:float-particle linear infinite}
+        @keyframes float-particle{0%{opacity:0;transform:translateY(100vh) rotate(0deg) scale(0.5)}10%{opacity:0.3}90%{opacity:0.2}100%{opacity:0;transform:translateY(-10vh) rotate(360deg) scale(1)}}
+        .glass{background:rgba(255,255,255,0.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.3)}
+        .dark .glass{background:rgba(10,20,40,0.7);border:1px solid rgba(255,255,255,0.08)}
+        .card-hover{transition:all 0.4s cubic-bezier(0.4,0,0.2,1)}
+        .card-hover:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 20px 40px rgba(26,54,93,0.15)}
+        .sidebar-link{transition:all 0.3s ease;position:relative;overflow:hidden}
+        .sidebar-link::before{content:"";position:absolute;left:0;top:0;height:100%;width:4px;background:#1a365d;transform:scaleY(0);transition:transform 0.3s ease}
+        .sidebar-link:hover::before,.sidebar-link.active::before{transform:scaleY(1)}
+        .sidebar-link.active{background:rgba(214,227,255,0.5);color:#002045;font-weight:700}
+        .dark .sidebar-link.active{background:rgba(26,54,93,0.4)}
+        .notif-dropdown{opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.3s ease}
+        .notif-dropdown.open{opacity:1;visibility:visible;transform:translateY(0)}
+        .mobile-sidebar{transform:translateX(-100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1)}
+        .mobile-sidebar.open{transform:translateX(0)}
+        .sidebar-overlay{opacity:0;visibility:hidden;transition:all 0.3s ease}
+        .sidebar-overlay.open{opacity:1;visibility:visible}
+        .fade-in{animation:fadeIn 0.6s ease-out}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+        .pulse-dot{animation:pulse-dot 2s ease-in-out infinite}
+        @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.5}}
+        .compliance-banner{animation:slide-down 0.5s ease-out}
+        @keyframes slide-down{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+        .gradient-bg{background:linear-gradient(-45deg,#f8f9ff,#e5eeff,#d4e4fc,#eff4ff);background-size:400% 400%;animation:gradient-shift 15s ease infinite}
+        .dark .gradient-bg{background:linear-gradient(-45deg,#050d1a,#0a1830,#0d2040,#050d1a);background-size:400% 400%}
+        @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        ::-webkit-scrollbar{width:6px}
+        ::-webkit-scrollbar-thumb{background:rgba(26,54,93,0.2);border-radius:3px}
+        .modal-overlay{opacity:0;visibility:hidden;transition:all 0.3s ease}
+        .modal-overlay.open{opacity:1;visibility:visible}
+        .modal-content{transform:scale(0.9) translateY(20px);transition:all 0.4s cubic-bezier(0.4,0,0.2,1)}
+        .modal-overlay.open .modal-content{transform:scale(1) translateY(0)}
+        body,.glass,.gradient-bg{transition:background 0.5s ease,color 0.3s ease}
+        /* Chatbot */
+        .chatbot-window{position:fixed;bottom:90px;right:20px;width:360px;max-height:520px;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.4);border-radius:20px;box-shadow:0 20px 60px rgba(0,32,69,0.2);display:flex;flex-direction:column;transform:translateY(20px) scale(0.95);opacity:0;visibility:hidden;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);z-index:1000}
+        .dark .chatbot-window{background:rgba(10,20,40,0.92);border-color:rgba(255,255,255,0.1)}
+        .chatbot-window.open{transform:translateY(0) scale(1);opacity:1;visibility:visible}
+        .chatbot-fab{position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:linear-gradient(135deg,#1a365d,#0a6c44);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,32,69,0.35);border:none;animation:fab-pulse 3s ease-in-out infinite;z-index:1001;transition:all 0.3s ease}
+        .chatbot-fab:hover{transform:scale(1.1)}
+        @keyframes fab-pulse{0%,100%{box-shadow:0 8px 24px rgba(0,32,69,0.35),0 0 0 0 rgba(26,54,93,0.3)}50%{box-shadow:0 8px 24px rgba(0,32,69,0.35),0 0 0 12px rgba(26,54,93,0)}}
+        .typing-dot{width:6px;height:6px;border-radius:50%;background:#1a365d;animation:typing 1.4s infinite ease-in-out;display:inline-block}
+        .typing-dot:nth-child(2){animation-delay:0.2s}.typing-dot:nth-child(3){animation-delay:0.4s}
+        @keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+        .topbar-btn{width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,0.5);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s;color:#43474e}
+        .dark .topbar-btn{background:rgba(255,255,255,0.15);color:#c8deff}
+        .topbar-btn:hover{background:rgba(255,255,255,0.9);color:#002045}
+        .dark .topbar-btn:hover{background:rgba(255,255,255,0.25);color:#ffffff}
+        .action-btn{padding:10px 20px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.3s;border:none;display:inline-flex;align-items:center;gap:6px}
+        .action-btn-primary{background:linear-gradient(135deg,#1a365d,#002045);color:white}
+        .action-btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,32,69,0.3)}
+        .dark .action-btn-primary{background:linear-gradient(135deg,#3a6bc7,#1a4a9e);color:#fff;box-shadow:0 4px 15px rgba(58,107,199,0.4)}
+        .dark .action-btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(58,107,199,0.55)}
+        .action-btn-secondary{background:rgba(214,227,255,0.4);color:#002045;border:1.5px solid rgba(26,54,93,0.2)}
+        .action-btn-secondary:hover{background:rgba(214,227,255,0.7)}
+        .dark .action-btn-secondary{background:rgba(100,150,255,0.18);color:#c8deff;border:1.5px solid rgba(100,150,255,0.35)}
+        .dark .action-btn-secondary:hover{background:rgba(100,150,255,0.3);color:#ffffff}
+        .action-btn-danger{background:rgba(186,26,26,0.1);color:#ba1a1a;border:1.5px solid rgba(186,26,26,0.2)}
+        .dark .action-btn-danger{background:rgba(255,80,80,0.15);color:#ff8080;border:1.5px solid rgba(255,80,80,0.3)}
+        .dark .action-btn-danger:hover{background:rgba(255,80,80,0.28)}
+        .settings-input{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid rgba(116,119,127,0.3);background:rgba(255,255,255,0.6);font-size:14px;outline:none;transition:all 0.3s}
+        .settings-input:focus{border-color:#1a365d;box-shadow:0 0 0 3px rgba(26,54,93,0.1)}
+        .dark .settings-input{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);color:#e4efff}
+        .dark .settings-input::placeholder{color:rgba(200,222,255,0.45)}
+        @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        .dark .text-primary{color:#adc7f7!important}
+        .dark body{color:#d0e1ff}
+        /* Dark mode global text fixes */
+        .dark [style*="color:#43474e"]{color:#94afd4!important}
+        .dark [style*="color:#002045"]{color:#c8deff!important}
+        .dark [style*="color:#0d1c2e"]{color:#e4efff!important}
+        .dark [style*="color:#74777f"]{color:#7fa8d0!important}
+        /* Dark card text overrides */
+        .dark .glass h2,.dark .glass h3,.dark .glass h4{color:#c8deff!important}
+        .dark .glass p,.dark .glass span:not(.material-symbols-outlined):not([style*="color:#0a6c44"]):not([style*="color:#ba1a1a"]):not([style*="color:#f59e0b"]){color:#a8c8ef}
+        /* Sidebar dark fixes */
+        .dark #sidebar h1{color:#c8deff!important}
+        .dark .sidebar-link{color:#a8c8ef!important}
+        .dark .sidebar-link.active{color:#e8f4ff!important;background:rgba(58,107,199,0.25)!important}
+        .dark .sidebar-link:hover{color:#ffffff!important;background:rgba(58,107,199,0.15)!important}
+        /* Topbar dark */
+        .dark header [style*="color:#002045"]{color:#c8deff!important}
+        /* Search input dark */
+        .dark #searchInput{background:rgba(255,255,255,0.08)!important;border-color:rgba(100,150,255,0.3)!important;color:#e4efff!important}
+        /* Fix text selection cursor on interactive elements */
+        button, a, [onclick], .action-btn, .topbar-btn, .sidebar-link, .card-hover, .chatbot-fab { outline: none !important; user-select: none !important; -webkit-user-select: none !important; -moz-user-select: none !important; }
+    </style>
+</head>
+<body class="gradient-bg antialiased min-h-screen font-sans flex" style="color:#0d1c2e">
+
+<div class="particle-container" id="particleContainer"></div>
+
+<!-- Compliance Banner -->
+<div class="fixed top-0 left-0 right-0 z-[60] hidden" id="complianceBanner">
+    <div class="compliance-banner text-white px-4 py-3 flex items-center justify-center gap-3 text-sm" style="background:linear-gradient(to right,#ba1a1a,#93000a)">
+        <span class="material-symbols-outlined animate-pulse">warning</span>
+        <span id="complianceBannerText">Compliance breaches detected</span>
+        <button onclick="document.getElementById('complianceBanner').classList.add('hidden')" class="ml-4 text-white/70 hover:text-white"><span class="material-symbols-outlined" style="font-size:18px">close</span></button>
+    </div>
+</div>
+
+<!-- Privacy Modal -->
+<div class="modal-overlay fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50" id="privacyModal">
+    <div class="modal-content glass rounded-2xl max-w-lg w-full p-8 shadow-2xl">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:#1a365d"><span class="material-symbols-outlined text-white" style="font-size:24px">shield</span></div>
+            <div>
+                <h3 class="text-xl font-bold" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="privacy_title">Data Access Notice</h3>
+                <p class="text-sm" style="color:#43474e" data-i18n="privacy_sub">Protected Health Information</p>
+            </div>
+        </div>
+        <div class="rounded-xl p-4 mb-4 text-sm" style="background:#fffbeb;border:1px solid #fde68a;color:#78350f">
+            <p data-i18n="privacy_body">You are accessing <strong>protected clinical trial data</strong>. All actions are:</p>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+                <li data-i18n="privacy_1">Logged immutably on <strong>Hyperledger Fabric</strong></li>
+                <li data-i18n="privacy_2">Subject to audit by <strong>CDSCO and ICMR-NIA</strong></li>
+                <li data-i18n="privacy_3">Governed by <strong>GCP-Ayurveda</strong> regulations</li>
+            </ul>
+        </div>
+        <button onclick="acknowledgePrivacy()" class="action-btn action-btn-primary w-full justify-center">
+            <span class="material-symbols-outlined" style="font-size:16px">verified_user</span>
+            <span data-i18n="privacy_ack">Acknowledge &amp; Access Dashboard</span>
+        </button>
+    </div>
+</div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay fixed inset-0 bg-black/50 z-[45] lg:hidden" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<nav class="mobile-sidebar lg:translate-x-0 lg:flex flex-col fixed left-0 top-0 h-screen w-72 z-[50] glass border-r border-outline-variant/30" id="sidebar">
+    <div class="h-16 flex items-center px-6 border-b border-outline-variant/30 gap-3">
+        <img alt="NIDANA Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv"/>
+        <h1 class="text-xl font-black" style="font-family:Manrope,sans-serif;color:#002045">NIDANA</h1>
+        <button class="lg:hidden ml-auto p-1" onclick="toggleSidebar()"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="mx-4 mt-4 mb-2 p-3 rounded-xl" style="background:rgba(159,245,193,0.1);border:1px solid rgba(159,245,193,0.3)">
+        <div class="flex items-center gap-2 mb-1">
+            <div class="w-2 h-2 rounded-full pulse-dot" style="background:#0a6c44"></div>
+            <span class="text-xs font-bold uppercase tracking-wider" style="color:#0a6c44">Blockchain</span>
+            <span class="ml-auto text-xs font-bold" style="color:#0a6c44" id="bcStatus">Connecting...</span>
+        </div>
+        <div class="text-xs" style="color:#43474e" id="bcBlocks">Blocks: —</div>
+    </div>
+    <div class="flex-1 overflow-y-auto py-2 flex flex-col gap-1" id="sidebarNav">
+        <a class="sidebar-link active flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" data-section="dashboard" data-roles="all" onclick="switchSection('dashboard')">
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">dashboard</span><span data-i18n="nav_dashboard">Dashboard</span>
+        </a>
+        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="studies" data-roles="Lead Doctor,Admin" onclick="switchSection('studies')">
+            <span class="material-symbols-outlined">work</span><span data-i18n="nav_studies">Study Portfolio</span>
+        </a>
+        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="safety" data-roles="Lead Doctor,Pharmacovigilance,Admin" onclick="switchSection('safety')">
+            <span class="material-symbols-outlined">medical_services</span><span data-i18n="nav_safety">Safety Tracker</span>
+        </a>
+        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="ethics" data-roles="Ethics Committee,Lead Doctor,Admin" onclick="switchSection('ethics')">
+            <span class="material-symbols-outlined">fact_check</span><span data-i18n="nav_ethics">Ethics &amp; CTRI</span>
+        </a>
+        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="consent" data-roles="Lead Doctor,Admin,Ethics Committee" onclick="switchSection('consent')">
+            <span class="material-symbols-outlined">translate</span><span data-i18n="nav_consent">e-Consent</span>
+        </a>
+        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="blockchain" data-roles="all" onclick="switchSection('blockchain')">
+            <span class="material-symbols-outlined">link</span><span data-i18n="nav_blockchain">Blockchain Ledger</span>
+        </a>
+        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="audit" data-roles="all" onclick="switchSection('audit')">
+            <span class="material-symbols-outlined">history</span><span data-i18n="nav_audit">Audit Logs</span>
+        </a>
+        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="settings" data-roles="Admin,Lead Doctor" onclick="switchSection('settings')">
+            <span class="material-symbols-outlined">settings</span><span data-i18n="nav_settings">Settings</span>
+        </a>
+    </div>
+    <div class="p-4 border-t border-outline-variant/30">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-sm" style="background:linear-gradient(135deg,#1a365d,#0a6c44)" id="sidebarAvatar">?</div>
+            <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold truncate" style="color:#002045" id="sidebarName">Loading...</div>
+                <div class="text-xs truncate" style="color:#43474e" id="sidebarRole">—</div>
+            </div>
+            <button onclick="doLogout()" title="Logout" style="padding:6px;border-radius:8px;border:none;background:transparent;cursor:pointer">
+                <span class="material-symbols-outlined" style="font-size:18px;color:#ba1a1a">logout</span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="flex-1 flex flex-col min-h-screen lg:ml-72 w-full relative z-10">
+    <!-- TopBar -->
+    <header class="fixed top-0 lg:left-72 left-0 right-0 z-40 flex justify-between items-center px-6 h-16 glass border-b border-outline-variant/30">
+        <div class="flex items-center gap-4 lg:hidden">
+            <button class="topbar-btn" onclick="toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
+            <img alt="NIDANA" class="h-8 w-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv"/>
+        </div>
+        <div class="hidden lg:flex items-center gap-4 flex-1">
+            <div class="relative w-80">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2" style="color:#74777f;font-size:20px">search</span>
+                <input id="searchInput" class="w-full text-sm rounded-xl" style="padding:8px 16px 8px 40px;background:rgba(255,255,255,0.6);border:1px solid rgba(116,119,127,0.3);outline:none" placeholder="Search studies, patients..." oninput="handleSearch(this.value)"/>
+                <div id="searchResults" class="absolute top-full left-0 right-0 mt-2 glass rounded-xl shadow-2xl hidden max-h-72 overflow-y-auto"></div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="hidden md:flex items-center gap-2 rounded-full" style="padding:4px 12px;background:rgba(214,227,255,0.4);border:1px solid rgba(26,54,93,0.15)">
+                <span class="material-symbols-outlined" style="font-size:14px;color:#002045">badge</span>
+                <span class="text-xs font-bold" style="color:#002045" id="topbarRoleText">—</span>
+            </div>
+            <button onclick="toggleLanguage()" class="topbar-btn font-bold text-xs" id="langBtn" title="Toggle Language">हि</button>
+            <button onclick="toggleDark()" class="topbar-btn" title="Toggle Dark Mode">
+                <span class="material-symbols-outlined" style="font-size:20px" id="darkModeIcon">dark_mode</span>
+            </button>
+            <div class="relative">
+                <button class="topbar-btn relative" id="notifBtnTopbar" onclick="toggleNotifications(event)">
+                    <span class="material-symbols-outlined" style="font-size:20px">notifications</span>
+                    <span class="absolute top-1 right-1 w-2 h-2 rounded-full border-2 border-white pulse-dot" style="background:#ba1a1a" id="notifBadge"></span>
+                </button>
+                <div class="notif-dropdown absolute right-0 top-full mt-2 w-96 glass rounded-2xl shadow-2xl" id="notifDropdown">
+                    <div class="flex justify-between items-center p-4" style="border-bottom:1px solid rgba(116,119,127,0.15)">
+                        <h4 class="text-xs font-bold uppercase tracking-wider" style="color:#002045" data-i18n="notif_title">Notifications</h4>
+                        <span class="text-xs" style="color:#43474e" id="notifCount">0 unread</span>
+                    </div>
+                    <div class="max-h-80 overflow-y-auto" id="notifList"><div class="p-8 text-center text-sm" style="color:#43474e">Loading...</div></div>
+                </div>
+            </div>
+            <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0 shadow-md" style="background:linear-gradient(135deg,#1a365d,#0a6c44)" id="topbarAvatar">?</div>
+        </div>
+    </header>
+
+    <main class="flex-1 mt-16 p-4 md:p-6 lg:p-10 overflow-x-hidden">
+
+        <!-- DASHBOARD SECTION -->
+        <div id="section-dashboard" class="section-content fade-in">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" id="sectionTitle">Dashboard Overview</h2>
+                <p class="text-lg" style="color:#43474e" id="sectionSubtitle">Monitor clinical trial progress, safety signals, and enrollment metrics.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="rounded-2xl p-6 shadow-lg card-hover text-white" style="background:linear-gradient(135deg,#1a365d,#002045)">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2.5 rounded-xl" style="background:rgba(255,255,255,0.15)"><span class="material-symbols-outlined">science</span></div>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1" style="background:rgba(255,255,255,0.15)"><span class="material-symbols-outlined" style="font-size:14px">trending_up</span>+2%</span>
+                    </div>
+                    <p class="text-xs text-white/70 mb-1 uppercase tracking-wider" data-i18n="kpi_studies">Active Studies</p>
+                    <h3 class="text-3xl font-bold" id="stat-activeStudies">—</h3>
+                </div>
+                <div class="rounded-2xl p-6 shadow-lg card-hover text-white" style="background:linear-gradient(135deg,#0a6c44,#054d30)">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2.5 rounded-xl" style="background:rgba(255,255,255,0.15)"><span class="material-symbols-outlined">group</span></div>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1" style="background:rgba(255,255,255,0.15)"><span class="material-symbols-outlined" style="font-size:14px">trending_up</span>+12%</span>
+                    </div>
+                    <p class="text-xs text-white/70 mb-1 uppercase tracking-wider" data-i18n="kpi_patients">Patients Joined</p>
+                    <h3 class="text-3xl font-bold" id="stat-totalPatients">—</h3>
+                </div>
+                <div class="rounded-2xl p-6 shadow-lg card-hover text-white" style="background:linear-gradient(135deg,#4f2e00,#321b00)">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2.5 rounded-xl" style="background:rgba(255,255,255,0.15)"><span class="material-symbols-outlined">pending_actions</span></div>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold" style="background:rgba(255,255,255,0.15)">due soon</span>
+                    </div>
+                    <p class="text-xs text-white/70 mb-1 uppercase tracking-wider" data-i18n="kpi_approvals">Approvals Needed</p>
+                    <h3 class="text-3xl font-bold" id="stat-pendingApprovals">—</h3>
+                </div>
+                <div class="rounded-2xl p-6 shadow-lg card-hover text-white" style="background:linear-gradient(135deg,#ba1a1a,#93000a)">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2.5 rounded-xl" style="background:rgba(255,255,255,0.15)"><span class="material-symbols-outlined">warning</span></div>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold animate-pulse" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3)">Action Req</span>
+                    </div>
+                    <p class="text-xs text-white/70 mb-1 uppercase tracking-wider" data-i18n="kpi_safety">Urgent Safety Issues</p>
+                    <h3 class="text-3xl font-bold" id="stat-urgentSafety">—</h3>
+                </div>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-6 mb-8">
+                <div class="glass rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold flex items-center gap-2" style="font-family:Manrope,sans-serif;color:#002045">
+                            <span class="material-symbols-outlined" style="color:#0a6c44">verified_user</span><span data-i18n="compliance_title">Compliance Score</span>
+                        </h4>
+                        <button onclick="runComplianceCheck(this)" class="action-btn action-btn-secondary text-xs">
+                            <span class="material-symbols-outlined" style="font-size:14px">refresh</span><span data-i18n="run_check">Run Check</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="relative w-28 h-28 flex-shrink-0">
+                            <svg viewBox="0 0 100 100" class="w-full h-full -rotate-90">
+                                <circle cx="50" cy="50" r="42" fill="none" stroke="#e5eeff" stroke-width="8"/>
+                                <circle cx="50" cy="50" r="42" fill="none" stroke="#0a6c44" stroke-width="8" stroke-linecap="round" stroke-dasharray="264" id="complianceCircle" stroke-dashoffset="264" style="transition:stroke-dashoffset 1.5s ease;"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl font-bold" style="color:#002045" id="complianceScoreText">—</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 space-y-3">
+                            <div class="flex justify-between text-sm"><span style="color:#43474e" data-i18n="total_breaches">Total Breaches</span><span class="font-bold" style="color:#002045" id="stat-breaches">—</span></div>
+                            <div class="flex justify-between text-sm"><span style="color:#43474e" data-i18n="bc_blocks">Blockchain Blocks</span><span class="font-bold" style="color:#002045" id="stat-blocks">—</span></div>
+                            <div class="flex justify-between text-sm"><span style="color:#43474e" data-i18n="last_check">Last Check</span><span class="font-bold" style="color:#002045" id="stat-lastCheck">—</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-bold flex items-center gap-2" style="font-family:Manrope,sans-serif;color:#002045">
+                            <span class="material-symbols-outlined">link</span><span data-i18n="bc_network">Blockchain Network</span>
+                        </h4>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full pulse-dot" style="background:#0a6c44"></div>
+                            <span class="text-xs font-bold" style="color:#0a6c44" id="bcStatusHeader">Active</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between pb-2" style="border-bottom:1px solid rgba(116,119,127,0.15)"><span style="color:#43474e">Network</span><span class="font-bold" style="color:#002045">Nidana CTMS Network</span></div>
+                        <div class="flex justify-between pb-2" style="border-bottom:1px solid rgba(116,119,127,0.15)"><span style="color:#43474e">Consensus</span><span class="font-bold" style="color:#002045">Raft</span></div>
+                        <div class="flex justify-between pb-2" style="border-bottom:1px solid rgba(116,119,127,0.15)"><span style="color:#43474e">State DB</span><span class="font-bold" style="color:#002045">CouchDB</span></div>
+                        <div class="flex justify-between pb-2" style="border-bottom:1px solid rgba(116,119,127,0.15)"><span style="color:#43474e" data-i18n="integrity">Integrity</span><span class="font-bold" style="color:#0a6c44" id="bcIntegrity">Checking...</span></div>
+                        <div class="flex justify-between"><span style="color:#43474e" data-i18n="orgs">Organizations</span><span class="font-bold" style="color:#002045" id="bcOrgs">4</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass rounded-2xl p-6 shadow-lg">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="text-lg font-bold flex items-center gap-2" style="font-family:Manrope,sans-serif;color:#002045">
+                        <span class="material-symbols-outlined">science</span><span data-i18n="active_trials">Active Clinical Trials</span>
+                    </h4>
+                    <span class="text-xs font-bold" style="color:#43474e" id="trialCount">— trials</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="text-left text-xs font-bold uppercase tracking-wider" style="color:#43474e;border-bottom:1px solid rgba(116,119,127,0.2)">
+                                <th class="pb-3 pr-4" data-i18n="th_trial_id">Trial ID</th>
+                                <th class="pb-3 pr-4" data-i18n="th_name">Name</th>
+                                <th class="pb-3 pr-4" data-i18n="th_phase">Phase</th>
+                                <th class="pb-3 pr-4" data-i18n="th_status">Status</th>
+                                <th class="pb-3 pr-4" data-i18n="th_enrollment">Enrollment</th>
+                                <th class="pb-3 pr-4" data-i18n="th_compliance">Compliance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trialsTable">
+                            <tr><td colspan="6" class="py-8 text-center text-sm" style="color:#43474e">Loading trials...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- STUDIES -->
+        <div id="section-studies" class="section-content hidden fade-in">
+            <div class="mb-8"><h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="studies_title">Study Portfolio</h2><p class="text-lg" style="color:#43474e" data-i18n="studies_subtitle">Manage all ongoing botanical and clinical trials.</p></div>
+            <div id="studiesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">Loading...</div>
+        </div>
+
+        <!-- SAFETY -->
+        <div id="section-safety" class="section-content hidden fade-in">
+            <div class="mb-8"><h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="safety_title">Safety Tracker</h2><p class="text-lg" style="color:#43474e" data-i18n="safety_subtitle">Monitor adverse events and safety signals.</p></div>
+            <div id="safetyList" class="space-y-4">Loading...</div>
+        </div>
+
+        <!-- ETHICS -->
+        <div id="section-ethics" class="section-content hidden fade-in">
+            <div class="mb-8"><h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="ethics_title">Ethics &amp; CTRI Tracker</h2><p class="text-lg" style="color:#43474e" data-i18n="ethics_subtitle">Track IEC approvals and regulatory deadlines.</p></div>
+            <div id="ethicsGrid" class="grid md:grid-cols-2 gap-6">Loading...</div>
+        </div>
+
+        <!-- CONSENT -->
+        <div id="section-consent" class="section-content hidden fade-in">
+            <div class="mb-8"><h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="consent_title">Multilingual e-Consent</h2><p class="text-lg" style="color:#43474e" data-i18n="consent_subtitle">Digital consent management with blockchain integrity.</p></div>
+            <div id="consentList" class="space-y-4">Loading...</div>
+        </div>
+
+        <!-- BLOCKCHAIN -->
+        <div id="section-blockchain" class="section-content hidden fade-in">
+            <div class="mb-8"><h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="bc_title">Blockchain Ledger</h2><p class="text-lg" style="color:#43474e" data-i18n="bc_subtitle">Immutable transaction history on Hyperledger Fabric.</p></div>
+            <div id="blockchainView" class="space-y-4">Loading...</div>
+        </div>
+
+        <!-- AUDIT -->
+        <div id="section-audit" class="section-content hidden fade-in">
+            <div class="mb-8"><h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="audit_title">Audit Logs</h2><p class="text-lg" style="color:#43474e" data-i18n="audit_subtitle">Immutable record of all regulated actions.</p></div>
+            <div id="auditList" class="space-y-3">Loading...</div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div id="section-settings" class="section-content hidden fade-in">
+            <div class="mb-8"><h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="settings_title">Settings</h2><p class="text-lg" style="color:#43474e" data-i18n="settings_subtitle">System configuration and preferences.</p></div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="glass rounded-2xl p-6 shadow-lg">
+                    <h4 class="font-bold mb-4 flex items-center gap-2" style="font-family:Manrope,sans-serif;color:#002045"><span class="material-symbols-outlined">person</span><span data-i18n="settings_profile">Profile Settings</span></h4>
+                    <div class="space-y-3">
+                        <div><label class="text-xs font-bold uppercase tracking-wider block mb-1" style="color:#43474e" data-i18n="settings_display_name">Display Name</label><input id="settingsName" class="settings-input" placeholder="Your name"/></div>
+                        <div><label class="text-xs font-bold uppercase tracking-wider block mb-1" style="color:#43474e" data-i18n="settings_email">Email</label><input id="settingsEmail" type="email" class="settings-input" placeholder="email@org.in"/></div>
+                        <div><label class="text-xs font-bold uppercase tracking-wider block mb-1" style="color:#43474e" data-i18n="settings_org">Organization</label><input class="settings-input" value="Nidana CTMS Network" readonly style="opacity:0.7"/></div>
+                        <button onclick="saveProfile()" class="action-btn action-btn-primary w-full justify-center mt-2">
+                            <span class="material-symbols-outlined" style="font-size:14px">save</span><span data-i18n="settings_save">Save Profile</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl p-6 shadow-lg">
+                    <h4 class="font-bold mb-4 flex items-center gap-2" style="font-family:Manrope,sans-serif;color:#002045"><span class="material-symbols-outlined">notifications</span><span data-i18n="settings_notifs">Notification Preferences</span></h4>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" checked id="notif-sae" class="w-4 h-4 rounded"/><span class="text-sm" data-i18n="notif_sae">SAE Alerts (Critical)</span></label>
+                        <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" checked id="notif-compliance" class="w-4 h-4 rounded"/><span class="text-sm" data-i18n="notif_compliance">Compliance Breaches</span></label>
+                        <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" checked id="notif-deadlines" class="w-4 h-4 rounded"/><span class="text-sm" data-i18n="notif_deadlines">Regulatory Deadlines</span></label>
+                        <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="notif-blockchain-pref" class="w-4 h-4 rounded"/><span class="text-sm" data-i18n="notif_blockchain">Blockchain Updates</span></label>
+                    </div>
+                    <button onclick="saveNotifications()" class="action-btn action-btn-secondary w-full justify-center mt-4">
+                        <span class="material-symbols-outlined" style="font-size:14px">check</span><span data-i18n="notif_save">Save Preferences</span>
+                    </button>
+                </div>
+                <div class="glass rounded-2xl p-6 shadow-lg">
+                    <h4 class="font-bold mb-4 flex items-center gap-2" style="font-family:Manrope,sans-serif;color:#002045"><span class="material-symbols-outlined">info</span><span data-i18n="settings_system">System Information</span></h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between"><span style="color:#43474e">Version</span><span class="font-bold" style="color:#002045">NIDANA v2.4.1</span></div>
+                        <div class="flex justify-between"><span style="color:#43474e">Chain</span><span class="font-bold" style="color:#002045">Hyperledger Fabric 2.5</span></div>
+                        <div class="flex justify-between"><span style="color:#43474e">Consensus</span><span class="font-bold" style="color:#002045">Raft</span></div>
+                        <div class="flex justify-between"><span style="color:#43474e">Uptime</span><span class="font-bold" style="color:#0a6c44" id="uptimeDisplay">0 min</span></div>
+                    </div>
+                    <a href="blockchain_demo.html" target="_blank" class="action-btn action-btn-secondary w-full justify-center mt-4" style="text-decoration:none">
+                        <span class="material-symbols-outlined" style="font-size:14px">play_circle</span><span data-i18n="view_demo">View Blockchain Demo</span>
+                    </a>
+                </div>
+                <div class="glass rounded-2xl p-6 shadow-lg" style="border:1px solid rgba(186,26,26,0.15)">
+                    <h4 class="font-bold mb-4 flex items-center gap-2" style="font-family:Manrope,sans-serif;color:#ba1a1a"><span class="material-symbols-outlined">warning</span><span data-i18n="danger_zone">Danger Zone</span></h4>
+                    <div class="space-y-3">
+                        <button onclick="clearSessionData()" class="action-btn action-btn-danger w-full justify-center"><span class="material-symbols-outlined" style="font-size:14px">delete</span><span data-i18n="clear_session">Clear Session Data</span></button>
+                        <button onclick="doLogout()" class="action-btn action-btn-danger w-full justify-center"><span class="material-symbols-outlined" style="font-size:14px">logout</span><span data-i18n="logout">Logout</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- CHATBOT FAB -->
+<button class="chatbot-fab" id="chatbotFab" onclick="toggleChatbot()" title="NIDANA AI Assistant">
+    <span class="material-symbols-outlined text-white" style="font-size:28px" id="chatbotFabIcon">smart_toy</span>
+</button>
+
+<!-- CHATBOT WINDOW -->
+<div class="chatbot-window" id="chatbotWindow">
+    <div class="flex items-center gap-3 p-4" style="border-bottom:1px solid rgba(116,119,127,0.15)">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#1a365d,#0a6c44)">
+            <span class="material-symbols-outlined text-white" style="font-size:18px">smart_toy</span>
+        </div>
+        <div class="flex-1">
+            <div class="text-sm font-bold" style="color:#002045" data-i18n="bot_name">NIDANA AI Assistant</div>
+            <div class="text-xs" style="color:#0a6c44">● <span data-i18n="bot_status">Online</span></div>
+        </div>
+        <button onclick="toggleChatbot()" class="topbar-btn" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-2" id="chatMessages" style="min-height:280px;max-height:330px"></div>
+    <div class="px-4 pb-2 flex flex-wrap gap-2" id="quickReplies"></div>
+    <div class="p-3 flex items-center gap-2" style="border-top:1px solid rgba(116,119,127,0.15)">
+        <input id="chatInput" class="flex-1 text-sm" style="border:none;outline:none;background:transparent;color:#0d1c2e" placeholder="Ask about NIDANA..." data-i18n-placeholder="bot_input_placeholder" onkeydown="if(event.key==='Enter') sendChatMsg()"/>
+        <button onclick="sendChatMsg()" class="w-8 h-8 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#1a365d,#0a6c44);border:none;cursor:pointer">
+            <span class="material-symbols-outlined text-white" style="font-size:16px">send</span>
+        </button>
+    </div>
+</div>
+
+<script>
+const API_BASE=window.location.origin+"/api";
+let dashboardData=null,isDark=localStorage.getItem("nidana_dark")==="true",currentLang=localStorage.getItem("nidana_lang")||"en",currentUser=null,chatOpen=false;
+
+const I18N={
+en:{nav_dashboard:"Dashboard",nav_studies:"Study Portfolio",nav_safety:"Safety Tracker",nav_ethics:"Ethics & CTRI",nav_consent:"e-Consent",nav_blockchain:"Blockchain Ledger",nav_audit:"Audit Logs",nav_settings:"Settings",kpi_studies:"Active Studies",kpi_patients:"Patients Joined",kpi_approvals:"Approvals Needed",kpi_safety:"Urgent Safety Issues",compliance_title:"Compliance Score",run_check:"Run Check",total_breaches:"Total Breaches",bc_blocks:"Blockchain Blocks",last_check:"Last Check",bc_network:"Blockchain Network",integrity:"Integrity",orgs:"Organizations",active_trials:"Active Clinical Trials",th_trial_id:"Trial ID",th_name:"Name",th_phase:"Phase",th_status:"Status",th_enrollment:"Enrollment",th_compliance:"Compliance",studies_title:"Study Portfolio",studies_subtitle:"Manage all ongoing botanical and clinical trials.",safety_title:"Safety Tracker",safety_subtitle:"Monitor adverse events and safety signals.",ethics_title:"Ethics & CTRI Tracker",ethics_subtitle:"Track IEC approvals and regulatory deadlines.",consent_title:"Multilingual e-Consent",consent_subtitle:"Digital consent management with blockchain integrity.",bc_title:"Blockchain Ledger",bc_subtitle:"Immutable transaction history on Hyperledger Fabric.",audit_title:"Audit Logs",audit_subtitle:"Immutable record of all regulated actions.",settings_title:"Settings",settings_subtitle:"System configuration and preferences.",settings_profile:"Profile Settings",settings_display_name:"Display Name",settings_email:"Email",settings_org:"Organization",settings_save:"Save Profile",settings_notifs:"Notification Preferences",notif_sae:"SAE Alerts (Critical)",notif_compliance:"Compliance Breaches",notif_deadlines:"Regulatory Deadlines",notif_blockchain:"Blockchain Updates",notif_save:"Save Preferences",settings_system:"System Information",view_demo:"View Blockchain Demo",danger_zone:"Danger Zone",clear_session:"Clear Session Data",logout:"Logout",notif_title:"Notifications",privacy_title:"Data Access Notice",privacy_sub:"Protected Health Information",privacy_body:"You are accessing <strong>protected clinical trial data</strong>. All actions are:",privacy_1:"Logged immutably on <strong>Hyperledger Fabric</strong>",privacy_2:"Subject to audit by <strong>CDSCO and ICMR-NIA</strong>",privacy_3:"Governed by <strong>GCP-Ayurveda</strong> regulations",privacy_ack:"Acknowledge & Access Dashboard",bot_name:"NIDANA AI Assistant",bot_status:"Online",bot_input_placeholder:"Ask about NIDANA..."},
+hi:{nav_dashboard:"डैशबोर्ड",nav_studies:"अध्ययन पोर्टफोलियो",nav_safety:"सुरक्षा ट्रैकर",nav_ethics:"नैतिकता और CTRI",nav_consent:"ई-सहमति",nav_blockchain:"ब्लॉकचेन लेजर",nav_audit:"ऑडिट लॉग",nav_settings:"सेटिंग्स",kpi_studies:"सक्रिय अध्ययन",kpi_patients:"शामिल मरीज",kpi_approvals:"अनुमोदन आवश्यक",kpi_safety:"अत्यावश्यक सुरक्षा मुद्दे",compliance_title:"अनुपालन स्कोर",run_check:"जांच करें",total_breaches:"कुल उल्लंघन",bc_blocks:"ब्लॉकचेन ब्लॉक",last_check:"अंतिम जांच",bc_network:"ब्लॉकचेन नेटवर्क",integrity:"अखंडता",orgs:"संगठन",active_trials:"सक्रिय क्लीनिकल परीक्षण",th_trial_id:"परीक्षण ID",th_name:"नाम",th_phase:"चरण",th_status:"स्थिति",th_enrollment:"नामांकन",th_compliance:"अनुपालन",studies_title:"अध्ययन पोर्टफोलियो",studies_subtitle:"सभी चल रहे परीक्षण प्रबंधित करें।",safety_title:"सुरक्षा ट्रैकर",safety_subtitle:"प्रतिकूल घटनाओं की निगरानी करें।",ethics_title:"नैतिकता और CTRI ट्रैकर",ethics_subtitle:"IEC अनुमोदन और समयसीमा ट्रैक करें।",consent_title:"बहुभाषी ई-सहमति",consent_subtitle:"ब्लॉकचेन समर्थित डिजिटल सहमति।",bc_title:"ब्लॉकचेन लेजर",bc_subtitle:"हाइपरलेजर फैब्रिक पर अपरिवर्तनीय इतिहास।",audit_title:"ऑडिट लॉग",audit_subtitle:"सभी विनियमित कार्यों का रिकॉर्ड।",settings_title:"सेटिंग्स",settings_subtitle:"सिस्टम कॉन्फ़िगरेशन और प्राथमिकताएं।",settings_profile:"प्रोफ़ाइल सेटिंग्स",settings_display_name:"प्रदर्शन नाम",settings_email:"ईमेल",settings_org:"संगठन",settings_save:"प्रोफ़ाइल सहेजें",settings_notifs:"अधिसूचना प्राथमिकताएं",notif_sae:"SAE अलर्ट",notif_compliance:"अनुपालन उल्लंघन",notif_deadlines:"नियामक समयसीमाएं",notif_blockchain:"ब्लॉकचेन अपडेट",notif_save:"प्राथमिकताएं सहेजें",settings_system:"सिस्टम जानकारी",view_demo:"ब्लॉकचेन डेमो देखें",danger_zone:"खतरनाक क्षेत्र",clear_session:"सत्र डेटा साफ़ करें",logout:"लॉगआउट",notif_title:"सूचनाएं",privacy_title:"डेटा एक्सेस सूचना",privacy_sub:"संरक्षित स्वास्थ्य जानकारी",privacy_body:"आप <strong>संरक्षित क्लीनिकल परीक्षण डेटा</strong> एक्सेस कर रहे हैं। सभी कार्य:",privacy_1:"<strong>हाइपरलेजर फैब्रिक</strong> पर अपरिवर्तनीय रूप से लॉग किए गए",privacy_2:"<strong>CDSCO और ICMR-NIA</strong> द्वारा ऑडिट के अधीन",privacy_3:"<strong>GCP-आयुर्वेद</strong> नियमों द्वारा शासित",privacy_ack:"स्वीकार करें और डैशबोर्ड एक्सेस करें",bot_name:"NIDANA AI सहायक",bot_status:"ऑनलाइन",bot_input_placeholder:"NIDANA के बारे में पूछें..."}
+};
+
+const CHAT_KB={
+en:{greet:"Hello! 👋 I'm NIDANA AI Assistant. I help you understand the application, navigate features, or explain clinical trial concepts. What would you like to know?",what_nidana:"NIDANA is a blockchain-backed Clinical Trial Management System for Ayurvedic medicine research. It tracks trials, patient safety, ethics compliance, and regulatory submissions — all secured on Hyperledger Fabric.",blockchain:"NIDANA uses Hyperledger Fabric — a permissioned blockchain with Raft consensus and CouchDB state DB. Every action creates an immutable block, ensuring data cannot be tampered with, providing a complete audit trail for CDSCO & ICMR-NIA.",how_save:"When you submit data, NIDANA: 1) Creates a transaction, 2) Calculates SHA-256 hash chaining to the previous block, 3) Mines a valid hash, 4) Stores the block permanently. See this live in the Blockchain Ledger section!",roles:"NIDANA has 5 roles:\n• Lead Doctor — Full access to all trials\n• Ethics Committee — IEC approvals & CTRI compliance\n• Pharmacovigilance — Safety events & AE tracking\n• Leadership — High-level KPIs\n• Administrator — Full system access + settings",compliance:"The Compliance Score (0-100%) measures GCP-Ayurveda protocol adherence. It checks IEC validity, CTRI registration, SAE reporting, consent status, and documentation. Below 80% triggers compliance alerts!",adverse_event:"An Adverse Event (AE) is any unexpected health issue in a trial participant. A Serious Adverse Event (SAE) must be reported to IEC within 24 hours by law. Go to Safety Tracker to view and manage all AEs.",iec:"IEC = Independent Ethics Committee. Every clinical trial in India needs IEC approval before starting. NIDANA tracks IEC approval dates, expiry, and sends alerts for renewals.",ctri:"CTRI = Clinical Trials Registry - India. All trials must be registered with CTRI before enrollment. NIDANA flags trials with missing registrations with a ⚠️ warning.",consent:"e-Consent is a digital, blockchain-secured consent system. Each patient consent is timestamped, hashed, and stored on blockchain. It tracks consent status: Consented/Pending/Expired/Withdrawn.",navigate:"Use the left sidebar: Dashboard (overview), Study Portfolio (trials), Safety Tracker (AEs), Ethics & CTRI (approvals), e-Consent (consents), Blockchain Ledger (transactions), Audit Logs, Settings.",dark_mode:"Use the moon/sun icon in the topbar to toggle Dark/Light mode. Use the language button (हि/En) to switch between English and Hindi!",logout:"To logout: click the ↩ button next to your avatar in the sidebar footer, or go to Settings → Danger Zone → Logout.",fallback:"I'm not sure I understood that. You can ask about: what NIDANA is, how blockchain works, roles, compliance scoring, adverse events, IEC/CTRI, e-consent, or how to navigate."},
+hi:{greet:"नमस्ते! 👋 मैं NIDANA AI सहायक हूं। मैं आपको एप्लिकेशन समझने और क्लीनिकल परीक्षण अवधारणाओं में मदद करता हूं।",what_nidana:"NIDANA एक ब्लॉकचेन-आधारित क्लीनिकल ट्रायल मैनेजमेंट सिस्टम है जो आयुर्वेदिक चिकित्सा अनुसंधान के लिए है। यह हाइपरलेजर फैब्रिक पर सुरक्षित है।",blockchain:"NIDANA हाइपरलेजर फैब्रिक का उपयोग करता है — Raft consensus और CouchDB के साथ। हर action एक अपरिवर्तनीय ब्लॉक बनाती है जिसे CDSCO और ICMR-NIA ऑडिट कर सकते हैं।",how_save:"डेटा सबमिट करने पर NIDANA: 1) Transaction बनाता है, 2) SHA-256 hash calculate करता है, 3) Valid hash mine करता है, 4) Block स्थायी रूप से store करता है। Blockchain Ledger में देखें!",roles:"NIDANA में 5 भूमिकाएं:\n• मुख्य चिकित्सक — पूर्ण एक्सेस\n• नैतिकता समिति — IEC अनुमोदन\n• फार्माकोविजिलेंस — सुरक्षा घटनाएं\n• नेतृत्व — उच्च-स्तरीय KPI\n• प्रशासक — पूर्ण सिस्टम एक्सेस",compliance:"अनुपालन स्कोर (0-100%) GCP-आयुर्वेद प्रोटोकॉल पालन मापता है। 80% से नीचे अनुपालन अलर्ट ट्रिगर होता है!",adverse_event:"प्रतिकूल घटना (AE) परीक्षण प्रतिभागी में कोई भी अप्रत्याशित स्वास्थ्य समस्या है। SAE को 24 घंटे में IEC को रिपोर्ट करना अनिवार्य है।",iec:"IEC = स्वतंत्र नैतिकता समिति। भारत में हर परीक्षण के लिए IEC अनुमोदन अनिवार्य है।",ctri:"CTRI = Clinical Trials Registry - India। नामांकन से पहले सभी परीक्षणों का पंजीकरण अनिवार्य है।",consent:"ई-सहमति एक डिजिटल ब्लॉकचेन-सुरक्षित प्रणाली है। प्रत्येक सहमति timestamped और hash की गई है।",navigate:"बाईं साइडबार का उपयोग करें: डैशबोर्ड, अध्ययन पोर्टफोलियो, सुरक्षा ट्रैकर, नैतिकता और CTRI, ई-सहमति, ब्लॉकचेन लेजर, ऑडिट लॉग, सेटिंग्स।",dark_mode:"टॉप बार में चंद्रमा/सूर्य आइकन से डार्क/लाइट मोड टॉगल करें। भाषा बटन से EN/HI बदलें!",logout:"लॉगआउट: साइडबार फुटर में ↩ बटन दबाएं, या Settings → Danger Zone → Logout।",fallback:"मुझे यह समझ नहीं आया। आप पूछ सकते हैं: NIDANA क्या है, ब्लॉकचेन, भूमिकाएं, अनुपालन, प्रतिकूल घटनाएं, IEC/CTRI, या नेविगेशन।"}
+};
+
+const QR_EN=["What is NIDANA?","How does blockchain save data?","What are the roles?","How to navigate?","What is SAE?"];
+const QR_HI=["NIDANA क्या है?","ब्लॉकचेन डेटा कैसे सेव करता है?","भूमिकाएं क्या हैं?","नेविगेट कैसे करें?","SAE क्या है?"];
+
+document.addEventListener("DOMContentLoaded",()=>{
+    const us=sessionStorage.getItem("nidana_user");
+    if(!us){window.location.href="login.html";return;}
+    currentUser=JSON.parse(us);
+    if(isDark)document.documentElement.classList.add("dark");
+    document.getElementById("darkModeIcon").textContent=isDark?"light_mode":"dark_mode";
+    document.getElementById("langBtn").textContent=currentLang==="en"?"हि":"En";
+    applyLang(currentLang);
+    setupUserUI();
+    applyRoleNav(currentUser.role);
+    createParticles();
+    if(!localStorage.getItem("nidana_privacy_ack"))document.getElementById("privacyModal").classList.add("open");
+    
+    loadDashboard();
+    setInterval(loadDashboard,30000);
+    const st=Date.now();
+    setInterval(()=>{const m=Math.floor((Date.now()-st)/60000);const el=document.getElementById("uptimeDisplay");if(el)el.textContent=m+" min";},60000);
+    setTimeout(()=>addBotMsg(CHAT_KB[currentLang].greet),600);
+    renderQuickReplies();
+});
+
+function setupUserUI(){
+    const u=currentUser;
+    const init=u.username.substring(0,2).toUpperCase();
+    ["topbarAvatar","sidebarAvatar"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=init;});
+    const sn=document.getElementById("sidebarName");if(sn)sn.textContent=u.username;
+    const sr=document.getElementById("sidebarRole");if(sr)sr.textContent=u.role;
+    const tr=document.getElementById("topbarRoleText");if(tr)tr.textContent=u.role;
+    const sne=document.getElementById("settingsName");if(sne)sne.value=u.username;
+    const rd={
+        "Lead Doctor":["Lead Doctor Overview","Monitor clinical trial progress, safety signals, and enrollment metrics."],
+        "Ethics Committee":["Ethics Committee View","Review pending approvals, SAE alerts, and compliance status."],
+        "Pharmacovigilance":["Pharmacovigilance Dashboard","Track adverse events, safety signals, and reporting timelines."],
+        "Leadership":["Leadership Overview","High-level KPIs, compliance scores, and institutional metrics."],
+        "Admin":["Administrator Panel","System configuration, user management, and blockchain status."]
+    };
+    const [t,s]=rd[u.role]||rd["Lead Doctor"];
+    const st2=document.getElementById("sectionTitle");if(st2)st2.textContent=t;
+    const ss=document.getElementById("sectionSubtitle");if(ss)ss.textContent=s;
+}
+
+function applyRoleNav(role){
+    document.querySelectorAll("#sidebarNav .sidebar-link").forEach(l=>{
+        const a=l.dataset.roles;
+        if(!a||a==="all")return;
+        const roles=a.split(",").map(r=>r.trim());
+        if(!roles.includes(role))l.style.display="none";
+    });
+}
+
+function toggleDark(){
+    isDark=!isDark;
+    document.documentElement.classList.toggle("dark",isDark);
+    document.getElementById("darkModeIcon").textContent=isDark?"light_mode":"dark_mode";
+    localStorage.setItem("nidana_dark",isDark);
+}
+
+function toggleLanguage(){
+    currentLang=currentLang==="en"?"hi":"en";
+    localStorage.setItem("nidana_lang",currentLang);
+    document.getElementById("langBtn").textContent=currentLang==="en"?"हि":"En";
+    applyLang(currentLang);
+    renderQuickReplies();
+}
+
+function applyLang(l){
+    const t=I18N[l];
+    document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;if(t[k]!==undefined)el.innerHTML=t[k];});
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{const k=el.dataset.i18nPlaceholder;if(t[k]!==undefined)el.placeholder=t[k];});
+    document.documentElement.lang=l;
+}
+
+function acknowledgePrivacy(){document.getElementById("privacyModal").classList.remove("open");localStorage.setItem("nidana_privacy_ack","true");}
+function doLogout(){sessionStorage.removeItem("nidana_user");sessionStorage.removeItem("nidana_privacy_ack");window.location.href="login.html";}
+function clearSessionData(){sessionStorage.clear();localStorage.removeItem("nidana_lang");localStorage.removeItem("nidana_dark");alert("Session cleared.");window.location.href="login.html";}
+
+async function apiFetch(ep){
+    try{const r=await fetch(API_BASE+ep);if(!r.ok)throw new Error("HTTP "+r.status);return await r.json();}
+    catch(e){return{success:false,error:e.message};}
+}
+
+// ── SIMULATED DATA ────────────────────────────────────────────────────────────
+// The backend API (/api) only exposes /health and /status (Vercel serverless).
+// All clinical data below is realistic demo data generated locally in the
+// browser so every section renders immediately without a real database.
+const MOCK_TRIALS = [
+  {trialId:"NIDANA-TRL-001",name:"Ashwagandha Stress & Cortisol RCT",phase:"Phase II",status:"Active",enrollmentCurrent:84,enrollmentTarget:120,complianceScore:96,principalInvestigator:"Dr. Priya Sharma",site:"AIIA New Delhi",herbFormulation:"Withania somnifera (KSM-66)",description:"Randomized double-blind study of standardised ashwagandha root extract on cortisol and perceived stress.",iecApprovalStatus:"Approved",iecApprovalDate:"2024-03-15",iecExpiryDate:"2026-03-14",ctriRegistration:"CTRI/2024/03/062481"},
+  {trialId:"NIDANA-TRL-002",name:"Triphala Gut Microbiome Study",phase:"Phase I",status:"Active",enrollmentCurrent:42,enrollmentTarget:60,complianceScore:88,principalInvestigator:"Dr. Ramesh Patel",site:"NIA Jaipur",herbFormulation:"Triphala Churna (standardised)",description:"Pilot open-label study on gut microbiome modulation by Triphala in healthy adults with sub-optimal digestion.",iecApprovalStatus:"Approved",iecApprovalDate:"2024-06-01",iecExpiryDate:"2026-05-31",ctriRegistration:"CTRI/2024/06/074512"},
+  {trialId:"NIDANA-TRL-003",name:"Boswellia Knee OA Pain Trial",phase:"Phase III",status:"Active",enrollmentCurrent:198,enrollmentTarget:240,complianceScore:91,principalInvestigator:"Dr. Anita Nair",site:"Rajiv Gandhi AYUSH",herbFormulation:"Boswellia serrata (AKBA 30%)",description:"Multi-centre RCT comparing Boswellia extract vs NSAID for knee osteoarthritis pain and functional outcomes.",iecApprovalStatus:"Approved",iecApprovalDate:"2023-11-20",iecExpiryDate:"2025-11-19",ctriRegistration:"CTRI/2023/11/058930"},
+  {trialId:"NIDANA-TRL-004",name:"Brahmi Cognitive Enhancement Study",phase:"Phase II",status:"Active",enrollmentCurrent:56,enrollmentTarget:100,complianceScore:79,principalInvestigator:"Dr. Suresh Menon",site:"CCRYN Kochi",herbFormulation:"Bacopa monnieri (Brahmi)",description:"Assessment of Brahmi on working memory, attention, and anxiety in college students (18–25 yr).",iecApprovalStatus:"Approved",iecApprovalDate:"2024-09-10",iecExpiryDate:"2026-09-09",ctriRegistration:"CTRI/2024/09/081234"},
+  {trialId:"NIDANA-TRL-005",name:"Shatavari Women's Hormonal Balance",phase:"Phase II",status:"Pending",enrollmentCurrent:0,enrollmentTarget:80,complianceScore:72,principalInvestigator:"Dr. Kavita Rao",site:"AIIA Mumbai",herbFormulation:"Asparagus racemosus",description:"Exploratory RCT of Shatavari on FSH, LH, and menopausal symptoms in peri-menopausal women.",iecApprovalStatus:"Pending",iecApprovalDate:null,iecExpiryDate:null,ctriRegistration:null},
+  {trialId:"NIDANA-TRL-006",name:"Guduchi Immunomodulation COVID-19",phase:"Phase II",status:"Completed",enrollmentCurrent:150,enrollmentTarget:150,complianceScore:98,principalInvestigator:"Dr. Arun Kumar",site:"NIA Jaipur",herbFormulation:"Tinospora cordifolia",description:"Completed double-blind RCT on Guduchi stem extract in mild-to-moderate COVID-19 for immune recovery.",iecApprovalStatus:"Approved",iecApprovalDate:"2023-01-10",iecExpiryDate:"2025-01-09",ctriRegistration:"CTRI/2023/01/040121"}
+];
+
+const MOCK_PATIENTS = [
+  {patientId:"PT-2024-0001",pseudonymizedId:"a3f7c92d",trialId:"NIDANA-TRL-001",site:"AIIA New Delhi",consentStatus:"Consented",consentDate:"2024-04-10"},
+  {patientId:"PT-2024-0002",pseudonymizedId:"b1e4d83a",trialId:"NIDANA-TRL-001",site:"AIIA New Delhi",consentStatus:"Consented",consentDate:"2024-04-12"},
+  {patientId:"PT-2024-0003",pseudonymizedId:"c9g2h71f",trialId:"NIDANA-TRL-002",site:"NIA Jaipur",consentStatus:"Pending",consentDate:null},
+  {patientId:"PT-2024-0004",pseudonymizedId:"d5k8j46e",trialId:"NIDANA-TRL-003",site:"Rajiv Gandhi AYUSH",consentStatus:"Consented",consentDate:"2024-02-18"},
+  {patientId:"PT-2024-0005",pseudonymizedId:"e2m3n95b",trialId:"NIDANA-TRL-003",site:"Rajiv Gandhi AYUSH",consentStatus:"Expired",consentDate:"2023-12-01"},
+  {patientId:"PT-2024-0006",pseudonymizedId:"f7p1q84c",trialId:"NIDANA-TRL-004",site:"CCRYN Kochi",consentStatus:"Consented",consentDate:"2024-10-05"},
+  {patientId:"PT-2024-0007",pseudonymizedId:"g4r6s23d",trialId:"NIDANA-TRL-001",site:"AIIA New Delhi",consentStatus:"Withdrawn",consentDate:"2024-05-20"},
+  {patientId:"PT-2024-0008",pseudonymizedId:"h8t9u12e",trialId:"NIDANA-TRL-002",site:"NIA Jaipur",consentStatus:"Consented",consentDate:"2024-07-14"},
+  {patientId:"PT-2024-0009",pseudonymizedId:"i0v5w67f",trialId:"NIDANA-TRL-003",site:"Rajiv Gandhi AYUSH",consentStatus:"Consented",consentDate:"2024-03-22"},
+  {patientId:"PT-2024-0010",pseudonymizedId:"j3x7y90g",trialId:"NIDANA-TRL-004",site:"CCRYN Kochi",consentStatus:"Pending",consentDate:null}
+];
+
+const MOCK_ADVERSE_EVENTS = [
+  {eventId:"AE-2024-001",patientId:"PT-2024-0001",trialId:"NIDANA-TRL-001",severity:"SAE",status:"Reported",description:"Grade 3 hepatotoxicity — elevated SGPT (5× ULN). Participant hospitalised. Causality: possibly related.",reportedBy:"Dr. Priya Sharma",reportedAt:"2024-11-02T08:30:00Z",iecNotified:true},
+  {eventId:"AE-2024-002",patientId:"PT-2024-0004",trialId:"NIDANA-TRL-003",severity:"AE",status:"Resolved",description:"Mild GI upset (nausea, loose stools) — Grade 1. Self-limiting, resolved within 48 h without intervention.",reportedBy:"Dr. Anita Nair",reportedAt:"2024-10-15T14:00:00Z",iecNotified:false},
+  {eventId:"AE-2024-003",patientId:"PT-2024-0006",trialId:"NIDANA-TRL-004",severity:"AE",status:"Ongoing",description:"Mild headache and insomnia reported after dose escalation. Grade 1. Under observation.",reportedBy:"Dr. Suresh Menon",reportedAt:"2024-11-10T10:00:00Z",iecNotified:false},
+  {eventId:"AE-2024-004",patientId:"PT-2024-0009",trialId:"NIDANA-TRL-003",severity:"SAE",status:"Under Review",description:"Anaphylactic reaction 30 min post-dose. BP 80/50. Treated with epinephrine. Causality: probable.",reportedBy:"Dr. Anita Nair",reportedAt:"2024-11-18T09:15:00Z",iecNotified:false}
+];
+
+const MOCK_BC_STATUS = {status:"Active",totalBlocks:1847,chainIntegrity:"VERIFIED",organizations:[{name:"AIIA New Delhi",mspId:"AIIA-MSP"},{name:"NIA Jaipur",mspId:"NIA-MSP"},{name:"CDSCO Regulator",mspId:"CDSCO-MSP"},{name:"ICMR-NIA",mspId:"ICMR-MSP"}]};
+
+const MOCK_BLOCKS = Array.from({length:12},(_, i)=>({index:1847-i,hash:"00000a"+Math.random().toString(36).substr(2,58),previousHash:"00000b"+Math.random().toString(36).substr(2,58),timestamp:new Date(Date.now()-(i*18*60000)).toISOString(),data:{transactionType:["PATIENT_ENROLLED","CONSENT_SIGNED","AE_REPORTED","COMPLIANCE_CHECK","IEC_APPROVAL","TRIAL_UPDATE"][i%6],actor:["Dr. Priya Sharma","Dr. Anita Nair","Dr. Suresh Menon","System"][i%4],organizationMSP:["AIIA-MSP","NIA-MSP","CDSCO-MSP"][i%3]}}));
+
+const MOCK_NOTIFICATIONS = [
+  {title:"SAE Reported — NIDANA-TRL-003",message:"Anaphylactic reaction requires IEC notification within 24 h.",type:"SAE_Alert",severity:"critical",timestamp:new Date(Date.now()-3600000).toISOString(),read:false,actionRequired:true},
+  {title:"Compliance Alert — TRL-004",message:"Brahmi trial compliance dropped to 79% — documentation gaps found.",type:"Compliance_Breach",severity:"warning",timestamp:new Date(Date.now()-7200000).toISOString(),read:false,actionRequired:true},
+  {title:"IEC Renewal Due — TRL-003",message:"Boswellia trial IEC approval expires 2025-11-19. Renew within 60 days.",type:"Deadline",severity:"warning",timestamp:new Date(Date.now()-86400000).toISOString(),read:true,actionRequired:false},
+  {title:"Patient Enrolled — TRL-001",message:"Patient PT-2024-0002 successfully enrolled in Ashwagandha RCT.",type:"System",severity:"info",timestamp:new Date(Date.now()-172800000).toISOString(),read:true,actionRequired:false},
+  {title:"Blockchain Block #1847 Mined",message:"New block added: PATIENT_ENROLLED transaction by Dr. Priya Sharma.",type:"Blockchain",severity:"info",timestamp:new Date(Date.now()-3000).toISOString(),read:false,actionRequired:false}
+];
+
+const MOCK_AUDIT = [
+  {action:"PATIENT_ENROLLED",details:"Patient PT-2024-0002 enrolled in NIDANA-TRL-001 (Ashwagandha RCT)",actor:"Dr. Priya Sharma",role:"Lead Doctor",resourceId:"PT-2024-0002",severity:"Info",blockchainTxHash:"0x3fa2",timestamp:new Date(Date.now()-3600000).toISOString()},
+  {action:"SAE_REPORTED",details:"Anaphylactic reaction for PT-2024-0009 in TRL-003. Causality: probable.",actor:"Dr. Anita Nair",role:"Lead Doctor",resourceId:"AE-2024-004",severity:"Critical",blockchainTxHash:"0x7bc1",timestamp:new Date(Date.now()-7200000).toISOString()},
+  {action:"COMPLIANCE_CHECK",details:"Automated GCP-Ayurveda compliance scan — 2 breaches found in TRL-004 & TRL-005",actor:"System",role:"Admin",resourceId:"SYSTEM",severity:"Warning",blockchainTxHash:"0x2d9f",timestamp:new Date(Date.now()-14400000).toISOString()},
+  {action:"IEC_APPROVAL_RENEWED",details:"Ethics approval renewed for TRL-001 (valid until 2026-03-14)",actor:"Dr. Kavita Rao",role:"Ethics Committee",resourceId:"NIDANA-TRL-001",severity:"Info",blockchainTxHash:"0x9ae4",timestamp:new Date(Date.now()-86400000).toISOString()},
+  {action:"CONSENT_REVOKED",details:"Patient PT-2024-0007 withdrew consent from TRL-001. Data locked per GCP.",actor:"Dr. Priya Sharma",role:"Lead Doctor",resourceId:"PT-2024-0007",severity:"Warning",blockchainTxHash:"0x5cf8",timestamp:new Date(Date.now()-172800000).toISOString()},
+  {action:"USER_LOGIN",details:"Successful login from 103.21.xx.xx (New Delhi)",actor:currentUser?currentUser.username:"User",role:currentUser?currentUser.role:"Lead Doctor",resourceId:"AUTH",severity:"Info",blockchainTxHash:null,timestamp:new Date().toISOString()}
+];
+// ── END SIMULATED DATA ─────────────────────────────────────────────────────────
+
+function getMockDashboardStats(){
+  const activeTrials=MOCK_TRIALS.filter(t=>t.status==="Active");
+  const totalPatients=MOCK_TRIALS.reduce((a,t)=>a+t.enrollmentCurrent,0);
+  const avgCompliance=Math.round(MOCK_TRIALS.reduce((a,t)=>a+t.complianceScore,0)/MOCK_TRIALS.length);
+  const breaches=MOCK_TRIALS.filter(t=>t.complianceScore<80).length;
+  return {activeStudies:activeTrials.length,totalPatients,pendingApprovals:MOCK_TRIALS.filter(t=>t.iecApprovalStatus!=="Approved").length,urgentSafetyIssues:MOCK_ADVERSE_EVENTS.filter(e=>e.severity==="SAE"&&e.status!=="Reported").length,totalBreaches:breaches,blockchainBlocks:MOCK_BC_STATUS.totalBlocks,complianceScore:avgCompliance,recentActivity:new Date().toISOString()};
+}
+
+function loadDashboard(){
+    const stats=getMockDashboardStats();
+    dashboardData=stats;
+    animateCounter("stat-activeStudies",stats.activeStudies);
+    animateCounter("stat-totalPatients",stats.totalPatients);
+    animateCounter("stat-pendingApprovals",stats.pendingApprovals);
+    animateCounter("stat-urgentSafety",stats.urgentSafetyIssues);
+    animateCounter("stat-breaches",stats.totalBreaches);
+    animateCounter("stat-blocks",stats.blockchainBlocks);
+    const lc=document.getElementById("stat-lastCheck");if(lc)lc.textContent=new Date().toLocaleTimeString();
+    const score=stats.complianceScore;
+    const offset=264-(264*score/100);
+    const circ=document.getElementById("complianceCircle");
+    const scoreT=document.getElementById("complianceScoreText");
+    if(circ)circ.setAttribute("stroke-dashoffset",offset);
+    if(scoreT)scoreT.textContent=score+"%";
+    if(score<80&&circ)circ.setAttribute("stroke","#ba1a1a");
+    if(stats.totalBreaches>0){
+        document.getElementById("complianceBanner").classList.remove("hidden");
+        document.getElementById("complianceBannerText").textContent="⚠️ "+stats.totalBreaches+" breach(es) — Review required per CDSCO/ICMR-NIA";
+    }
+    const tc=document.getElementById("trialCount");if(tc)tc.textContent=MOCK_TRIALS.length+" trials";
+    renderTrialsTable(MOCK_TRIALS.filter(t=>t.status==="Active"));
+    // Blockchain sidebar + header
+    const els={bcStatus:document.getElementById("bcStatus"),bcBlocks:document.getElementById("bcBlocks"),bcIntegrity:document.getElementById("bcIntegrity"),bcStatusHeader:document.getElementById("bcStatusHeader")};
+    if(els.bcStatus)els.bcStatus.textContent=MOCK_BC_STATUS.status;
+    if(els.bcBlocks)els.bcBlocks.textContent="Blocks: "+MOCK_BC_STATUS.totalBlocks;
+    if(els.bcIntegrity){els.bcIntegrity.textContent=MOCK_BC_STATUS.chainIntegrity;els.bcIntegrity.style.color="#0a6c44";}
+    if(els.bcStatusHeader)els.bcStatusHeader.textContent=MOCK_BC_STATUS.status;
+    loadNotifications();
+}
+
+function loadNotifications(){
+    const data=MOCK_NOTIFICATIONS;
+    const unread=data.filter(x=>!x.read).length;
+    const ce=document.getElementById("notifCount");if(ce)ce.textContent=unread+" unread";
+    const badge=document.getElementById("notifBadge");if(badge&&unread===0)badge.style.display="none";
+    const list=document.getElementById("notifList");if(!list)return;
+    const sc={critical:"color:#ba1a1a",warning:"color:#f59e0b",info:"color:#1a365d"};
+    const ic={SAE_Alert:"emergency",Compliance_Breach:"gavel",Consent_Expiry:"schedule",Deadline:"event",System:"info",Blockchain:"link"};
+    list.innerHTML=data.slice(0,8).map(x=>`<div style="padding:12px 16px;border-bottom:1px solid rgba(116,119,127,0.1);cursor:pointer;opacity:${x.read?0.6:1}"><div style="display:flex;align-items:flex-start;gap:12px"><span class="material-symbols-outlined" style="${sc[x.severity]||"color:#1a365d"};font-size:20px;margin-top:2px">${ic[x.type]||"info"}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:#002045">${x.title}</div><div style="font-size:11px;color:#43474e">${x.message}</div><div style="font-size:10px;color:#74777f;margin-top:2px">${new Date(x.timestamp).toLocaleString()}</div></div>${x.actionRequired?'<span style="font-size:10px;background:rgba(186,26,26,0.1);color:#ba1a1a;padding:2px 8px;border-radius:12px;font-weight:700">ACTION</span>':""}</div></div>`).join("");
+}
+
+function renderTrialsTable(trials){
+    const tb=document.getElementById("trialsTable");if(!tb)return;
+    const sc={Active:"background:rgba(10,108,68,0.1);color:#0a6c44",Pending:"background:rgba(255,184,102,0.2);color:#321b00",Completed:"background:rgba(214,227,255,0.5);color:#002045",Suspended:"background:rgba(186,26,26,0.1);color:#ba1a1a",Terminated:"background:rgba(186,26,26,0.1);color:#ba1a1a"};
+    tb.innerHTML=trials.map(t=>{
+        const pct=t.enrollmentTarget>0?Math.round(t.enrollmentCurrent/t.enrollmentTarget*100):0;
+        const cc=t.complianceScore>=90?"color:#0a6c44":t.complianceScore>=70?"color:#f59e0b":"color:#ba1a1a";
+        return `<tr style="border-bottom:1px solid rgba(116,119,127,0.1)"><td style="padding:12px 16px 12px 0;font-weight:700;color:#002045">${t.trialId}</td><td style="padding:12px 16px 12px 0">${t.name}</td><td style="padding:12px 16px 12px 0"><span style="background:rgba(214,227,255,0.5);color:#002045;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700">${t.phase}</span></td><td style="padding:12px 16px 12px 0"><span style="${sc[t.status]||""};padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700">${t.status}</span></td><td style="padding:12px 16px 12px 0"><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:8px;background:#e5eeff;border-radius:4px;overflow:hidden"><div style="width:${pct}%;height:100%;background:#0a6c44;border-radius:4px"></div></div><span style="font-size:11px;color:#43474e">${t.enrollmentCurrent}/${t.enrollmentTarget}</span></div></td><td style="padding:12px 0"><span style="${cc};font-weight:700">${t.complianceScore}%</span></td></tr>`;
+    }).join("");
+}
+
+function switchSection(id){
+    document.querySelectorAll(".section-content").forEach(s=>s.classList.add("hidden"));
+    document.querySelectorAll(".sidebar-link").forEach(l=>l.classList.remove("active"));
+    const sec=document.getElementById("section-"+id);
+    if(sec){sec.classList.remove("hidden");sec.classList.remove("fade-in");void sec.offsetWidth;sec.classList.add("fade-in");}
+    const link=document.querySelector(`.sidebar-link[data-section="${id}"]`);
+    if(link)link.classList.add("active");
+    if(id==="studies")loadStudies();
+    else if(id==="safety")loadSafety();
+    else if(id==="ethics")loadEthics();
+    else if(id==="consent")loadConsent();
+    else if(id==="blockchain")loadBlockchain();
+    else if(id==="audit")loadAuditLogs();
+    if(window.innerWidth<1024)toggleSidebar();
+}
+
+function loadStudies(){
+    document.getElementById("studiesGrid").innerHTML=MOCK_TRIALS.map(t=>`<div class="glass rounded-2xl p-6 card-hover"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><span style="font-size:12px;font-weight:700;color:#002045">${t.trialId}</span><span style="${t.status==="Active"?"background:rgba(10,108,68,0.15);color:#0a6c44":t.status==="Completed"?"background:rgba(26,54,93,0.12);color:#1a365d":"background:rgba(255,184,102,0.2);color:#7a4500"};padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700">${t.status}</span></div><h4 style="font-weight:700;color:#002045;margin-bottom:8px;line-height:1.35">${t.name}</h4><p style="font-size:12px;color:#43474e;margin-bottom:14px;line-height:1.5">${t.description||""}</p><div style="font-size:12px;color:#43474e;display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between"><span>Phase</span><span style="font-weight:700;color:#002045">${t.phase}</span></div><div style="display:flex;justify-content:space-between"><span>PI</span><span style="font-weight:700;color:#002045;font-size:11px">${t.principalInvestigator}</span></div><div style="display:flex;justify-content:space-between"><span>Site</span><span style="font-weight:700;color:#002045;font-size:11px">${t.site}</span></div><div style="display:flex;justify-content:space-between"><span>Herb</span><span style="font-weight:700;color:#0a6c44;font-size:11px">${t.herbFormulation||"—"}</span></div><div style="display:flex;align-items:center;justify-content:space-between"><span>Enrollment</span><span style="font-size:11px;color:#43474e">${t.enrollmentCurrent}/${t.enrollmentTarget}</span></div><div style="width:100%;height:6px;background:rgba(116,119,127,0.15);border-radius:4px;overflow:hidden;margin-top:-4px"><div style="width:${t.enrollmentTarget>0?Math.round(t.enrollmentCurrent/t.enrollmentTarget*100):0}%;height:100%;background:#0a6c44;border-radius:4px"></div></div><div style="display:flex;justify-content:space-between"><span>Compliance</span><span style="font-weight:700;${t.complianceScore>=90?"color:#0a6c44":t.complianceScore>=70?"color:#f59e0b":"color:#ba1a1a"}">${t.complianceScore}%</span></div></div></div>`).join("");
+}
+
+function loadSafety(){
+    document.getElementById("safetyList").innerHTML=MOCK_ADVERSE_EVENTS.map(e=>{
+        const isSAE=e.severity==="SAE";
+        return `<div class="glass rounded-2xl p-6 card-hover" style="border-left:4px solid ${isSAE?"#ba1a1a":"#ffb866"}"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div style="display:flex;align-items:center;gap:12px"><span class="material-symbols-outlined" style="color:${isSAE?"#ba1a1a":"#f59e0b"}">${isSAE?"emergency":"warning"}</span><div><span style="font-weight:700;color:#002045">${e.eventId}</span><span style="${isSAE?"background:rgba(186,26,26,0.12);color:#ba1a1a":"background:rgba(255,184,102,0.2);color:#7a4500"};margin-left:8px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700">${e.severity}</span></div></div><span style="background:rgba(214,227,255,0.5);color:#002045;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700">${e.status}</span></div><p style="font-size:13px;color:#43474e;margin-bottom:10px;line-height:1.5">${e.description}</p><div style="display:flex;flex-wrap:wrap;gap:16px;font-size:11px;color:#43474e"><span>Patient: <strong>${e.patientId}</strong></span><span>Trial: <strong>${e.trialId}</strong></span><span>By: <strong>${e.reportedBy}</strong></span><span>Date: <strong>${new Date(e.reportedAt).toLocaleDateString()}</strong></span></div>${isSAE&&!e.iecNotified?'<div style="margin-top:12px;background:rgba(186,26,26,0.06);border:1px solid rgba(186,26,26,0.2);border-radius:12px;padding:12px;font-size:11px;color:#ba1a1a;font-weight:700;display:flex;align-items:center;gap:8px"><span class="material-symbols-outlined" style="font-size:16px">warning</span>IEC notification pending — 24-hour compliance deadline</div>':""}</div>`;
+    }).join("");
+}
+
+function loadEthics(){
+    document.getElementById("ethicsGrid").innerHTML=MOCK_TRIALS.map(t=>`<div class="glass rounded-2xl p-6 card-hover"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px"><span style="font-weight:700;color:#002045">${t.trialId}</span><span style="${t.iecApprovalStatus==="Approved"?"background:rgba(10,108,68,0.12);color:#0a6c44":"background:rgba(186,26,26,0.12);color:#ba1a1a"};padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700">${t.iecApprovalStatus}</span></div><h4 style="font-weight:700;color:#002045;margin-bottom:14px;line-height:1.35">${t.name}</h4><div style="font-size:12px;color:#43474e;display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between"><span>CTRI Registration</span><span style="font-weight:700;font-size:11px;color:${t.ctriRegistration?"#0a6c44":"#ba1a1a"}">${t.ctriRegistration||"MISSING ⚠️"}</span></div><div style="display:flex;justify-content:space-between"><span>IEC Approved</span><span style="font-weight:700;color:#002045">${t.iecApprovalDate?new Date(t.iecApprovalDate).toLocaleDateString():"—"}</span></div><div style="display:flex;justify-content:space-between"><span>IEC Expiry</span><span style="font-weight:700;color:${t.iecExpiryDate&&new Date(t.iecExpiryDate)<new Date()?"#ba1a1a":"#002045"}">${t.iecExpiryDate?new Date(t.iecExpiryDate).toLocaleDateString():"—"}</span></div></div></div>`).join("");
+}
+
+function loadConsent(){
+    const ss={Consented:"background:rgba(10,108,68,0.12);color:#0a6c44",Pending:"background:rgba(255,184,102,0.2);color:#7a4500",Withdrawn:"background:rgba(186,26,26,0.12);color:#ba1a1a",Expired:"background:rgba(186,26,26,0.12);color:#ba1a1a"};
+    document.getElementById("consentList").innerHTML=MOCK_PATIENTS.map(p=>`<div class="glass rounded-xl card-hover" style="padding:16px;display:flex;align-items:center;gap:16px"><div style="width:40px;height:40px;border-radius:50%;background:rgba(214,227,255,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-symbols-outlined" style="color:#002045;font-size:20px">person</span></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font-weight:700;font-size:13px;color:#002045">${p.patientId}</span><span style="font-size:10px;color:#74777f">Hash: ${p.pseudonymizedId}</span></div><div style="font-size:11px;color:#43474e;margin-top:2px">Trial: ${p.trialId} • ${p.site||"—"}</div></div><span style="${ss[p.consentStatus]||""};padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;flex-shrink:0">${p.consentStatus}</span><div style="font-size:10px;color:#43474e;text-align:right;flex-shrink:0"><div>${p.consentDate?new Date(p.consentDate).toLocaleDateString():"Pending"}</div><div style="display:flex;align-items:center;gap:4px;margin-top:2px"><span class="material-symbols-outlined" style="font-size:12px;color:#0a6c44">verified</span>Blockchain</div></div></div>`).join("");
+}
+
+function loadBlockchain(){
+    const view=document.getElementById("blockchainView");
+    const s=MOCK_BC_STATUS;
+    const blocks=MOCK_BLOCKS;
+    let h=`<div class="glass rounded-2xl p-6 mb-6"><h4 style="font-family:Manrope,sans-serif;font-weight:700;color:#002045;margin-bottom:16px;display:flex;align-items:center;gap:8px"><span class="material-symbols-outlined">hub</span>Network Overview</h4><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px"><div style="background:rgba(214,227,255,0.3);border-radius:12px;padding:16px;text-align:center"><div style="font-size:28px;font-weight:800;color:#002045">${s.totalBlocks}</div><div style="font-size:11px;color:#43474e;margin-top:4px">Total Blocks</div></div><div style="background:rgba(159,245,193,0.2);border-radius:12px;padding:16px;text-align:center"><div style="font-size:14px;font-weight:700;color:#0a6c44;margin-top:4px">${s.chainIntegrity}</div><div style="font-size:11px;color:#43474e;margin-top:4px">Chain Integrity</div></div><div style="background:rgba(214,227,255,0.3);border-radius:12px;padding:16px;text-align:center"><div style="font-size:28px;font-weight:800;color:#002045">${s.organizations.length}</div><div style="font-size:11px;color:#43474e;margin-top:4px">Organizations</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${s.organizations.map(o=>`<div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.4);border-radius:10px;padding:12px"><span class="material-symbols-outlined" style="color:#002045;font-size:18px">apartment</span><div><div style="font-size:12px;font-weight:700;color:#002045">${o.name}</div><div style="font-size:10px;color:#43474e">${o.mspId}</div></div></div>`).join("")}</div></div>`;
+    h+=`<div class="glass rounded-2xl p-6"><h4 style="font-family:Manrope,sans-serif;font-weight:700;color:#002045;margin-bottom:16px;display:flex;align-items:center;gap:8px"><span class="material-symbols-outlined">view_timeline</span>Recent Transactions</h4><div style="display:flex;flex-direction:column;gap:12px">${blocks.map(b=>`<div style="background:rgba(255,255,255,0.4);border:1px solid rgba(116,119,127,0.15);border-radius:12px;padding:16px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><span style="background:#1a365d;color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Block #${b.index}</span><span style="font-size:12px;font-weight:700;color:#0a6c44">${b.data.transactionType}</span></div><span style="font-size:10px;color:#43474e">${new Date(b.timestamp).toLocaleString()}</span></div><div style="font-size:10px;font-family:monospace;color:#43474e">Hash: ${b.hash.substring(0,40)}...</div><div style="font-size:10px;font-family:monospace;color:#43474e">Prev: ${b.previousHash.substring(0,40)}...</div><div style="font-size:10px;color:#43474e;margin-top:4px">Actor: ${b.data.actor} • Org: ${b.data.organizationMSP}</div></div>`).join("")}</div></div>`;
+    view.innerHTML=h;
+}
+
+function loadAuditLogs(){
+    const sc={Info:"color:#002045",Warning:"color:#f59e0b",Critical:"color:#ba1a1a"};
+    const sb={Info:"background:rgba(214,227,255,0.3)",Warning:"background:rgba(255,184,102,0.2)",Critical:"background:rgba(186,26,26,0.1)"};
+    document.getElementById("auditList").innerHTML=MOCK_AUDIT.map(l=>`<div class="glass rounded-xl" style="padding:16px;display:flex;align-items:center;gap:16px"><span class="material-symbols-outlined" style="${sc[l.severity]};font-size:20px;flex-shrink:0">${l.severity==="Critical"?"error":l.severity==="Warning"?"warning":"info"}</span><div style="flex:1"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-weight:700;font-size:13px;color:#002045">${l.action}</span><span style="${sb[l.severity]};${sc[l.severity]};padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700">${l.severity}</span></div><div style="font-size:11px;color:#43474e;margin-top:3px">${l.details||""}</div><div style="font-size:10px;color:#74777f;margin-top:4px">Actor: ${l.actor} (${l.role}) • ${l.resourceId} • ${new Date(l.timestamp).toLocaleString()}</div></div>${l.blockchainTxHash?'<span class="material-symbols-outlined" style="color:#0a6c44;font-size:16px;flex-shrink:0" title="Blockchain verified">verified</span>':""}</div>`).join("");
+}
+
+function runComplianceCheck(btn){
+    const orig=btn.innerHTML;
+    btn.innerHTML='<span class="material-symbols-outlined" style="font-size:14px;animation:spin 1s linear infinite">progress_activity</span> Checking...';
+    btn.disabled=true;
+    setTimeout(()=>{btn.innerHTML=orig;btn.disabled=false;loadDashboard();showToast("✅ Compliance check complete!");},1800);
+}
+
+let searchTimer;
+function handleSearch(q){
+    clearTimeout(searchTimer);
+    const box=document.getElementById("searchResults");
+    if(!q||q.length<2){box.classList.add("hidden");return;}
+    searchTimer=setTimeout(()=>{
+        const ql=q.toLowerCase();
+        const trials=MOCK_TRIALS.filter(t=>t.trialId.toLowerCase().includes(ql)||t.name.toLowerCase().includes(ql)||t.herbFormulation?.toLowerCase().includes(ql));
+        const patients=MOCK_PATIENTS.filter(p=>p.patientId.toLowerCase().includes(ql)||p.trialId.toLowerCase().includes(ql));
+        const events=MOCK_ADVERSE_EVENTS.filter(e=>e.eventId.toLowerCase().includes(ql)||e.description.toLowerCase().includes(ql));
+        let h="";
+        if(trials.length){h+='<div style="padding:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#002045;border-bottom:1px solid rgba(116,119,127,0.15)">Trials</div>';trials.forEach(t=>h+=`<div style="padding:8px 16px;font-size:13px;cursor:pointer" onmouseover="this.style.background='rgba(214,227,255,0.3)'" onmouseout="this.style.background=''" onclick="switchSection('studies')">${t.trialId} — ${t.name}</div>`);}
+        if(patients.length){h+='<div style="padding:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#002045;border-bottom:1px solid rgba(116,119,127,0.15)">Patients</div>';patients.forEach(p=>h+=`<div style="padding:8px 16px;font-size:13px;cursor:pointer" onclick="switchSection('consent')">${p.patientId} — ${p.trialId}</div>`);}
+        if(events.length){h+='<div style="padding:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#002045;border-bottom:1px solid rgba(116,119,127,0.15)">Safety Events</div>';events.forEach(e=>h+=`<div style="padding:8px 16px;font-size:13px;cursor:pointer" onclick="switchSection('safety')">${e.eventId} — ${e.description.substring(0,60)}...</div>`);}
+        box.innerHTML=h||'<div style="padding:16px;text-align:center;font-size:13px;color:#43474e">No results found</div>';
+        box.classList.remove("hidden");
+    },200);
+}
+
+document.addEventListener("click",e=>{
+    if(!e.target.closest("#searchInput")&&!e.target.closest("#searchResults")){const sr=document.getElementById("searchResults");if(sr)sr.classList.add("hidden");}
+    if(!e.target.closest("#notifDropdown")&&!e.target.closest("#notifBtnTopbar")){const nd=document.getElementById("notifDropdown");if(nd)nd.classList.remove("open");}
+});
+
+function saveProfile(){const n=document.getElementById("settingsName")?.value;if(!n)return;if(currentUser){currentUser.username=n;sessionStorage.setItem("nidana_user",JSON.stringify(currentUser));setupUserUI();}showToast(currentLang==="hi"?"प्रोफ़ाइल सहेजी गई!":"Profile saved!");}
+function saveNotifications(){showToast(currentLang==="hi"?"प्राथमिकताएं सहेजी गईं!":"Notification preferences saved!");}
+function showToast(msg){const t=document.createElement("div");t.textContent=msg;t.style.cssText="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#1a365d,#0a6c44);color:white;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;z-index:9999;animation:fadeIn 0.3s ease";document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
+
+function animateCounter(id,target){const el=document.getElementById(id);if(!el||isNaN(target))return;let cur=0;const step=target/40;const timer=setInterval(()=>{cur+=step;if(cur>=target){cur=target;clearInterval(timer);}el.textContent=Math.floor(cur).toLocaleString();},30);}
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");document.getElementById("sidebarOverlay").classList.toggle("open");}
+function toggleNotifications(e){e&&e.stopPropagation();document.getElementById("notifDropdown").classList.toggle("open");}
+
+function toggleChatbot(){chatOpen=!chatOpen;const win=document.getElementById("chatbotWindow");const icon=document.getElementById("chatbotFabIcon");win.classList.toggle("open",chatOpen);icon.textContent=chatOpen?"close":"smart_toy";}
+
+function addBotMsg(text){
+    const msgs=document.getElementById("chatMessages");
+    const div=document.createElement("div");
+    div.style.cssText="max-width:85%;padding:10px 14px;border-radius:16px;border-bottom-left-radius:4px;font-size:13px;line-height:1.5;margin-bottom:8px;background:rgba(214,227,255,0.5);color:#0d1c2e;align-self:flex-start;white-space:pre-wrap";
+    div.textContent=text;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+
+function addUserMsg(text){
+    const msgs=document.getElementById("chatMessages");
+    const div=document.createElement("div");
+    div.style.cssText="max-width:85%;padding:10px 14px;border-radius:16px;border-bottom-right-radius:4px;font-size:13px;line-height:1.5;margin-bottom:8px;background:linear-gradient(135deg,#1a365d,#002045);color:white;align-self:flex-end;margin-left:auto";
+    div.textContent=text;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+
+function showTyping(){
+    const msgs=document.getElementById("chatMessages");
+    const div=document.createElement("div");div.id="typingIndicator";
+    div.style.cssText="display:flex;gap:4px;align-items:center;padding:10px 14px;border-radius:16px;border-bottom-left-radius:4px;background:rgba(214,227,255,0.5);width:fit-content;margin-bottom:8px";
+    div.innerHTML="<div class='typing-dot'></div><div class='typing-dot'></div><div class='typing-dot'></div>";
+    msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;return div;
+}
+
+function sendChatMsg(){
+    const input=document.getElementById("chatInput");const text=input.value.trim();if(!text)return;input.value="";
+    addUserMsg(text);document.getElementById("quickReplies").innerHTML="";
+    const typing=showTyping();
+    setTimeout(()=>{typing.remove();addBotMsg(getBotResponse(text.toLowerCase(),currentLang));renderQuickReplies();},800+Math.random()*600);
+}
+
+function getBotResponse(msg,lang){
+    const kb=CHAT_KB[lang];
+    if(/hello|hi|hey|namaste|नमस्ते|हेलो/.test(msg))return kb.greet;
+    if(/what is nidana|nidana kya|nidana क्या/.test(msg))return kb.what_nidana;
+    if(/how.*save|data.*save|block.*creat|ब्लॉक.*save|सेव/.test(msg))return kb.how_save;
+    if(/blockchain|block chain|ब्लॉकचेन/.test(msg))return kb.blockchain;
+    if(/role|भूमिका/.test(msg))return kb.roles;
+    if(/compliance|score|अनुपालन/.test(msg))return kb.compliance;
+    if(/sae|adverse|safety|प्रतिकूल|सुरक्षा/.test(msg))return kb.adverse_event;
+    if(/iec|ethics|नैतिकता/.test(msg))return kb.iec;
+    if(/ctri|register|पंजीकर/.test(msg))return kb.ctri;
+    if(/consent|सहमति/.test(msg))return kb.consent;
+    if(/navigate|how to use|कैसे|navigate/.test(msg))return kb.navigate;
+    if(/dark|light|mode|language|भाषा|lang/.test(msg))return kb.dark_mode;
+    if(/logout|sign out|लॉगआउट/.test(msg))return kb.logout;
+    return kb.fallback;
+}
+
+function renderQuickReplies(){
+    const qr=document.getElementById("quickReplies");
+    const replies=currentLang==="hi"?QR_HI:QR_EN;
+    qr.innerHTML=replies.map(r=>`<button style="padding:4px 10px;border-radius:12px;border:1px solid rgba(26,54,93,0.2);background:rgba(214,227,255,0.3);font-size:11px;font-weight:600;color:#002045;cursor:pointer" onclick="handleQR('${r.replace(/'/g,"\\\\'")}')"> ${r}</button>`).join("");
+}
+
+function handleQR(text){document.getElementById("quickReplies").innerHTML="";addUserMsg(text);const typing=showTyping();setTimeout(()=>{typing.remove();addBotMsg(getBotResponse(text.toLowerCase(),currentLang));renderQuickReplies();},800);}
+
+function createParticles(){
+    const c=document.getElementById("particleContainer");
+    const s=[`<svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 1C10 1 6 6 6 10C6 14 10 19 10 19C10 19 14 14 14 10C14 6 10 1 10 1Z" fill="rgba(159,245,193,0.3)" stroke="rgba(10,108,68,0.2)" stroke-width="0.5"/></svg>`,`<svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 14C2 14 4 6 8 2C12 6 14 14 14 14C14 14 10 10 8 10C6 10 2 14 2 14Z" fill="rgba(10,108,68,0.1)"/></svg>`,`<svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="2" fill="rgba(255,184,102,0.3)"/></svg>`];
+    for(let i=0;i<15;i++){const d=document.createElement("div");d.className="particle";d.innerHTML=s[Math.floor(Math.random()*s.length)];d.style.left=Math.random()*100+"%";d.style.animationDuration=(15+Math.random()*25)+"s";d.style.animationDelay=Math.random()*20+"s";c.appendChild(d);}
+}
+</script>
+</body>
+</html>

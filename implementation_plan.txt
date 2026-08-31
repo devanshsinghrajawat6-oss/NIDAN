@@ -1,0 +1,232 @@
+========================================================================
+IMPLEMENTATION PLAN
+AYURVEDA CLINICAL TRIAL COMPLIANCE & MONITORING DASHBOARD
+(Blockchain-Backed Regulatory Compliance System)
+========================================================================
+
+THEME: MedTech / BioTech / HealthTech
+DOMAIN: Government Ayurveda Research Institute — Clinical Trial Oversight
+CORE BACKEND: Hyperledger Fabric (Permissioned Blockchain)
+PRIMARY MOTIVE: Regulatory rules-and-regulations enforcement and
+end-to-end auditability of Ayurveda clinical trials, with real-time
+compliance monitoring as the central value proposition (technology is
+the enabler, compliance is the goal).
+
+========================================================================
+1. PROBLEM STATEMENT (SUMMARY)
+========================================================================
+Ayurveda clinical trials conducted across multiple government-approved
+sites currently rely on fragmented, paper-based or siloed digital
+record-keeping. This creates:
+- Delayed or missed regulatory compliance checks (CDSCO, ICMR-NIA,
+  Ministry of Ayush, GCP-Ayurveda guidelines).
+- No single source of truth for trial data (patient consent, dosage
+  logs, adverse event reports, herb sourcing/batch records).
+- Difficulty in audit trails when trial data is questioned or
+  investigated.
+- Risk of data tampering or retroactive edits to trial records.
+
+GOAL: Build a dashboard backed by Hyperledger Fabric that makes every
+regulated action in a clinical trial (consent, dosing, adverse event,
+batch certification, protocol deviation) an immutable, permissioned,
+rule-validated ledger entry — enforced through chaincode (smart
+contracts), not just UI-level checks.
+
+========================================================================
+2. PRIMARY MOTIVE: RULES & REGULATIONS ENGINE (CORE FOCUS)
+========================================================================
+This is the heart of the project. Blockchain is the trust layer;
+the regulation engine is the intelligence layer.
+
+2.1 Regulatory Frameworks to Encode
+  - Good Clinical Practice for Ayurveda (GCP-Ayurveda, Ministry of Ayush)
+  - CDSCO clinical trial rules (New Drugs and Clinical Trials Rules, 2019)
+  - ICMR-NIA ethical guidelines for biomedical research
+  - CTRI (Clinical Trials Registry India) registration mandates
+  - Institutional Ethics Committee (IEC) approval requirements
+  - Informed consent documentation standards
+  - Adverse Event (AE) / Serious Adverse Event (SAE) reporting timelines
+  - Herb/raw-material batch traceability and AYUSH Premium Mark standards
+
+2.2 Rule Enforcement via Chaincode
+  Every transaction submitted to the ledger passes through a chaincode
+  validation layer before being committed. Examples:
+  - A dosage log cannot be submitted without a prior valid signed
+    consent record for that patient ID.
+  - An SAE (Serious Adverse Event) submission automatically triggers a
+    mandatory notification transaction to the Ethics Committee node
+    within a defined time window (e.g., 24 hours), else it is flagged
+    as a compliance breach on the dashboard.
+  - Herb batch entries must reference a certified supplier ID already
+    present on the ledger; uncertified batches are rejected at the
+    chaincode level, not just the UI.
+  - Protocol deviations require dual-signature approval (Principal
+    Investigator + Ethics Committee representative) before being
+    recorded as "resolved."
+
+2.3 Compliance Dashboard Views
+  - Real-time compliance score per trial site (green/amber/red)
+  - Breach log with severity, timestamp, and responsible node
+  - Upcoming regulatory deadlines (consent renewals, periodic
+    ethics review dates, batch re-certification)
+  - Immutable audit trail viewer (search by patient ID, batch ID,
+    site ID, or investigator ID)
+
+========================================================================
+3. SYSTEM ARCHITECTURE
+========================================================================
+
+3.1 High-Level Layers
+  [Frontend Dashboard] <-> [API / Middleware Layer] <-> [Hyperledger
+  Fabric Network] <-> [Off-chain Database for large files/documents]
+
+3.2 Hyperledger Fabric Network Design
+  - Organizations (example):
+      Org1: Government Ayurveda Research Institute (Admin/Regulator)
+      Org2: Trial Site / Hospital
+      Org3: Ethics Committee
+      Org4: Herb Supplier / Raw Material Certifier
+  - Channels:
+      "compliance-channel" — shared across all orgs for consent,
+      AE/SAE, and audit-relevant transactions
+      "supply-channel" — herb sourcing and batch certification,
+      shared between Institute and Suppliers
+  - Ordering Service: Raft consensus (recommended for permissioned,
+    crash-fault-tolerant setup)
+  - Chaincode (Smart Contracts), written in Go or Node.js/TypeScript:
+      1. ConsentContract
+      2. DosageLogContract
+      3. AdverseEventContract
+      4. BatchTraceabilityContract
+      5. ProtocolDeviationContract
+      6. ComplianceRuleEngine (validation library used by all above)
+  - World State DB: CouchDB (needed for rich queries used by the
+    compliance dashboard, e.g., query by status/date range)
+
+3.3 Off-Chain Components
+  - Document store (e.g., encrypted object storage) for large files:
+    consent PDFs, lab reports, ethics committee minutes.
+    Only the document HASH is stored on-chain for integrity
+    verification; the file itself lives off-chain.
+  - Notification service for deadline/breach alerts (email/SMS/portal).
+
+3.4 Middleware / API Layer
+  - Node.js (Fabric SDK) or Fabric Gateway API exposing REST endpoints
+  - Role-based access control (RBAC) mapped to Fabric MSP identities
+  - Endpoints: /consent, /dosage, /adverse-event, /batch,
+    /deviation, /compliance-status, /audit-trail
+
+3.5 Frontend Dashboard
+  - Framework: React (or similar), role-based views:
+      Regulator/Institute view — full compliance overview, all sites
+      Site/Investigator view — their trial's data entry + status
+      Ethics Committee view — pending approvals, SAE alerts
+      Supplier view — batch certification submissions
+  - Key screens: Compliance Overview, Trial Site Detail, Patient
+    Consent Log, Adverse Event Tracker, Herb Batch Traceability,
+    Audit Trail Search, Alerts & Deadlines
+
+========================================================================
+4. DATA MODEL (KEY LEDGER ASSETS)
+========================================================================
+- Patient Consent Record: {patientID(hashed), trialID, consentHash,
+  timestamp, IEC approval ref, status}
+- Dosage Log: {patientID(hashed), trialID, dosage, herbBatchID,
+  timestamp, recordedBy}
+- Adverse Event: {eventID, patientID(hashed), severity, description,
+  reportedAt, notifiedAt, status, resolutionRef}
+- Herb Batch: {batchID, supplierID, herbType, certificationRef,
+  harvestDate, testResultsHash, status}
+- Protocol Deviation: {deviationID, trialID, description, reportedBy,
+  approvals[], status}
+- Compliance Rule Violation (auto-generated): {ruleID, assetRef,
+  severity, detectedAt, resolvedAt}
+
+Note: Patient identifiers are hashed/pseudonymized on-chain to comply
+with data privacy norms; PII stays in a permissioned off-chain system.
+
+========================================================================
+5. IMPLEMENTATION PHASES
+========================================================================
+
+PHASE 1 — Foundation (Week 1)
+  - Set up Hyperledger Fabric test network (Fabric samples / Fabric CA)
+  - Define MSPs for 4 organizations
+  - Design and finalize chaincode data schemas
+  - Set up CouchDB as state database
+
+PHASE 2 — Chaincode Development (Week 2)
+  - Implement ConsentContract, DosageLogContract
+  - Implement AdverseEventContract with time-bound rule validation
+  - Implement BatchTraceabilityContract
+  - Implement ComplianceRuleEngine shared validation library
+  - Unit test each chaincode function
+
+PHASE 3 — Middleware & Integration (Week 3)
+  - Build REST API layer using Fabric Gateway SDK
+  - Implement RBAC tied to Fabric identities
+  - Integrate off-chain document store with on-chain hash verification
+  - Build notification/alerting service for deadlines and breaches
+
+PHASE 4 — Dashboard Development (Week 3-4)
+  - Build role-based frontend views (Regulator, Site, Ethics Committee,
+    Supplier)
+  - Real-time compliance score visualization
+  - Audit trail search interface
+  - Alerts and deadline tracker UI
+
+PHASE 5 — Testing & Compliance Validation (Week 4-5)
+  - Simulate full trial lifecycle: enrollment -> consent -> dosing ->
+    adverse event -> resolution
+  - Simulate a herb batch from supplier certification to dosage use
+  - Test rule-breach scenarios (late SAE reporting, missing consent,
+    uncertified batch) to confirm chaincode rejects/flags correctly
+  - Load testing on Fabric network (multiple peers, concurrent txns)
+
+PHASE 6 — Demo Preparation (Week 5-6)
+  - Prepare seeded demo data (multiple trial sites, sample patients,
+    sample herb batches)
+  - Prepare walkthrough script covering: compliance dashboard, a
+    breach detection scenario, and full audit trail traceability
+  - Prepare architecture diagram and slide deck
+
+========================================================================
+6. TECH STACK SUMMARY
+========================================================================
+  Blockchain: Hyperledger Fabric (Raft ordering, CouchDB state DB)
+  Chaincode: Go or Node.js/TypeScript
+  Middleware/API: Node.js + Fabric Gateway SDK, REST
+  Frontend: React + Tailwind (or similar component library)
+  Off-chain storage: Encrypted object storage (e.g., MinIO/S3-compatible)
+  Notifications: Email/SMS gateway integration
+  Auth: Fabric CA-based identity, mapped to app-level RBAC
+  Deployment: Docker + Docker Compose (dev), Kubernetes (scale-up)
+
+========================================================================
+7. SECURITY & COMPLIANCE CONSIDERATIONS
+========================================================================
+  - Patient PII never stored in plaintext on-chain (hashed references
+    only; PII resides in a separate access-controlled system)
+  - Immutable audit logs for every regulated action (non-repudiation)
+  - Role-based, identity-based access control via Fabric MSPs
+  - Time-bound rule enforcement for SAE reporting (regulatory deadline
+    compliance baked into chaincode logic, not just UI reminders)
+  - Dual-signature/multi-party approval for sensitive actions
+    (protocol deviations, batch decertification)
+  - Regular chaincode audits and endorsement policy reviews across
+    all participating organizations
+
+========================================================================
+8. SUCCESS METRICS (FOR DEMO/EVALUATION)
+========================================================================
+  - 100% of simulated regulated actions pass through rule validation
+    before ledger commit
+  - Breach detection latency: instantly flagged on submission
+  - Full traceability demo: from herb batch -> dosage -> patient
+    outcome, in under 3 clicks on the dashboard
+  - Zero unauthorized/unsigned entries accepted by chaincode during
+    stress test
+
+========================================================================
+END OF PLAN
+========================================================================

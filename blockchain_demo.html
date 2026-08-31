@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>NIDANA — Blockchain Demo | Live Data Saving Visualization</title>
+    <meta name="description" content="Watch live how clinical trial data is saved on the Hyperledger Fabric blockchain in the NIDANA CTMS system."/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Hanken+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0&display=swap" rel="stylesheet"/>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Hanken Grotesk',sans-serif; }
+        body { background:#050d1a; color:#d0e1ff; min-height:100vh; overflow-x:hidden; }
+
+        /* Stars background */
+        .stars { position:fixed; inset:0; overflow:hidden; z-index:0; }
+        .star { position:absolute; border-radius:50%; background:white; animation:twinkle linear infinite; }
+        @keyframes twinkle { 0%,100%{opacity:0.1} 50%{opacity:0.8} }
+
+        .container { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:40px 20px; }
+
+        /* Header */
+        .header { text-align:center; margin-bottom:48px; }
+        .header img { height:48px; margin-bottom:16px; animation:logo-glow 3s ease-in-out infinite; }
+        @keyframes logo-glow { 0%,100%{filter:drop-shadow(0 0 8px rgba(10,108,68,0.4))} 50%{filter:drop-shadow(0 0 20px rgba(10,108,68,0.8))} }
+        .header h1 { font-family:Manrope,sans-serif; font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,#adc7f7,#9ff5c1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:8px; }
+        .header p { color:#9ba5b5; font-size:1rem; }
+
+        /* Form panel */
+        .panel { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:28px; margin-bottom:32px; backdrop-filter:blur(10px); }
+        .panel h2 { font-family:Manrope,sans-serif; font-size:1.1rem; font-weight:700; color:#adc7f7; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
+        .panel h2 .step-badge { background:linear-gradient(135deg,#1a365d,#0a6c44); color:white; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+
+        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+        .form-group { display:flex; flex-direction:column; gap:6px; }
+        .form-group label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#9ba5b5; }
+        .form-group input, .form-group select, .form-group textarea { background:rgba(255,255,255,0.06); border:1.5px solid rgba(255,255,255,0.1); border-radius:10px; padding:10px 14px; color:#d0e1ff; font-size:13px; font-family:'Hanken Grotesk',sans-serif; outline:none; transition:all 0.3s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:#adc7f7; background:rgba(173,199,247,0.08); }
+        .form-group textarea { resize:vertical; min-height:60px; }
+        .form-group input.typing { border-color:#9ff5c1; background:rgba(159,245,193,0.08); animation:type-pulse 0.3s ease; }
+        @keyframes type-pulse { 0%{transform:scale(1)} 50%{transform:scale(1.01)} 100%{transform:scale(1)} }
+
+        .submit-btn { width:100%; padding:14px; background:linear-gradient(135deg,#1a365d,#0a6c44); color:white; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.3s; position:relative; overflow:hidden; }
+        .submit-btn::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent); opacity:0; transition:opacity 0.3s; }
+        .submit-btn:hover:not(:disabled)::after { opacity:1; }
+        .submit-btn:disabled { opacity:0.6; cursor:not-allowed; }
+        .submit-btn.mining { animation:btn-pulse 1s ease-in-out infinite; }
+        @keyframes btn-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(159,245,193,0.3)} 50%{box-shadow:0 0 0 12px rgba(159,245,193,0)} }
+
+        /* Mining animation */
+        .mining-panel { background:rgba(0,0,0,0.3); border:1px solid rgba(159,245,193,0.2); border-radius:16px; padding:24px; margin-bottom:32px; display:none; }
+        .mining-panel.active { display:block; }
+        .mining-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+        .mining-spinner { width:32px; height:32px; border:3px solid rgba(159,245,193,0.2); border-top-color:#9ff5c1; border-radius:50%; animation:spin 0.8s linear infinite; }
+        @keyframes spin { to{transform:rotate(360deg)} }
+        .mining-steps { display:flex; flex-direction:column; gap:10px; }
+        .mining-step { display:flex; align-items:center; gap:12px; font-size:13px; opacity:0.3; transition:all 0.4s; }
+        .mining-step.active { opacity:1; }
+        .mining-step.done { opacity:1; }
+        .mining-step .step-icon { width:24px; height:24px; border-radius:50%; border:2px solid rgba(159,245,193,0.3); display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; transition:all 0.4s; }
+        .mining-step.active .step-icon { border-color:#9ff5c1; background:rgba(159,245,193,0.1); animation:step-pulse 1s ease-in-out infinite; }
+        @keyframes step-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(159,245,193,0.3)} 50%{box-shadow:0 0 0 8px rgba(159,245,193,0)} }
+        .mining-step.done .step-icon { border-color:#9ff5c1; background:#9ff5c1; color:#002045; }
+
+        .hash-display { font-family:'JetBrains Mono',monospace; font-size:11px; color:#9ff5c1; background:rgba(0,0,0,0.4); border-radius:8px; padding:10px 14px; margin-top:10px; word-break:break-all; min-height:32px; transition:all 0.3s; }
+        .nonce-display { font-family:'JetBrains Mono',monospace; font-size:13px; color:#adc7f7; text-align:center; margin-top:8px; }
+
+        /* Block chain visualization */
+        .chain-section { margin-bottom:32px; }
+        .chain-section h2 { font-family:Manrope,sans-serif; font-size:1.1rem; font-weight:700; color:#adc7f7; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
+        .chain-container { display:flex; align-items:center; gap:0; overflow-x:auto; padding:16px 0; }
+        .block-wrapper { display:flex; align-items:center; gap:0; flex-shrink:0; }
+        .block-card { width:180px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:16px; position:relative; transition:all 0.5s cubic-bezier(0.4,0,0.2,1); flex-shrink:0; }
+        .block-card.new-block { animation:block-appear 0.6s cubic-bezier(0.4,0,0.2,1) forwards; border-color:rgba(159,245,193,0.5); box-shadow:0 0 30px rgba(159,245,193,0.2); }
+        @keyframes block-appear { from{opacity:0;transform:scale(0.7) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+        .block-card.genesis { border-color:rgba(173,199,247,0.3); background:rgba(26,54,93,0.2); }
+        .block-index { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#9ba5b5; margin-bottom:4px; }
+        .block-type { font-size:11px; font-weight:700; color:#9ff5c1; margin-bottom:8px; }
+        .block-hash { font-family:'JetBrains Mono',monospace; font-size:9px; color:#9ba5b5; word-break:break-all; margin-bottom:6px; }
+        .block-hash span { color:#adc7f7; }
+        .block-time { font-size:9px; color:#74777f; }
+        .block-verified { position:absolute; top:10px; right:10px; }
+        .chain-arrow { color:#9ba5b5; font-size:20px; margin:0 4px; flex-shrink:0; }
+        .chain-link { width:32px; height:2px; background:linear-gradient(to right,rgba(173,199,247,0.3),rgba(159,245,193,0.3)); flex-shrink:0; position:relative; }
+        .chain-link::after { content:'▶'; position:absolute; right:-8px; top:-7px; color:rgba(159,245,193,0.5); font-size:12px; }
+
+        /* Success flash */
+        .success-flash { position:fixed; inset:0; background:rgba(159,245,193,0.05); pointer-events:none; animation:success-flash 0.6s ease-out; z-index:100; }
+        @keyframes success-flash { 0%{opacity:0} 30%{opacity:1} 100%{opacity:0} }
+
+        /* Block detail panel */
+        .detail-panel { background:rgba(0,0,0,0.3); border:1px solid rgba(173,199,247,0.15); border-radius:16px; padding:24px; margin-bottom:32px; display:none; }
+        .detail-panel.visible { display:block; animation:fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        .detail-panel h3 { font-family:Manrope,sans-serif; font-size:1rem; font-weight:700; color:#adc7f7; margin-bottom:16px; }
+        .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .detail-item { display:flex; flex-direction:column; gap:4px; }
+        .detail-item .di-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#74777f; }
+        .detail-item .di-value { font-family:'JetBrains Mono',monospace; font-size:11px; color:#d0e1ff; word-break:break-all; }
+        .detail-item .di-value.highlight { color:#9ff5c1; }
+
+        /* Stats bar */
+        .stats-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
+        .stat-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:20px; text-align:center; }
+        .stat-value { font-family:Manrope,sans-serif; font-size:2rem; font-weight:800; color:#adc7f7; }
+        .stat-label { font-size:11px; color:#9ba5b5; margin-top:4px; text-transform:uppercase; letter-spacing:0.05em; }
+
+        /* Log console */
+        .console { background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:20px; font-family:'JetBrains Mono',monospace; font-size:12px; max-height:200px; overflow-y:auto; }
+        .console h3 { font-family:Manrope,sans-serif; font-size:0.9rem; font-weight:700; color:#adc7f7; margin-bottom:12px; }
+        .log-line { margin-bottom:4px; line-height:1.6; }
+        .log-line .ts { color:#74777f; }
+        .log-line .msg { color:#9ba5b5; }
+        .log-line.success .msg { color:#9ff5c1; }
+        .log-line.info .msg { color:#adc7f7; }
+        .log-line.warning .msg { color:#ffb866; }
+
+        /* Demo controls */
+        .controls { display:flex; gap:12px; justify-content:center; margin-bottom:32px; flex-wrap:wrap; }
+        .ctrl-btn { padding:10px 20px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#d0e1ff; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.3s; display:flex; align-items:center; gap:6px; }
+        .ctrl-btn:hover { background:rgba(255,255,255,0.12); border-color:rgba(173,199,247,0.3); }
+        .ctrl-btn.primary { background:rgba(26,54,93,0.4); border-color:rgba(173,199,247,0.3); color:#adc7f7; }
+
+        /* Status indicator */
+        .status-bar { display:flex; align-items:center; gap:8px; margin-bottom:20px; font-size:12px; color:#9ba5b5; }
+        .status-dot { width:8px; height:8px; border-radius:50%; background:#9ff5c1; animation:pulse-dot 2s ease-in-out infinite; }
+        @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        @media(max-width:640px) {
+            .form-row { grid-template-columns:1fr; }
+            .stats-bar { grid-template-columns:repeat(2,1fr); }
+            .detail-grid { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" alt="NIDANA Logo"/>
+        <h1>🔗 Blockchain Live Demo</h1>
+        <p>Watch how clinical trial data is saved immutably on Hyperledger Fabric</p>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-dot"></div>
+        <span>Hyperledger Fabric Network Active — Raft Consensus — CouchDB State DB</span>
+        <span style="margin-left:auto;color:#9ff5c1;font-weight:700" id="networkTime"></span>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+        <div class="stat-card"><div class="stat-value" id="stat-total-blocks">1</div><div class="stat-label">Total Blocks</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-txns">0</div><div class="stat-label">Transactions</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-integrity" style="color:#9ff5c1;font-size:1rem;padding-top:8px">VERIFIED ✓</div><div class="stat-label">Chain Integrity</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-nonce">0</div><div class="stat-label">Last Nonce</div></div>
+    </div>
+
+    <!-- Data Entry Form -->
+    <div class="panel">
+        <h2><span class="step-badge">1</span> Enter Clinical Trial Data</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Trial ID</label>
+                <input id="inp-trialId" placeholder="e.g. CTMS-AY-2024-001"/>
+            </div>
+            <div class="form-group">
+                <label>Transaction Type</label>
+                <select id="inp-txType">
+                    <option value="TRIAL_ENROLLMENT">Trial Enrollment</option>
+                    <option value="ADVERSE_EVENT">Adverse Event Report</option>
+                    <option value="CONSENT_SIGNED">Patient Consent Signed</option>
+                    <option value="IEC_APPROVAL">IEC Approval</option>
+                    <option value="COMPLIANCE_CHECK">Compliance Check</option>
+                    <option value="SAFETY_UPDATE">Safety Update</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Patient ID</label>
+                <input id="inp-patientId" placeholder="e.g. PAT-001"/>
+            </div>
+            <div class="form-group">
+                <label>Organization (MSP)</label>
+                <select id="inp-org">
+                    <option value="GovAyushResearchInstituteMSP">Gov Ayush Research Institute</option>
+                    <option value="TrialSiteHospitalMSP">Trial Site / Hospital</option>
+                    <option value="EthicsCommitteeMSP">Ethics Committee</option>
+                    <option value="HerbSupplierMSP">Herb Supplier</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group" style="margin-bottom:20px">
+            <label>Clinical Notes / Payload</label>
+            <textarea id="inp-payload" placeholder="Enter clinical observation, event details, or compliance notes..."></textarea>
+        </div>
+        <button class="submit-btn" id="submitBtn" onclick="submitTransaction()">
+            <span class="material-symbols-outlined" style="font-size:18px">send</span>
+            Submit to Blockchain
+        </button>
+    </div>
+
+    <!-- Mining Animation -->
+    <div class="mining-panel" id="miningPanel">
+        <div class="mining-header">
+            <div class="mining-spinner" id="miningSpinner"></div>
+            <div>
+                <div style="font-family:Manrope,sans-serif;font-size:1rem;font-weight:700;color:#9ff5c1" id="miningTitle">Mining Block...</div>
+                <div style="font-size:12px;color:#9ba5b5" id="miningSubtitle">Calculating SHA-256 proof-of-work</div>
+            </div>
+        </div>
+        <div class="mining-steps">
+            <div class="mining-step" id="step1">
+                <div class="step-icon" id="si1">1</div>
+                <div>
+                    <div style="font-weight:700;color:#d0e1ff;font-size:13px">Packaging Transaction Data</div>
+                    <div style="font-size:11px;color:#9ba5b5">Serializing payload with timestamp</div>
+                </div>
+            </div>
+            <div class="mining-step" id="step2">
+                <div class="step-icon" id="si2">2</div>
+                <div>
+                    <div style="font-weight:700;color:#d0e1ff;font-size:13px">Fetching Previous Block Hash</div>
+                    <div style="font-size:11px;color:#9ba5b5" id="prevHashPreview">Loading chain tip...</div>
+                </div>
+            </div>
+            <div class="mining-step" id="step3">
+                <div class="step-icon" id="si3">3</div>
+                <div>
+                    <div style="font-weight:700;color:#d0e1ff;font-size:13px">SHA-256 Hash Mining (Nonce Search)</div>
+                    <div class="hash-display" id="hashDisplay">Computing...</div>
+                    <div class="nonce-display" id="nonceDisplay">Nonce: 0</div>
+                </div>
+            </div>
+            <div class="mining-step" id="step4">
+                <div class="step-icon" id="si4">4</div>
+                <div>
+                    <div style="font-weight:700;color:#d0e1ff;font-size:13px">Block Sealed &amp; Added to Chain</div>
+                    <div style="font-size:11px;color:#9ba5b5" id="sealedMsg">Awaiting...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block Detail -->
+    <div class="detail-panel" id="detailPanel">
+        <h3>🧱 Newly Created Block</h3>
+        <div class="detail-grid">
+            <div class="detail-item"><div class="di-label">Block Index</div><div class="di-value highlight" id="d-index">—</div></div>
+            <div class="detail-item"><div class="di-label">Transaction Type</div><div class="di-value highlight" id="d-type">—</div></div>
+            <div class="detail-item" style="grid-column:1/-1"><div class="di-label">Block Hash (SHA-256)</div><div class="di-value highlight" id="d-hash">—</div></div>
+            <div class="detail-item" style="grid-column:1/-1"><div class="di-label">Previous Hash</div><div class="di-value" id="d-prevhash">—</div></div>
+            <div class="detail-item"><div class="di-label">Nonce</div><div class="di-value" id="d-nonce">—</div></div>
+            <div class="detail-item"><div class="di-label">Timestamp</div><div class="di-value" id="d-timestamp">—</div></div>
+            <div class="detail-item"><div class="di-label">Actor / Patient</div><div class="di-value" id="d-actor">—</div></div>
+            <div class="detail-item"><div class="di-label">Organization MSP</div><div class="di-value" id="d-org">—</div></div>
+        </div>
+    </div>
+
+    <!-- Chain Visualization -->
+    <div class="chain-section">
+        <h2>
+            <span class="material-symbols-outlined" style="color:#adc7f7">view_timeline</span>
+            Live Blockchain Chain
+        </h2>
+        <div class="chain-container" id="chainContainer"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="ctrl-btn primary" onclick="runAutoDemo()">
+            <span class="material-symbols-outlined" style="font-size:16px">play_circle</span>
+            Auto Demo (5 Blocks)
+        </button>
+        <button class="ctrl-btn" onclick="resetChain()">
+            <span class="material-symbols-outlined" style="font-size:16px">refresh</span>
+            Reset Chain
+        </button>
+        <a href="code.html" class="ctrl-btn" style="text-decoration:none">
+            <span class="material-symbols-outlined" style="font-size:16px">dashboard</span>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Console -->
+    <div class="console">
+        <h3>🖥️ Blockchain Node Console</h3>
+        <div id="consoleLog"></div>
+    </div>
+
+</div>
+
+<script>
+// Simple SHA-256 simulation (for demo visualization)
+async function sha256(str) {
+    const buf = new TextEncoder().encode(str);
+    const hash = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Blockchain state
+let chain = [];
+let totalTxns = 0;
+let isRunning = false;
+
+// Demo data pools
+const DEMO_TRIALS = ['CTMS-AY-2024-001', 'CTMS-AY-2024-002', 'CTMS-AY-2024-003', 'CTMS-BT-2024-004'];
+const DEMO_PATIENTS = ['PAT-001', 'PAT-002', 'PAT-003', 'PAT-004', 'PAT-005'];
+const DEMO_TYPES = ['TRIAL_ENROLLMENT', 'ADVERSE_EVENT', 'CONSENT_SIGNED', 'IEC_APPROVAL', 'COMPLIANCE_CHECK', 'SAFETY_UPDATE'];
+const DEMO_ORGS = ['GovAyushResearchInstituteMSP', 'TrialSiteHospitalMSP', 'EthicsCommitteeMSP', 'HerbSupplierMSP'];
+const DEMO_PAYLOADS = [
+    'Patient enrolled in Phase II Ashwagandha efficacy study. Baseline vitals recorded.',
+    'Mild adverse event: transient nausea reported. Severity: Grade 1. No discontinuation.',
+    'Patient consent signed in Hindi. Witnessed by Dr. Sharma. Digital signature captured.',
+    'IEC approval renewed for 12 months. Certificate No: IEC/2024/AY-078.',
+    'Monthly compliance check passed. Protocol adherence: 97%. Zero deviations.',
+    'Safety update: No serious adverse events in past 30 days. Interim analysis clear.',
+];
+
+// Stars
+function createStars() {
+    const c = document.getElementById('stars');
+    for (let i = 0; i < 150; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const size = Math.random() * 2.5 + 0.5;
+        s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${Math.random()*5}s`;
+        c.appendChild(s);
+    }
+}
+
+// Logging
+function logMsg(msg, type='info') {
+    const cl = document.getElementById('consoleLog');
+    const ts = new Date().toLocaleTimeString();
+    const div = document.createElement('div');
+    div.className = `log-line ${type}`;
+    div.innerHTML = `<span class="ts">[${ts}]</span> <span class="msg">${msg}</span>`;
+    cl.insertBefore(div, cl.firstChild);
+    if (cl.children.length > 30) cl.lastChild.remove();
+}
+
+// Initialize genesis block
+async function initGenesis() {
+    const genesisData = { transactionType: 'GENESIS', payload: { message: 'Nidana Ayurveda CTMS — Genesis Block', channelId: 'compliance-channel' }, actor: 'SYSTEM', organizationMSP: 'GovAyushResearchInstituteMSP' };
+    const ts = new Date().toISOString();
+    const genesisHash = await sha256(`0${ts}${JSON.stringify(genesisData)}${'0'.repeat(64)}0`);
+    const genesis = { index: 0, timestamp: ts, data: genesisData, previousHash: '0'.repeat(64), hash: genesisHash, nonce: 0 };
+    chain.push(genesis);
+    renderChain();
+    updateStats();
+    logMsg('⛓️  Genesis block created on compliance-channel', 'success');
+    logMsg('🔗 Hyperledger Fabric Ledger initialized (Raft consensus, CouchDB state)', 'info');
+}
+
+// Submit transaction
+async function submitTransaction() {
+    if (isRunning) return;
+    const trialId = document.getElementById('inp-trialId').value || 'CTMS-AY-2024-001';
+    const txType = document.getElementById('inp-txType').value;
+    const patientId = document.getElementById('inp-patientId').value || 'PAT-001';
+    const org = document.getElementById('inp-org').value;
+    const payload = document.getElementById('inp-payload').value || 'Clinical data submitted via NIDANA CTMS';
+    await mineBlock({ trialId, txType, patientId, org, payload });
+}
+
+async function mineBlock(data) {
+    if (isRunning) return;
+    isRunning = true;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.classList.add('mining');
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite">progress_activity</span> Mining...';
+
+    const miningPanel = document.getElementById('miningPanel');
+    miningPanel.classList.add('active');
+    document.getElementById('detailPanel').classList.remove('visible');
+
+    const prevBlock = chain[chain.length - 1];
+    const txnData = {
+        transactionType: data.txType || 'TRIAL_ENROLLMENT',
+        payload: { trialId: data.trialId, patientId: data.patientId, notes: data.payload, channel: 'compliance-channel' },
+        actor: data.patientId || 'SYSTEM',
+        organizationMSP: data.org || 'TrialSiteHospitalMSP'
+    };
+
+    // Step 1: Package data
+    setStep(1, 'active');
+    logMsg(`📦 Packaging transaction: ${txnData.transactionType} for ${txnData.payload.trialId}`, 'info');
+    await sleep(700);
+    setStep(1, 'done');
+
+    // Step 2: Fetch previous hash
+    setStep(2, 'active');
+    const prevHashEl = document.getElementById('prevHashPreview');
+    prevHashEl.textContent = `Chain tip: Block #${prevBlock.index} — ${prevBlock.hash.substring(0, 24)}...`;
+    logMsg(`🔗 Previous hash: ${prevBlock.hash.substring(0, 32)}...`, 'info');
+    await sleep(600);
+    setStep(2, 'done');
+
+    // Step 3: Mine
+    setStep(3, 'active');
+    logMsg('⛏️  Starting proof-of-work (target: hash starting with "00")', 'info');
+    const newIndex = prevBlock.index + 1;
+    const timestamp = new Date().toISOString();
+    let nonce = 0, hash = '';
+    const hashDisplay = document.getElementById('hashDisplay');
+    const nonceDisplay = document.getElementById('nonceDisplay');
+
+    // Mine with animation
+    while (!hash.startsWith('00') && nonce < 5000) {
+        hash = await sha256(`${newIndex}${timestamp}${JSON.stringify(txnData)}${prevBlock.hash}${nonce}`);
+        if (nonce % 8 === 0) {
+            hashDisplay.textContent = hash;
+            nonceDisplay.textContent = `Nonce: ${nonce}`;
+            if (nonce < 50) await sleep(60);
+        }
+        nonce++;
+    }
+    nonce--;
+    hashDisplay.textContent = hash;
+    nonceDisplay.textContent = `Nonce: ${nonce} ✓`;
+    logMsg(`✅ Valid hash found! Nonce: ${nonce} — Hash: ${hash.substring(0, 32)}...`, 'success');
+    await sleep(400);
+    setStep(3, 'done');
+
+    // Step 4: Seal
+    setStep(4, 'active');
+    const newBlock = { index: newIndex, timestamp, data: txnData, previousHash: prevBlock.hash, hash, nonce };
+    await sleep(500);
+    document.getElementById('sealedMsg').textContent = `Block #${newIndex} sealed — Index: ${newIndex}, Hash: ${hash.substring(0, 24)}...`;
+    logMsg(`🔒 Block #${newIndex} sealed and added to chain!`, 'success');
+    setStep(4, 'done');
+
+    chain.push(newBlock);
+    totalTxns++;
+    updateStats();
+
+    // Hide mining panel
+    await sleep(600);
+    miningPanel.classList.remove('active');
+    resetSteps();
+
+    // Show detail
+    showBlockDetail(newBlock);
+
+    // Update chain visualization
+    renderChain();
+
+    // Flash
+    const flash = document.createElement('div');
+    flash.className = 'success-flash';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 700);
+
+    // Reset form
+    btn.disabled = false;
+    btn.classList.remove('mining');
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">send</span> Submit to Blockchain';
+
+    logMsg(`🎉 Transaction complete! Chain now has ${chain.length} blocks.`, 'success');
+    isRunning = false;
+}
+
+function setStep(n, state) {
+    const step = document.getElementById(`step${n}`);
+    const icon = document.getElementById(`si${n}`);
+    step.className = `mining-step ${state}`;
+    if (state === 'done') icon.innerHTML = '✓';
+}
+
+function resetSteps() {
+    for (let i = 1; i <= 4; i++) { setStep(i, ''); document.getElementById(`si${i}`).textContent = i; }
+}
+
+function showBlockDetail(block) {
+    const panel = document.getElementById('detailPanel');
+    panel.classList.add('visible');
+    document.getElementById('d-index').textContent = block.index;
+    document.getElementById('d-type').textContent = block.data.transactionType;
+    document.getElementById('d-hash').textContent = block.hash;
+    document.getElementById('d-prevhash').textContent = block.previousHash;
+    document.getElementById('d-nonce').textContent = block.nonce;
+    document.getElementById('d-timestamp').textContent = new Date(block.timestamp).toLocaleString();
+    document.getElementById('d-actor').textContent = block.data.actor;
+    document.getElementById('d-org').textContent = block.data.organizationMSP;
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderChain() {
+    const container = document.getElementById('chainContainer');
+    container.innerHTML = '';
+    chain.forEach((block, i) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'block-wrapper';
+        const isNew = i === chain.length - 1 && i > 0;
+        const card = document.createElement('div');
+        card.className = `block-card${block.index === 0 ? ' genesis' : ''}${isNew ? ' new-block' : ''}`;
+        card.onclick = () => showBlockDetail(block);
+        card.style.cursor = 'pointer';
+        const typeColors = { GENESIS:'#adc7f7', TRIAL_ENROLLMENT:'#9ff5c1', ADVERSE_EVENT:'#ffb866', CONSENT_SIGNED:'#c4b5fd', IEC_APPROVAL:'#67e8f9', COMPLIANCE_CHECK:'#86efac', SAFETY_UPDATE:'#fca5a5' };
+        const color = typeColors[block.data.transactionType] || '#9ff5c1';
+        card.innerHTML = `
+            <div class="block-verified"><span class="material-symbols-outlined" style="font-size:16px;color:#9ff5c1">verified</span></div>
+            <div class="block-index">Block #${block.index}</div>
+            <div class="block-type" style="color:${color}">${block.data.transactionType}</div>
+            <div class="block-hash"><span>${block.hash.substring(0,10)}...</span><br/>${block.hash.substring(10,20)}...</div>
+            <div class="block-time">${new Date(block.timestamp).toLocaleTimeString()}</div>
+        `;
+        wrapper.appendChild(card);
+        if (i < chain.length - 1) {
+            const link = document.createElement('div');
+            link.className = 'chain-link';
+            wrapper.appendChild(link);
+        }
+        container.appendChild(wrapper);
+    });
+    container.scrollLeft = container.scrollWidth;
+}
+
+function updateStats() {
+    document.getElementById('stat-total-blocks').textContent = chain.length;
+    document.getElementById('stat-txns').textContent = totalTxns;
+    document.getElementById('stat-nonce').textContent = chain.length > 1 ? chain[chain.length-1].nonce : 0;
+}
+
+async function runAutoDemo() {
+    if (isRunning) return;
+    logMsg('🤖 Auto demo started — adding 5 transactions...', 'info');
+    for (let i = 0; i < 5; i++) {
+        const idx = i % DEMO_TYPES.length;
+        await mineBlock({
+            trialId: DEMO_TRIALS[Math.floor(Math.random()*DEMO_TRIALS.length)],
+            txType: DEMO_TYPES[idx],
+            patientId: DEMO_PATIENTS[Math.floor(Math.random()*DEMO_PATIENTS.length)],
+            org: DEMO_ORGS[Math.floor(Math.random()*DEMO_ORGS.length)],
+            payload: DEMO_PAYLOADS[idx]
+        });
+        await sleep(300);
+    }
+    logMsg('✅ Auto demo complete!', 'success');
+}
+
+function resetChain() {
+    chain = [];
+    totalTxns = 0;
+    document.getElementById('chainContainer').innerHTML = '';
+    document.getElementById('consoleLog').innerHTML = '';
+    document.getElementById('detailPanel').classList.remove('visible');
+    document.getElementById('miningPanel').classList.remove('active');
+    updateStats();
+    initGenesis();
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Auto-type form fields for visual effect
+function autoTypeField(id, text, delay=0) {
+    return new Promise(resolve => {
+        setTimeout(async () => {
+            const el = document.getElementById(id);
+            el.value = '';
+            for (const ch of text) {
+                el.value += ch;
+                el.classList.add('typing');
+                await sleep(50 + Math.random()*30);
+                el.classList.remove('typing');
+            }
+            resolve();
+        }, delay);
+    });
+}
+
+// Clock
+setInterval(() => {
+    const el = document.getElementById('networkTime');
+    if (el) el.textContent = new Date().toLocaleTimeString();
+}, 1000);
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+    createStars();
+    initGenesis();
+    // Pre-fill demo data
+    autoTypeField('inp-trialId', 'CTMS-AY-2024-001', 500);
+    autoTypeField('inp-patientId', 'PAT-007', 800);
+    autoTypeField('inp-payload', 'Patient enrolled. Baseline ashwagandha intervention initiated.', 1200);
+});
+</script>
+</body>
+</html>

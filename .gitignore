@@ -1,0 +1,6 @@
+node_modules/
+.env
+bAckend/node_modules/
+
+.vercel
+.env*
