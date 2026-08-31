@@ -59,6 +59,20 @@
         @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         ::-webkit-scrollbar{width:4px}
         ::-webkit-scrollbar-thumb{background:rgba(26,54,93,0.2);border-radius:2px}
+        /* App-like behavior: disable text selection and focus rings everywhere except inputs */
+        body { cursor: default; }
+        *:not(input):not(textarea) {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            outline: none !important;
+        }
+        input, textarea {
+            user-select: auto !important;
+            -webkit-user-select: auto !important;
+            -moz-user-select: auto !important;
+        }
+        a, button, [onclick], label, .role-card { cursor: pointer; }
     </style>
 </head>
 <body class="login-bg flex items-center justify-center min-h-screen p-4 transition-colors duration-500">

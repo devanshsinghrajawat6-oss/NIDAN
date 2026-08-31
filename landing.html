@@ -217,10 +217,20 @@
         .dark .chatbot-win-land { background:rgba(10,20,40,0.94); border-color:rgba(255,255,255,0.1); }
         .chatbot-win-land.open { transform:translateY(0) scale(1); opacity:1; visibility:visible; }
         .typing-dot-land { width:6px; height:6px; border-radius:50%; background:#1a365d; animation:typing-land 1.4s infinite ease-in-out; display:inline-block; }
-        .typing-dot-land:nth-child(2){animation-delay:0.2s}.typing-dot-land:nth-child(3){animation-delay:0.4s}
-        @keyframes typing-land{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-        /* Fix text selection cursor on interactive elements */
-        button, a, [onclick], .btn-primary, .btn-secondary, .chatbot-fab-land { outline: none !important; user-select: none !important; -webkit-user-select: none !important; -moz-user-select: none !important; }
+        /* App-like behavior: disable text selection and focus rings everywhere except inputs */
+        body { cursor: default; }
+        *:not(input):not(textarea) {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            outline: none !important;
+        }
+        input, textarea {
+            user-select: auto !important;
+            -webkit-user-select: auto !important;
+            -moz-user-select: auto !important;
+        }
+        a, button, [onclick], label, .chatbot-fab-land { cursor: pointer; }
     </style>
 </head>
 <body class="gradient-bg text-on-background antialiased min-h-screen font-body-md flex flex-col selection:bg-secondary-container selection:text-primary">

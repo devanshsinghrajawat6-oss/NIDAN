@@ -125,8 +125,20 @@
         .dark header [style*="color:#002045"]{color:#c8deff!important}
         /* Search input dark */
         .dark #searchInput{background:rgba(255,255,255,0.08)!important;border-color:rgba(100,150,255,0.3)!important;color:#e4efff!important}
-        /* Fix text selection cursor on interactive elements */
-        button, a, [onclick], .action-btn, .topbar-btn, .sidebar-link, .card-hover, .chatbot-fab { outline: none !important; user-select: none !important; -webkit-user-select: none !important; -moz-user-select: none !important; }
+        /* App-like behavior: disable text selection and focus rings everywhere except inputs */
+        body { cursor: default; }
+        *:not(input):not(textarea) {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            outline: none !important;
+        }
+        input, textarea {
+            user-select: auto !important;
+            -webkit-user-select: auto !important;
+            -moz-user-select: auto !important;
+        }
+        a, button, [onclick], label, .sidebar-link, .chatbot-fab { cursor: pointer; }
     </style>
 </head>
 <body class="gradient-bg antialiased min-h-screen font-sans flex" style="color:#0d1c2e">
