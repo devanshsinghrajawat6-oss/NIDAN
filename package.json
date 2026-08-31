@@ -4,6 +4,6 @@
   "description": "Nidana Ayurveda Clinical Trial Compliance & Monitoring Dashboard",
   "private": true,
   "dependencies": {
-    "mongoose": "^8.0.0"
+    "mongoose": "^8.24.4"
   }
 }
