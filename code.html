@@ -127,15 +127,16 @@
         .dark #searchInput{background:rgba(255,255,255,0.08)!important;border-color:rgba(100,150,255,0.3)!important;color:#e4efff!important}
         
         /* Better Dark Mode */
-        .dark body { background: #000c14; color: #e4efff; }
+        .dark body { background: #000c14; color: #ffffff !important; }
         .dark .glass { background: rgba(0, 32, 69, 0.85); border: 1px solid rgba(100, 150, 255, 0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
-        .dark h1, .dark h2, .dark h3, .dark h4, .dark label { color: #e4efff !important; }
-        .dark p, .dark span { color: #c0d6ff !important; }
+        .dark h1, .dark h2, .dark h3, .dark h4, .dark label, .dark p, .dark span { color: inherit !important; }
         .dark input, .dark select, .dark textarea { background: rgba(255,255,255,0.1)!important; color: #fff!important; border-color: rgba(255,255,255,0.2)!important; }
         .dark .sidebar-link:hover, .dark .card-hover:hover { background: rgba(255,255,255,0.05)!important; }
         .dark .sidebar-link.active { background: rgba(100, 150, 255, 0.15)!important; }
-        .dark table th { color: #e4efff !important; border-bottom: 1px solid rgba(255,255,255,0.1)!important; }
+        .dark table th { border-bottom: 1px solid rgba(255,255,255,0.1)!important; }
         .dark table td { border-bottom: 1px solid rgba(255,255,255,0.05)!important; }
+        .dark .action-btn-primary { background: #000000 !important; color: #ffffff !important; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); }
+        .dark .action-btn-primary:hover { background: #1a1a1a !important; }
 
         /* App-like behavior: disable text selection and focus rings everywhere except inputs */
         body { cursor: default; }
@@ -188,11 +189,13 @@
 <div class="sidebar-overlay fixed inset-0 bg-black/50 z-[45] lg:hidden" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <!-- Sidebar -->
-<nav class="mobile-sidebar lg:translate-x-0 lg:flex flex-col fixed left-0 top-0 h-screen w-72 z-[50] glass border-r border-outline-variant/30" id="sidebar">
-    <div class="h-16 flex items-center px-6 border-b border-outline-variant/30 gap-3">
-        <img alt="NIDANA Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv"/>
-        <h1 class="text-xl font-black" style="font-family:Manrope,sans-serif;color:#002045">NIDANA</h1>
-        <button class="lg:hidden ml-auto p-1" onclick="toggleSidebar()"><span class="material-symbols-outlined">close</span></button>
+<div class="w-64 h-full glass flex flex-col fixed left-0 top-0 z-[50] transition-transform duration-300 lg:translate-x-0 -translate-x-full border-r border-outline-variant/30" id="sidebar">
+    <div class="h-20 flex items-center px-6 gap-3 border-b border-outline-variant/30">
+        <div class="dark:bg-white dark:p-1.5 dark:rounded-xl flex items-center justify-center">
+            <img alt="NIDANA Logo" class="h-8 w-auto object-contain" style="mix-blend-mode: multiply;" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv"/>
+        </div>
+        <span class="text-xl font-bold font-headline-md tracking-wide" style="color:#002045">NIDANA</span>
+        <button class="lg:hidden ml-auto p-1" onclick="toggleSidebar()"><span class="material-symbols-outlined" style="color:#002045">close</span></button>
     </div>
     <div class="mx-4 mt-4 mb-2 p-3 rounded-xl" style="background:rgba(159,245,193,0.1);border:1px solid rgba(159,245,193,0.3)">
         <div class="flex items-center gap-2 mb-1">
@@ -203,28 +206,31 @@
         <div class="text-xs" style="color:#43474e" id="bcBlocks">Blocks: —</div>
     </div>
     <div class="flex-1 overflow-y-auto py-2 flex flex-col gap-1" id="sidebarNav">
-        <a class="sidebar-link active flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" data-section="dashboard" data-roles="all" onclick="switchSection('dashboard')">
+        <a class="sidebar-link active" onclick="switchSection('dashboard')">
             <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">dashboard</span><span data-i18n="nav_dashboard">Dashboard</span>
         </a>
-        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="studies" data-roles="Lead Doctor,Admin" onclick="switchSection('studies')">
+        <a class="sidebar-link" onclick="switchSection('studies')">
             <span class="material-symbols-outlined">work</span><span data-i18n="nav_studies">Study Portfolio</span>
         </a>
-        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="safety" data-roles="Lead Doctor,Pharmacovigilance,Admin" onclick="switchSection('safety')">
+        <a class="sidebar-link" onclick="switchSection('safety')">
             <span class="material-symbols-outlined">medical_services</span><span data-i18n="nav_safety">Safety Tracker</span>
         </a>
-        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="ethics" data-roles="Ethics Committee,Lead Doctor,Admin" onclick="switchSection('ethics')">
+        <a class="sidebar-link" onclick="switchSection('ethics')">
             <span class="material-symbols-outlined">fact_check</span><span data-i18n="nav_ethics">Ethics &amp; CTRI</span>
         </a>
-        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="consent" data-roles="Lead Doctor,Admin,Ethics Committee" onclick="switchSection('consent')">
+        <a class="sidebar-link" onclick="switchSection('consent')">
             <span class="material-symbols-outlined">translate</span><span data-i18n="nav_consent">e-Consent</span>
         </a>
-        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="blockchain" data-roles="all" onclick="switchSection('blockchain')">
+        <a class="sidebar-link" onclick="switchSection('blockchain')">
             <span class="material-symbols-outlined">link</span><span data-i18n="nav_blockchain">Blockchain Ledger</span>
         </a>
-        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="audit" data-roles="all" onclick="switchSection('audit')">
+        <a class="sidebar-link" onclick="switchSection('trace')">
+            <span class="material-symbols-outlined">eco</span><span data-i18n="nav_trace">Trace Herb Batch</span>
+        </a>
+        <a class="sidebar-link mt-4" onclick="switchSection('audit')">
             <span class="material-symbols-outlined">history</span><span data-i18n="nav_audit">Audit Logs</span>
         </a>
-        <a class="sidebar-link flex items-center px-6 py-4 gap-4 text-sm font-medium cursor-pointer" style="color:#43474e" data-section="settings" data-roles="Admin,Lead Doctor" onclick="switchSection('settings')">
+        <a class="sidebar-link" onclick="switchSection('settings')">
             <span class="material-symbols-outlined">settings</span><span data-i18n="nav_settings">Settings</span>
         </a>
     </div>
@@ -243,12 +249,14 @@
 </nav>
 
 <!-- Main Content -->
-<div class="flex-1 flex flex-col min-h-screen lg:ml-72 w-full relative z-10">
+<div class="flex-1 flex flex-col min-h-screen lg:ml-72 relative z-10">
     <!-- TopBar -->
     <header class="fixed top-0 lg:left-72 left-0 right-0 z-40 flex justify-between items-center px-6 h-16 glass border-b border-outline-variant/30">
         <div class="flex items-center gap-4 lg:hidden">
             <button class="topbar-btn" onclick="toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
-            <img alt="NIDANA" class="h-8 w-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv"/>
+            <div class="dark:bg-white dark:p-1 dark:rounded-lg flex items-center justify-center">
+                <img alt="NIDANA" class="h-8 w-auto" style="mix-blend-mode: multiply;" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv"/>
+            </div>
         </div>
         <div class="hidden lg:flex items-center gap-4 flex-1">
             <div class="relative w-80">
@@ -448,6 +456,26 @@
         <div id="section-audit" class="section-content hidden fade-in">
             <div class="mb-8"><h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="audit_title">Audit Logs</h2><p class="text-lg" style="color:#43474e" data-i18n="audit_subtitle">Immutable record of all regulated actions.</p></div>
             <div id="auditList" class="space-y-3">Loading...</div>
+        </div>
+
+        <!-- TRACE HERB BATCH -->
+        <div id="section-trace" class="section-content hidden fade-in">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="trace_title">Trace Herb Batch</h2>
+                    <p class="text-lg" style="color:#43474e" data-i18n="trace_subtitle">Track botanical formulations from harvest to patient dosage.</p>
+                </div>
+            </div>
+            <div class="glass rounded-2xl p-6">
+                <div class="flex gap-4 mb-6">
+                    <input type="text" class="w-full p-3 rounded-xl border border-outline-variant/50" placeholder="Enter Batch ID (e.g. BT-ASH-2024-001)..."/>
+                    <button class="action-btn action-btn-primary whitespace-nowrap"><span class="material-symbols-outlined">search</span> Track Origin</button>
+                </div>
+                <div class="text-center p-10" style="color:#43474e">
+                    <span class="material-symbols-outlined mb-4" style="font-size:48px;opacity:0.5">eco</span>
+                    <p>Enter a Batch ID to see its full supply chain history verified on the Hyperledger Fabric.</p>
+                </div>
+            </div>
         </div>
 
         <!-- SETTINGS -->
