@@ -518,6 +518,29 @@ hi:{greet:"नमस्ते! 👋 मैं NIDANA AI सहायक हू�
 const QR_EN=["What is NIDANA?","How does blockchain save data?","What are the roles?","How to navigate?","What is SAE?"];
 const QR_HI=["NIDANA क्या है?","ब्लॉकचेन डेटा कैसे सेव करता है?","भूमिकाएं क्या हैं?","नेविगेट कैसे करें?","SAE क्या है?"];
 
+async function apiFetch(ep, opts={}){
+    try{
+        const r=await fetch(API_BASE+ep, opts);
+        if(!r.ok)throw new Error("HTTP "+r.status);
+        return await r.json();
+    }
+    catch(e){return{success:false,error:e.message};}
+}
+
+async function initData() {
+    const trialsRes = await apiFetch("/trials");
+    if(trialsRes && trialsRes.success && trialsRes.data && trialsRes.data.length > 0) {
+        MOCK_TRIALS = trialsRes.data;
+    }
+    
+    const patientsRes = await apiFetch("/patients");
+    if(patientsRes && patientsRes.success && patientsRes.data && patientsRes.data.length > 0) {
+        MOCK_PATIENTS = patientsRes.data;
+    }
+    console.log("Loaded data:", { trials: MOCK_TRIALS.length, patients: MOCK_PATIENTS.length });
+    loadDashboard();
+}
+
 document.addEventListener("DOMContentLoaded",()=>{
     const us=sessionStorage.getItem("nidana_user");
     if(!us){window.location.href="login.html";return;}
@@ -531,8 +554,11 @@ document.addEventListener("DOMContentLoaded",()=>{
     createParticles();
     if(!localStorage.getItem("nidana_privacy_ack"))document.getElementById("privacyModal").classList.add("open");
     
-    loadDashboard();
-    setInterval(loadDashboard,30000);
+    initData().then(() => {
+        loadDashboard();
+        setInterval(loadDashboard,30000);
+    });
+    
     const st=Date.now();
     setInterval(()=>{const m=Math.floor((Date.now()-st)/60000);const el=document.getElementById("uptimeDisplay");if(el)el.textContent=m+" min";},60000);
     setTimeout(()=>addBotMsg(CHAT_KB[currentLang].greet),600);
@@ -594,16 +620,13 @@ function acknowledgePrivacy(){document.getElementById("privacyModal").classList.
 function doLogout(){sessionStorage.removeItem("nidana_user");sessionStorage.removeItem("nidana_privacy_ack");window.location.href="login.html";}
 function clearSessionData(){sessionStorage.clear();localStorage.removeItem("nidana_lang");localStorage.removeItem("nidana_dark");alert("Session cleared.");window.location.href="login.html";}
 
-async function apiFetch(ep){
-    try{const r=await fetch(API_BASE+ep);if(!r.ok)throw new Error("HTTP "+r.status);return await r.json();}
-    catch(e){return{success:false,error:e.message};}
-}
+
 
 // ── SIMULATED DATA ────────────────────────────────────────────────────────────
 // The backend API (/api) only exposes /health and /status (Vercel serverless).
 // All clinical data below is realistic demo data generated locally in the
 // browser so every section renders immediately without a real database.
-const MOCK_TRIALS = [
+let MOCK_TRIALS = [
   {trialId:"NIDANA-TRL-001",name:"Ashwagandha Stress & Cortisol RCT",phase:"Phase II",status:"Active",enrollmentCurrent:84,enrollmentTarget:120,complianceScore:96,principalInvestigator:"Dr. Priya Sharma",site:"AIIA New Delhi",herbFormulation:"Withania somnifera (KSM-66)",description:"Randomized double-blind study of standardised ashwagandha root extract on cortisol and perceived stress.",iecApprovalStatus:"Approved",iecApprovalDate:"2024-03-15",iecExpiryDate:"2026-03-14",ctriRegistration:"CTRI/2024/03/062481"},
   {trialId:"NIDANA-TRL-002",name:"Triphala Gut Microbiome Study",phase:"Phase I",status:"Active",enrollmentCurrent:42,enrollmentTarget:60,complianceScore:88,principalInvestigator:"Dr. Ramesh Patel",site:"NIA Jaipur",herbFormulation:"Triphala Churna (standardised)",description:"Pilot open-label study on gut microbiome modulation by Triphala in healthy adults with sub-optimal digestion.",iecApprovalStatus:"Approved",iecApprovalDate:"2024-06-01",iecExpiryDate:"2026-05-31",ctriRegistration:"CTRI/2024/06/074512"},
   {trialId:"NIDANA-TRL-003",name:"Boswellia Knee OA Pain Trial",phase:"Phase III",status:"Active",enrollmentCurrent:198,enrollmentTarget:240,complianceScore:91,principalInvestigator:"Dr. Anita Nair",site:"Rajiv Gandhi AYUSH",herbFormulation:"Boswellia serrata (AKBA 30%)",description:"Multi-centre RCT comparing Boswellia extract vs NSAID for knee osteoarthritis pain and functional outcomes.",iecApprovalStatus:"Approved",iecApprovalDate:"2023-11-20",iecExpiryDate:"2025-11-19",ctriRegistration:"CTRI/2023/11/058930"},
@@ -612,7 +635,7 @@ const MOCK_TRIALS = [
   {trialId:"NIDANA-TRL-006",name:"Guduchi Immunomodulation COVID-19",phase:"Phase II",status:"Completed",enrollmentCurrent:150,enrollmentTarget:150,complianceScore:98,principalInvestigator:"Dr. Arun Kumar",site:"NIA Jaipur",herbFormulation:"Tinospora cordifolia",description:"Completed double-blind RCT on Guduchi stem extract in mild-to-moderate COVID-19 for immune recovery.",iecApprovalStatus:"Approved",iecApprovalDate:"2023-01-10",iecExpiryDate:"2025-01-09",ctriRegistration:"CTRI/2023/01/040121"}
 ];
 
-const MOCK_PATIENTS = [
+let MOCK_PATIENTS = [
   {patientId:"PT-2024-0001",pseudonymizedId:"a3f7c92d",trialId:"NIDANA-TRL-001",site:"AIIA New Delhi",consentStatus:"Consented",consentDate:"2024-04-10"},
   {patientId:"PT-2024-0002",pseudonymizedId:"b1e4d83a",trialId:"NIDANA-TRL-001",site:"AIIA New Delhi",consentStatus:"Consented",consentDate:"2024-04-12"},
   {patientId:"PT-2024-0003",pseudonymizedId:"c9g2h71f",trialId:"NIDANA-TRL-002",site:"NIA Jaipur",consentStatus:"Pending",consentDate:null},
