@@ -125,6 +125,18 @@
         .dark header [style*="color:#002045"]{color:#c8deff!important}
         /* Search input dark */
         .dark #searchInput{background:rgba(255,255,255,0.08)!important;border-color:rgba(100,150,255,0.3)!important;color:#e4efff!important}
+        
+        /* Better Dark Mode */
+        .dark body { background: #000c14; color: #e4efff; }
+        .dark .glass { background: rgba(0, 32, 69, 0.85); border: 1px solid rgba(100, 150, 255, 0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+        .dark h1, .dark h2, .dark h3, .dark h4, .dark label { color: #e4efff !important; }
+        .dark p, .dark span { color: #c0d6ff !important; }
+        .dark input, .dark select, .dark textarea { background: rgba(255,255,255,0.1)!important; color: #fff!important; border-color: rgba(255,255,255,0.2)!important; }
+        .dark .sidebar-link:hover, .dark .card-hover:hover { background: rgba(255,255,255,0.05)!important; }
+        .dark .sidebar-link.active { background: rgba(100, 150, 255, 0.15)!important; }
+        .dark table th { color: #e4efff !important; border-bottom: 1px solid rgba(255,255,255,0.1)!important; }
+        .dark table td { border-bottom: 1px solid rgba(255,255,255,0.05)!important; }
+
         /* App-like behavior: disable text selection and focus rings everywhere except inputs */
         body { cursor: default; }
         *:not(input):not(textarea) {
@@ -388,7 +400,15 @@
 
         <!-- STUDIES -->
         <div id="section-studies" class="section-content hidden fade-in">
-            <div class="mb-8"><h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="studies_title">Study Portfolio</h2><p class="text-lg" style="color:#43474e" data-i18n="studies_subtitle">Manage all ongoing botanical and clinical trials.</p></div>
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="studies_title">Study Portfolio</h2>
+                    <p class="text-lg" style="color:#43474e" data-i18n="studies_subtitle">Manage all ongoing botanical and clinical trials.</p>
+                </div>
+                <button onclick="document.getElementById('trialModal').classList.add('open')" class="action-btn action-btn-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined">add</span> Create Trial
+                </button>
+            </div>
             <div id="studiesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">Loading...</div>
         </div>
 
@@ -406,7 +426,15 @@
 
         <!-- CONSENT -->
         <div id="section-consent" class="section-content hidden fade-in">
-            <div class="mb-8"><h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="consent_title">Multilingual e-Consent</h2><p class="text-lg" style="color:#43474e" data-i18n="consent_subtitle">Digital consent management with blockchain integrity.</p></div>
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2" style="font-family:Manrope,sans-serif;color:#002045" data-i18n="consent_title">Multilingual e-Consent</h2>
+                    <p class="text-lg" style="color:#43474e" data-i18n="consent_subtitle">Digital consent management with blockchain integrity.</p>
+                </div>
+                <button onclick="document.getElementById('patientModal').classList.add('open')" class="action-btn action-btn-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined">person_add</span> Add Patient
+                </button>
+            </div>
             <div id="consentList" class="space-y-4">Loading...</div>
         </div>
 
@@ -501,9 +529,65 @@
     </div>
 </div>
 
+<!-- Add Patient Modal -->
+<div id="patientModal" class="modal-overlay">
+    <div class="glass rounded-3xl p-8 max-w-md w-full relative">
+        <button onclick="document.getElementById('patientModal').classList.remove('open')" class="absolute top-4 right-4"><span class="material-symbols-outlined">close</span></button>
+        <h3 class="text-xl font-bold mb-4" style="color:#002045">Add New Patient</h3>
+        <form id="addPatientForm" onsubmit="submitPatient(event)">
+            <div class="mb-4">
+                <label class="block text-sm font-bold mb-1" style="color:#43474e">Patient ID</label>
+                <input id="newPatientId" class="w-full p-2 rounded-lg border border-outline-variant/50" required placeholder="PT-2024-XXXX" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-bold mb-1" style="color:#43474e">Trial ID</label>
+                <input id="newPatientTrial" class="w-full p-2 rounded-lg border border-outline-variant/50" required placeholder="NIDANA-TRL-XXX" />
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-1" style="color:#43474e">Site</label>
+                <input id="newPatientSite" class="w-full p-2 rounded-lg border border-outline-variant/50" required placeholder="AIIA New Delhi" />
+            </div>
+            <button type="submit" class="action-btn action-btn-primary w-full justify-center">Save to Database & Blockchain</button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Trial Modal -->
+<div id="trialModal" class="modal-overlay">
+    <div class="glass rounded-3xl p-8 max-w-md w-full relative max-h-[90vh] overflow-y-auto">
+        <button onclick="document.getElementById('trialModal').classList.remove('open')" class="absolute top-4 right-4"><span class="material-symbols-outlined">close</span></button>
+        <h3 class="text-xl font-bold mb-4" style="color:#002045">Create Trial</h3>
+        <form id="addTrialForm" onsubmit="submitTrial(event)">
+            <div class="mb-4">
+                <label class="block text-sm font-bold mb-1" style="color:#43474e">Trial ID</label>
+                <input id="newTrialId" class="w-full p-2 rounded-lg border border-outline-variant/50" required placeholder="NIDANA-TRL-XXX" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-bold mb-1" style="color:#43474e">Name</label>
+                <input id="newTrialName" class="w-full p-2 rounded-lg border border-outline-variant/50" required placeholder="Trial Title" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-bold mb-1" style="color:#43474e">Phase</label>
+                <input id="newTrialPhase" class="w-full p-2 rounded-lg border border-outline-variant/50" placeholder="Phase II" />
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-bold mb-1" style="color:#43474e">Principal Investigator</label>
+                <input id="newTrialPI" class="w-full p-2 rounded-lg border border-outline-variant/50" required placeholder="Dr. Name" />
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-1" style="color:#43474e">CTRI Registration</label>
+                <input id="newTrialCTRI" class="w-full p-2 rounded-lg border border-outline-variant/50" required placeholder="CTRI/2024/..." />
+            </div>
+            <button type="submit" class="action-btn action-btn-primary w-full justify-center">Create Trial</button>
+        </form>
+    </div>
+</div>
+
 <script>
 const API_BASE=window.location.origin+"/api";
 let dashboardData=null,isDark=localStorage.getItem("nidana_dark")==="true",currentLang=localStorage.getItem("nidana_lang")||"en",currentUser=null,chatOpen=false;
+let MOCK_TRIALS = [];
+let MOCK_PATIENTS = [];
 
 const I18N={
 en:{nav_dashboard:"Dashboard",nav_studies:"Study Portfolio",nav_safety:"Safety Tracker",nav_ethics:"Ethics & CTRI",nav_consent:"e-Consent",nav_blockchain:"Blockchain Ledger",nav_audit:"Audit Logs",nav_settings:"Settings",kpi_studies:"Active Studies",kpi_patients:"Patients Joined",kpi_approvals:"Approvals Needed",kpi_safety:"Urgent Safety Issues",compliance_title:"Compliance Score",run_check:"Run Check",total_breaches:"Total Breaches",bc_blocks:"Blockchain Blocks",last_check:"Last Check",bc_network:"Blockchain Network",integrity:"Integrity",orgs:"Organizations",active_trials:"Active Clinical Trials",th_trial_id:"Trial ID",th_name:"Name",th_phase:"Phase",th_status:"Status",th_enrollment:"Enrollment",th_compliance:"Compliance",studies_title:"Study Portfolio",studies_subtitle:"Manage all ongoing botanical and clinical trials.",safety_title:"Safety Tracker",safety_subtitle:"Monitor adverse events and safety signals.",ethics_title:"Ethics & CTRI Tracker",ethics_subtitle:"Track IEC approvals and regulatory deadlines.",consent_title:"Multilingual e-Consent",consent_subtitle:"Digital consent management with blockchain integrity.",bc_title:"Blockchain Ledger",bc_subtitle:"Immutable transaction history on Hyperledger Fabric.",audit_title:"Audit Logs",audit_subtitle:"Immutable record of all regulated actions.",settings_title:"Settings",settings_subtitle:"System configuration and preferences.",settings_profile:"Profile Settings",settings_display_name:"Display Name",settings_email:"Email",settings_org:"Organization",settings_save:"Save Profile",settings_notifs:"Notification Preferences",notif_sae:"SAE Alerts (Critical)",notif_compliance:"Compliance Breaches",notif_deadlines:"Regulatory Deadlines",notif_blockchain:"Blockchain Updates",notif_save:"Save Preferences",settings_system:"System Information",view_demo:"View Blockchain Demo",danger_zone:"Danger Zone",clear_session:"Clear Session Data",logout:"Logout",notif_title:"Notifications",privacy_title:"Data Access Notice",privacy_sub:"Protected Health Information",privacy_body:"You are accessing <strong>protected clinical trial data</strong>. All actions are:",privacy_1:"Logged immutably on <strong>Hyperledger Fabric</strong>",privacy_2:"Subject to audit by <strong>CDSCO and ICMR-NIA</strong>",privacy_3:"Governed by <strong>GCP-Ayurveda</strong> regulations",privacy_ack:"Acknowledge & Access Dashboard",bot_name:"NIDANA AI Assistant",bot_status:"Online",bot_input_placeholder:"Ask about NIDANA..."},
@@ -620,34 +704,6 @@ function acknowledgePrivacy(){document.getElementById("privacyModal").classList.
 function doLogout(){sessionStorage.removeItem("nidana_user");sessionStorage.removeItem("nidana_privacy_ack");window.location.href="login.html";}
 function clearSessionData(){sessionStorage.clear();localStorage.removeItem("nidana_lang");localStorage.removeItem("nidana_dark");alert("Session cleared.");window.location.href="login.html";}
 
-
-
-// ── SIMULATED DATA ────────────────────────────────────────────────────────────
-// The backend API (/api) only exposes /health and /status (Vercel serverless).
-// All clinical data below is realistic demo data generated locally in the
-// browser so every section renders immediately without a real database.
-let MOCK_TRIALS = [
-  {trialId:"NIDANA-TRL-001",name:"Ashwagandha Stress & Cortisol RCT",phase:"Phase II",status:"Active",enrollmentCurrent:84,enrollmentTarget:120,complianceScore:96,principalInvestigator:"Dr. Priya Sharma",site:"AIIA New Delhi",herbFormulation:"Withania somnifera (KSM-66)",description:"Randomized double-blind study of standardised ashwagandha root extract on cortisol and perceived stress.",iecApprovalStatus:"Approved",iecApprovalDate:"2024-03-15",iecExpiryDate:"2026-03-14",ctriRegistration:"CTRI/2024/03/062481"},
-  {trialId:"NIDANA-TRL-002",name:"Triphala Gut Microbiome Study",phase:"Phase I",status:"Active",enrollmentCurrent:42,enrollmentTarget:60,complianceScore:88,principalInvestigator:"Dr. Ramesh Patel",site:"NIA Jaipur",herbFormulation:"Triphala Churna (standardised)",description:"Pilot open-label study on gut microbiome modulation by Triphala in healthy adults with sub-optimal digestion.",iecApprovalStatus:"Approved",iecApprovalDate:"2024-06-01",iecExpiryDate:"2026-05-31",ctriRegistration:"CTRI/2024/06/074512"},
-  {trialId:"NIDANA-TRL-003",name:"Boswellia Knee OA Pain Trial",phase:"Phase III",status:"Active",enrollmentCurrent:198,enrollmentTarget:240,complianceScore:91,principalInvestigator:"Dr. Anita Nair",site:"Rajiv Gandhi AYUSH",herbFormulation:"Boswellia serrata (AKBA 30%)",description:"Multi-centre RCT comparing Boswellia extract vs NSAID for knee osteoarthritis pain and functional outcomes.",iecApprovalStatus:"Approved",iecApprovalDate:"2023-11-20",iecExpiryDate:"2025-11-19",ctriRegistration:"CTRI/2023/11/058930"},
-  {trialId:"NIDANA-TRL-004",name:"Brahmi Cognitive Enhancement Study",phase:"Phase II",status:"Active",enrollmentCurrent:56,enrollmentTarget:100,complianceScore:95,principalInvestigator:"Dr. Suresh Menon",site:"CCRYN Kochi",herbFormulation:"Bacopa monnieri (Brahmi)",description:"Assessment of Brahmi on working memory, attention, and anxiety in college students (18–25 yr).",iecApprovalStatus:"Approved",iecApprovalDate:"2024-09-10",iecExpiryDate:"2026-09-09",ctriRegistration:"CTRI/2024/09/081234"},
-  {trialId:"NIDANA-TRL-005",name:"Shatavari Women's Hormonal Balance",phase:"Phase II",status:"Pending",enrollmentCurrent:0,enrollmentTarget:80,complianceScore:88,principalInvestigator:"Dr. Kavita Rao",site:"AIIA Mumbai",herbFormulation:"Asparagus racemosus",description:"Exploratory RCT of Shatavari on FSH, LH, and menopausal symptoms in peri-menopausal women.",iecApprovalStatus:"Pending",iecApprovalDate:null,iecExpiryDate:null,ctriRegistration:null},
-  {trialId:"NIDANA-TRL-006",name:"Guduchi Immunomodulation COVID-19",phase:"Phase II",status:"Completed",enrollmentCurrent:150,enrollmentTarget:150,complianceScore:98,principalInvestigator:"Dr. Arun Kumar",site:"NIA Jaipur",herbFormulation:"Tinospora cordifolia",description:"Completed double-blind RCT on Guduchi stem extract in mild-to-moderate COVID-19 for immune recovery.",iecApprovalStatus:"Approved",iecApprovalDate:"2023-01-10",iecExpiryDate:"2025-01-09",ctriRegistration:"CTRI/2023/01/040121"}
-];
-
-let MOCK_PATIENTS = [
-  {patientId:"PT-2024-0001",pseudonymizedId:"a3f7c92d",trialId:"NIDANA-TRL-001",site:"AIIA New Delhi",consentStatus:"Consented",consentDate:"2024-04-10"},
-  {patientId:"PT-2024-0002",pseudonymizedId:"b1e4d83a",trialId:"NIDANA-TRL-001",site:"AIIA New Delhi",consentStatus:"Consented",consentDate:"2024-04-12"},
-  {patientId:"PT-2024-0003",pseudonymizedId:"c9g2h71f",trialId:"NIDANA-TRL-002",site:"NIA Jaipur",consentStatus:"Pending",consentDate:null},
-  {patientId:"PT-2024-0004",pseudonymizedId:"d5k8j46e",trialId:"NIDANA-TRL-003",site:"Rajiv Gandhi AYUSH",consentStatus:"Consented",consentDate:"2024-02-18"},
-  {patientId:"PT-2024-0005",pseudonymizedId:"e2m3n95b",trialId:"NIDANA-TRL-003",site:"Rajiv Gandhi AYUSH",consentStatus:"Expired",consentDate:"2023-12-01"},
-  {patientId:"PT-2024-0006",pseudonymizedId:"f7p1q84c",trialId:"NIDANA-TRL-004",site:"CCRYN Kochi",consentStatus:"Consented",consentDate:"2024-10-05"},
-  {patientId:"PT-2024-0007",pseudonymizedId:"g4r6s23d",trialId:"NIDANA-TRL-001",site:"AIIA New Delhi",consentStatus:"Withdrawn",consentDate:"2024-05-20"},
-  {patientId:"PT-2024-0008",pseudonymizedId:"h8t9u12e",trialId:"NIDANA-TRL-002",site:"NIA Jaipur",consentStatus:"Consented",consentDate:"2024-07-14"},
-  {patientId:"PT-2024-0009",pseudonymizedId:"i0v5w67f",trialId:"NIDANA-TRL-003",site:"Rajiv Gandhi AYUSH",consentStatus:"Consented",consentDate:"2024-03-22"},
-  {patientId:"PT-2024-0010",pseudonymizedId:"j3x7y90g",trialId:"NIDANA-TRL-004",site:"CCRYN Kochi",consentStatus:"Pending",consentDate:null}
-];
-
 const MOCK_ADVERSE_EVENTS = [
   {eventId:"AE-2024-001",patientId:"PT-2024-0001",trialId:"NIDANA-TRL-001",severity:"SAE",status:"Reported",description:"Grade 3 hepatotoxicity — elevated SGPT (5× ULN). Participant hospitalised. Causality: possibly related.",reportedBy:"Dr. Priya Sharma",reportedAt:"2024-11-02T08:30:00Z",iecNotified:true},
   {eventId:"AE-2024-002",patientId:"PT-2024-0004",trialId:"NIDANA-TRL-003",severity:"AE",status:"Resolved",description:"Mild GI upset (nausea, loose stools) — Grade 1. Self-limiting, resolved within 48 h without intervention.",reportedBy:"Dr. Anita Nair",reportedAt:"2024-10-15T14:00:00Z",iecNotified:false},
@@ -675,17 +731,25 @@ const MOCK_AUDIT = [
   {action:"CONSENT_REVOKED",details:"Patient PT-2024-0007 withdrew consent from TRL-001. Data locked per GCP.",actor:"Dr. Priya Sharma",role:"Lead Doctor",resourceId:"PT-2024-0007",severity:"Warning",blockchainTxHash:"0x5cf8",timestamp:new Date(Date.now()-172800000).toISOString()},
   {action:"USER_LOGIN",details:"Successful login from 103.21.xx.xx (New Delhi)",actor:currentUser?currentUser.username:"User",role:currentUser?currentUser.role:"Lead Doctor",resourceId:"AUTH",severity:"Info",blockchainTxHash:null,timestamp:new Date().toISOString()}
 ];
-// ── END SIMULATED DATA ─────────────────────────────────────────────────────────
 
 function getMockDashboardStats(){
   const activeTrials=MOCK_TRIALS.filter(t=>t.status==="Active");
-  const totalPatients=MOCK_TRIALS.reduce((a,t)=>a+t.enrollmentCurrent,0);
-  const avgCompliance=Math.round(MOCK_TRIALS.reduce((a,t)=>a+t.complianceScore,0)/MOCK_TRIALS.length);
+  const totalPatients=MOCK_PATIENTS.length;
+  const avgCompliance=MOCK_TRIALS.length>0?Math.round(MOCK_TRIALS.reduce((a,t)=>a+t.complianceScore,0)/MOCK_TRIALS.length):0;
   const breaches=MOCK_TRIALS.filter(t=>t.complianceScore<80).length;
   return {activeStudies:activeTrials.length,totalPatients,pendingApprovals:MOCK_TRIALS.filter(t=>t.iecApprovalStatus!=="Approved").length,urgentSafetyIssues:MOCK_ADVERSE_EVENTS.filter(e=>e.severity==="SAE"&&e.status!=="Reported").length,totalBreaches:breaches,blockchainBlocks:MOCK_BC_STATUS.totalBlocks,complianceScore:avgCompliance,recentActivity:new Date().toISOString()};
 }
 
 function loadDashboard(){
+    if(!document.getElementById("section-dashboard")) return;
+    document.getElementById("stat-activeStudies").textContent=MOCK_TRIALS.filter(t=>t.status==="Active").length;
+    document.getElementById("stat-totalPatients").textContent=MOCK_PATIENTS.length;
+    
+    // re-render if visible
+    if(!document.getElementById("section-studies").classList.contains("hidden")) loadStudies();
+    if(!document.getElementById("section-consent").classList.contains("hidden")) loadConsent();
+    
+    // run existing layout logic
     const stats=getMockDashboardStats();
     dashboardData=stats;
     animateCounter("stat-activeStudies",stats.activeStudies);
@@ -823,6 +887,89 @@ function showToast(msg){const t=document.createElement("div");t.textContent=msg;
 
 function animateCounter(id,target){const el=document.getElementById(id);if(!el||isNaN(target))return;let cur=0;const step=target/40;const timer=setInterval(()=>{cur+=step;if(cur>=target){cur=target;clearInterval(timer);}el.textContent=Math.floor(cur).toLocaleString();},30);}
 function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");document.getElementById("sidebarOverlay").classList.toggle("open");}
+
+async function submitPatient(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    const oldText = btn.textContent;
+    btn.textContent = "Saving...";
+    btn.disabled = true;
+
+    const data = {
+        patientId: document.getElementById('newPatientId').value,
+        trialId: document.getElementById('newPatientTrial').value,
+        site: document.getElementById('newPatientSite').value,
+        consentStatus: 'Consented'
+    };
+
+    const res = await apiFetch("/patients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    btn.textContent = oldText;
+    btn.disabled = false;
+
+    if (res && res.success) {
+        showToast("Patient added successfully!");
+        document.getElementById('patientModal').classList.remove('open');
+        e.target.reset();
+        await initData(); // Reload data
+    } else {
+        showToast("Error: API not connected or failed. Reverting to mock data.");
+        // Mock fallback
+        MOCK_PATIENTS.unshift({...data, pseudonymizedId: "mock123", consentDate: new Date(), blockchainTxHash: "0xMOCK"});
+        document.getElementById('patientModal').classList.remove('open');
+        e.target.reset();
+        loadDashboard();
+        loadConsent();
+    }
+}
+
+async function submitTrial(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    const oldText = btn.textContent;
+    btn.textContent = "Saving...";
+    btn.disabled = true;
+
+    const data = {
+        trialId: document.getElementById('newTrialId').value,
+        name: document.getElementById('newTrialName').value,
+        phase: document.getElementById('newTrialPhase').value,
+        principalInvestigator: document.getElementById('newTrialPI').value,
+        ctriRegistration: document.getElementById('newTrialCTRI').value,
+        status: "Active",
+        enrollmentCurrent: 0,
+        enrollmentTarget: 100,
+        complianceScore: 100
+    };
+
+    const res = await apiFetch("/trials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    btn.textContent = oldText;
+    btn.disabled = false;
+
+    if (res && res.success) {
+        showToast("Trial created successfully!");
+        document.getElementById('trialModal').classList.remove('open');
+        e.target.reset();
+        await initData(); // Reload data
+    } else {
+        showToast("Error: API not connected or failed. Reverting to mock data.");
+        MOCK_TRIALS.unshift({...data});
+        document.getElementById('trialModal').classList.remove('open');
+        e.target.reset();
+        loadDashboard();
+        loadStudies();
+    }
+}
+
 function toggleNotifications(e){e&&e.stopPropagation();document.getElementById("notifDropdown").classList.toggle("open");}
 
 function toggleChatbot(){chatOpen=!chatOpen;const win=document.getElementById("chatbotWindow");const icon=document.getElementById("chatbotFabIcon");win.classList.toggle("open",chatOpen);icon.textContent=chatOpen?"close":"smart_toy";}
