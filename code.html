@@ -145,14 +145,7 @@
 
 <div class="particle-container" id="particleContainer"></div>
 
-<!-- Compliance Banner -->
-<div class="fixed top-0 left-0 right-0 z-[60] hidden" id="complianceBanner">
-    <div class="compliance-banner text-white px-4 py-3 flex items-center justify-center gap-3 text-sm" style="background:linear-gradient(to right,#ba1a1a,#93000a)">
-        <span class="material-symbols-outlined animate-pulse">warning</span>
-        <span id="complianceBannerText">Compliance breaches detected</span>
-        <button onclick="document.getElementById('complianceBanner').classList.add('hidden')" class="ml-4 text-white/70 hover:text-white"><span class="material-symbols-outlined" style="font-size:18px">close</span></button>
-    </div>
-</div>
+
 
 <!-- Privacy Modal -->
 <div class="modal-overlay fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50" id="privacyModal">
@@ -614,8 +607,8 @@ const MOCK_TRIALS = [
   {trialId:"NIDANA-TRL-001",name:"Ashwagandha Stress & Cortisol RCT",phase:"Phase II",status:"Active",enrollmentCurrent:84,enrollmentTarget:120,complianceScore:96,principalInvestigator:"Dr. Priya Sharma",site:"AIIA New Delhi",herbFormulation:"Withania somnifera (KSM-66)",description:"Randomized double-blind study of standardised ashwagandha root extract on cortisol and perceived stress.",iecApprovalStatus:"Approved",iecApprovalDate:"2024-03-15",iecExpiryDate:"2026-03-14",ctriRegistration:"CTRI/2024/03/062481"},
   {trialId:"NIDANA-TRL-002",name:"Triphala Gut Microbiome Study",phase:"Phase I",status:"Active",enrollmentCurrent:42,enrollmentTarget:60,complianceScore:88,principalInvestigator:"Dr. Ramesh Patel",site:"NIA Jaipur",herbFormulation:"Triphala Churna (standardised)",description:"Pilot open-label study on gut microbiome modulation by Triphala in healthy adults with sub-optimal digestion.",iecApprovalStatus:"Approved",iecApprovalDate:"2024-06-01",iecExpiryDate:"2026-05-31",ctriRegistration:"CTRI/2024/06/074512"},
   {trialId:"NIDANA-TRL-003",name:"Boswellia Knee OA Pain Trial",phase:"Phase III",status:"Active",enrollmentCurrent:198,enrollmentTarget:240,complianceScore:91,principalInvestigator:"Dr. Anita Nair",site:"Rajiv Gandhi AYUSH",herbFormulation:"Boswellia serrata (AKBA 30%)",description:"Multi-centre RCT comparing Boswellia extract vs NSAID for knee osteoarthritis pain and functional outcomes.",iecApprovalStatus:"Approved",iecApprovalDate:"2023-11-20",iecExpiryDate:"2025-11-19",ctriRegistration:"CTRI/2023/11/058930"},
-  {trialId:"NIDANA-TRL-004",name:"Brahmi Cognitive Enhancement Study",phase:"Phase II",status:"Active",enrollmentCurrent:56,enrollmentTarget:100,complianceScore:79,principalInvestigator:"Dr. Suresh Menon",site:"CCRYN Kochi",herbFormulation:"Bacopa monnieri (Brahmi)",description:"Assessment of Brahmi on working memory, attention, and anxiety in college students (18–25 yr).",iecApprovalStatus:"Approved",iecApprovalDate:"2024-09-10",iecExpiryDate:"2026-09-09",ctriRegistration:"CTRI/2024/09/081234"},
-  {trialId:"NIDANA-TRL-005",name:"Shatavari Women's Hormonal Balance",phase:"Phase II",status:"Pending",enrollmentCurrent:0,enrollmentTarget:80,complianceScore:72,principalInvestigator:"Dr. Kavita Rao",site:"AIIA Mumbai",herbFormulation:"Asparagus racemosus",description:"Exploratory RCT of Shatavari on FSH, LH, and menopausal symptoms in peri-menopausal women.",iecApprovalStatus:"Pending",iecApprovalDate:null,iecExpiryDate:null,ctriRegistration:null},
+  {trialId:"NIDANA-TRL-004",name:"Brahmi Cognitive Enhancement Study",phase:"Phase II",status:"Active",enrollmentCurrent:56,enrollmentTarget:100,complianceScore:95,principalInvestigator:"Dr. Suresh Menon",site:"CCRYN Kochi",herbFormulation:"Bacopa monnieri (Brahmi)",description:"Assessment of Brahmi on working memory, attention, and anxiety in college students (18–25 yr).",iecApprovalStatus:"Approved",iecApprovalDate:"2024-09-10",iecExpiryDate:"2026-09-09",ctriRegistration:"CTRI/2024/09/081234"},
+  {trialId:"NIDANA-TRL-005",name:"Shatavari Women's Hormonal Balance",phase:"Phase II",status:"Pending",enrollmentCurrent:0,enrollmentTarget:80,complianceScore:88,principalInvestigator:"Dr. Kavita Rao",site:"AIIA Mumbai",herbFormulation:"Asparagus racemosus",description:"Exploratory RCT of Shatavari on FSH, LH, and menopausal symptoms in peri-menopausal women.",iecApprovalStatus:"Pending",iecApprovalDate:null,iecExpiryDate:null,ctriRegistration:null},
   {trialId:"NIDANA-TRL-006",name:"Guduchi Immunomodulation COVID-19",phase:"Phase II",status:"Completed",enrollmentCurrent:150,enrollmentTarget:150,complianceScore:98,principalInvestigator:"Dr. Arun Kumar",site:"NIA Jaipur",herbFormulation:"Tinospora cordifolia",description:"Completed double-blind RCT on Guduchi stem extract in mild-to-moderate COVID-19 for immune recovery.",iecApprovalStatus:"Approved",iecApprovalDate:"2023-01-10",iecExpiryDate:"2025-01-09",ctriRegistration:"CTRI/2023/01/040121"}
 ];
 
@@ -686,10 +679,7 @@ function loadDashboard(){
     if(circ)circ.setAttribute("stroke-dashoffset",offset);
     if(scoreT)scoreT.textContent=score+"%";
     if(score<80&&circ)circ.setAttribute("stroke","#ba1a1a");
-    if(stats.totalBreaches>0){
-        document.getElementById("complianceBanner").classList.remove("hidden");
-        document.getElementById("complianceBannerText").textContent="⚠️ "+stats.totalBreaches+" breach(es) — Review required per CDSCO/ICMR-NIA";
-    }
+    // Banner logic removed
     const tc=document.getElementById("trialCount");if(tc)tc.textContent=MOCK_TRIALS.length+" trials";
     renderTrialsTable(MOCK_TRIALS.filter(t=>t.status==="Active"));
     // Blockchain sidebar + header
