@@ -73,6 +73,19 @@
             -moz-user-select: auto !important;
         }
         a, button, [onclick], label, .role-card { cursor: pointer; }
+        /* Chatbot CSS */
+        .chatbot-window { position: fixed; bottom: 90px; right: 20px; width: 360px; max-height: 520px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 32, 69, 0.2); display: flex; flex-direction: column; transform: translateY(20px) scale(0.95); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000 }
+        .dark .chatbot-window { background: rgba(10, 20, 40, 0.92); border-color: rgba(255, 255, 255, 0.1) }
+        .chatbot-window.open { transform: translateY(0) scale(1); opacity: 1; visibility: visible }
+        .chatbot-fab { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; background: linear-gradient(135deg, #1a365d, #0a6c44); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 24px rgba(0, 32, 69, 0.35); border: none; animation: fab-pulse 3s ease-in-out infinite; z-index: 1001; transition: all 0.3s ease }
+        .chatbot-fab:hover { transform: scale(1.1) }
+        @keyframes fab-pulse { 0%, 100% { box-shadow: 0 8px 24px rgba(0, 32, 69, 0.35), 0 0 0 0 rgba(26, 54, 93, 0.3) } 50% { box-shadow: 0 8px 24px rgba(0, 32, 69, 0.35), 0 0 0 12px rgba(26, 54, 93, 0) } }
+        .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: #1a365d; animation: typing 1.4s infinite ease-in-out; display: inline-block }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s }
+        @keyframes typing { 0%, 60%, 100% { transform: translateY(0) } 30% { transform: translateY(-6px) } }
+        .topbar-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; color: #43474e }
+        .dark .topbar-btn { background: rgba(255, 255, 255, 0.15); color: #c8deff }
     </style>
 </head>
 <body class="login-bg flex items-center justify-center min-h-screen p-4 transition-colors duration-500">
@@ -93,7 +106,7 @@
 <div class="w-full max-w-2xl fade-in">
     <div class="text-center mb-8">
         <div class="flex justify-center mb-4">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" alt="NIDANA Logo" class="h-14 w-auto object-contain logo-animated"/>
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" alt="NIDANA Logo" class="h-14 w-auto object-contain logo-animated" style="mix-blend-mode: multiply;"/>
         </div>
         <h1 style="font-family:Manrope,sans-serif;font-size:2.5rem;font-weight:900;color:#002045">NIDANA</h1>
         <p class="text-sm mt-1" style="color:#43474e" data-i18n="subtitle">Clinical Trial Management System · Blockchain Secured</p>
@@ -197,6 +210,33 @@
     </div>
 </div>
 
+<!-- CHATBOT FAB -->
+<button class="chatbot-fab" id="chatbotFab" onclick="toggleChatbot()" title="NIDANA AI Assistant">
+    <span class="material-symbols-outlined text-white" style="font-size:28px" id="chatbotFabIcon">smart_toy</span>
+</button>
+
+<!-- CHATBOT WINDOW -->
+<div class="chatbot-window" id="chatbotWindow">
+    <div class="flex items-center gap-3 p-4" style="border-bottom:1px solid rgba(116,119,127,0.15)">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#1a365d,#0a6c44)">
+            <span class="material-symbols-outlined text-white" style="font-size:18px">smart_toy</span>
+        </div>
+        <div class="flex-1">
+            <div class="text-sm font-bold" style="color:#002045" data-i18n="bot_name">NIDANA AI Assistant</div>
+            <div class="text-xs" style="color:#0a6c44">● <span data-i18n="bot_status">Online</span></div>
+        </div>
+        <button onclick="toggleChatbot()" class="topbar-btn" style="width:28px;height:28px"><span class="material-symbols-outlined" style="font-size:16px">close</span></button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-2" id="chatMessages" style="min-height:280px;max-height:330px"></div>
+    <div class="px-4 pb-2 flex flex-wrap gap-2" id="quickReplies"></div>
+    <div class="p-3 flex items-center gap-2" style="border-top:1px solid rgba(116,119,127,0.15)">
+        <input id="chatInput" class="flex-1 text-sm" style="border:none;outline:none;background:transparent;color:#0d1c2e" placeholder="Ask about login..." data-i18n-placeholder="bot_input_placeholder" onkeydown="if(event.key==='Enter') sendChatMsg()" />
+        <button onclick="sendChatMsg()" class="w-8 h-8 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#1a365d,#0a6c44);border:none;cursor:pointer">
+            <span class="material-symbols-outlined text-white" style="font-size:16px">send</span>
+        </button>
+    </div>
+</div>
+
 <script>
 const I18N = {
     en: {
@@ -253,6 +293,10 @@ document.addEventListener("DOMContentLoaded", () => {
     applyLang(lang);
     createParticles();
     if(sessionStorage.getItem("nidana_user")){window.location.href="code.html";}
+    
+    // Init Chatbot
+    setTimeout(() => addBotMsg(lang === 'hi' ? "नमस्ते! मैं आपकी लॉगिन करने में कैसे मदद कर सकता हूँ?" : "Hello! How can I help you login today?"), 600);
+    renderQuickReplies();
 });
 
 function selectRole(card){
@@ -344,6 +388,86 @@ function createParticles(){
         d.style.animationDelay=Math.random()*15+"s";
         c.appendChild(d);
     }
+}
+
+// --- Chatbot Logic ---
+let chatOpen = false;
+const QR_EN = ["How do I login?", "Demo credentials?", "What is NIDANA?"];
+const QR_HI = ["मैं लॉगिन कैसे करूँ?", "डेमो क्रेडेंशियल्स?", "NIDANA क्या है?"];
+
+function toggleChatbot() {
+    chatOpen = !chatOpen;
+    document.getElementById("chatbotWindow").classList.toggle("open", chatOpen);
+    document.getElementById("chatbotFabIcon").textContent = chatOpen ? "close" : "smart_toy";
+}
+
+function addBotMsg(text) {
+    const msgs = document.getElementById("chatMessages");
+    const div = document.createElement("div");
+    div.style.cssText = "max-width:85%;padding:10px 14px;border-radius:16px;border-bottom-left-radius:4px;font-size:13px;line-height:1.5;margin-bottom:8px;background:rgba(214,227,255,0.5);color:#0d1c2e;align-self:flex-start;white-space:pre-wrap";
+    div.textContent = text;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addUserMsg(text) {
+    const msgs = document.getElementById("chatMessages");
+    const div = document.createElement("div");
+    div.style.cssText = "max-width:85%;padding:10px 14px;border-radius:16px;border-bottom-right-radius:4px;font-size:13px;line-height:1.5;margin-bottom:8px;background:linear-gradient(135deg,#1a365d,#002045);color:white;align-self:flex-end;margin-left:auto";
+    div.textContent = text;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+    const msgs = document.getElementById("chatMessages");
+    const div = document.createElement("div");
+    div.style.cssText = "display:flex;gap:4px;align-items:center;padding:10px 14px;border-radius:16px;border-bottom-left-radius:4px;background:rgba(214,227,255,0.5);width:fit-content;margin-bottom:8px";
+    div.innerHTML = "<div class='typing-dot'></div><div class='typing-dot'></div><div class='typing-dot'></div>";
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+    return div;
+}
+
+function sendChatMsg() {
+    const input = document.getElementById("chatInput");
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = "";
+    addUserMsg(text);
+    document.getElementById("quickReplies").innerHTML = "";
+    const typing = showTyping();
+    setTimeout(() => {
+        typing.remove();
+        addBotMsg(getBotResponse(text.toLowerCase(), lang));
+        renderQuickReplies();
+    }, 800 + Math.random() * 600);
+}
+
+function handleQR(text) {
+    const input = document.getElementById("chatInput");
+    input.value = text;
+    sendChatMsg();
+}
+
+function getBotResponse(msg, l) {
+    if (l === 'hi') {
+        if (/लॉगिन|login/.test(msg)) return "लॉगिन करने के लिए, अपनी भूमिका (उदा. 'Lead Doctor') चुनें, और उपयोगकर्ता नाम और पासवर्ड दर्ज करें।";
+        if (/डेमो|demo|credentials/.test(msg)) return "डेमो के लिए, उपयोगकर्ता नाम: demo और पासवर्ड: nidana2024 का उपयोग करें।";
+        if (/nidana|निदान/.test(msg)) return "NIDANA आयुर्वेद अनुसंधान के लिए एक ब्लॉकचेन-समर्थित क्लीनिकल ट्रायल मैनेजमेंट सिस्टम है।";
+        return "क्षमा करें, मुझे समझ नहीं आया। आप लॉगिन, डेमो क्रेडेंशियल्स या NIDANA के बारे में पूछ सकते हैं।";
+    } else {
+        if (/login|sign in|how/.test(msg)) return "To login, first select your role from the cards (e.g., Lead Doctor), then enter your username and password.";
+        if (/demo|credentials|password|user/.test(msg)) return "For the demo, select any role and use the username 'demo' and the password 'nidana2024'.";
+        if (/nidana|what is/.test(msg)) return "NIDANA is a blockchain-backed Clinical Trial Management System for Ayurvedic medicine research.";
+        return "I'm not sure I understood. You can ask me how to login, what the demo credentials are, or what NIDANA is.";
+    }
+}
+
+function renderQuickReplies() {
+    const qr = document.getElementById("quickReplies");
+    const replies = lang === "hi" ? QR_HI : QR_EN;
+    qr.innerHTML = replies.map(r => `<button style="padding:4px 10px;border-radius:12px;border:1px solid rgba(26,54,93,0.2);background:rgba(214,227,255,0.3);font-size:11px;font-weight:600;color:#002045;cursor:pointer" onclick="handleQR('${r.replace(/'/g, "\\\\'")}')"> ${r}</button>`).join("");
 }
 </script>
 </body>

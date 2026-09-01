@@ -110,7 +110,18 @@
         .sidebar-link {
             transition: all 0.3s ease;
             position: relative;
-            overflow: hidden
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 24px;
+            color: #43474e;
+            text-decoration: none;
+            cursor: pointer;
+            border-radius: 0 24px 24px 0;
+            margin-right: 16px;
+            font-size: 15px;
+            font-weight: 500;
         }
 
         .sidebar-link::before {
@@ -151,6 +162,17 @@
             opacity: 1;
             visibility: visible;
             transform: translateY(0)
+        }
+
+        .modal-overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
         }
 
         .mobile-sidebar {
@@ -515,129 +537,93 @@
             }
         }
 
-        .dark .text-primary {
-            color: #adc7f7 !important
-        }
-
-        .dark body {
-            color: #d0e1ff
-        }
-
-        /* Dark mode global text fixes */
-        .dark [style*="color:#43474e"] {
-            color: #94afd4 !important
-        }
-
-        .dark [style*="color:#002045"] {
-            color: #c8deff !important
-        }
-
-        .dark [style*="color:#0d1c2e"] {
-            color: #e4efff !important
-        }
-
-        .dark [style*="color:#74777f"] {
-            color: #7fa8d0 !important
-        }
-
-        /* Dark card text overrides */
-        .dark .glass h2,
-        .dark .glass h3,
-        .dark .glass h4 {
-            color: #c8deff !important
-        }
-
-        .dark .glass p,
-        .dark .glass span:not(.material-symbols-outlined):not([style*="color:#0a6c44"]):not([style*="color:#ba1a1a"]):not([style*="color:#f59e0b"]) {
-            color: #a8c8ef
-        }
-
-        /* Sidebar dark fixes */
-        .dark #sidebar h1 {
-            color: #c8deff !important
-        }
-
-        .dark .sidebar-link {
-            color: #a8c8ef !important
-        }
-
-        .dark .sidebar-link.active {
-            color: #e8f4ff !important;
-            background: rgba(58, 107, 199, 0.25) !important
-        }
-
-        .dark .sidebar-link:hover {
-            color: #ffffff !important;
-            background: rgba(58, 107, 199, 0.15) !important
-        }
-
-        /* Topbar dark */
-        .dark header [style*="color:#002045"] {
-            color: #c8deff !important
-        }
-
-        /* Search input dark */
-        .dark #searchInput {
-            background: rgba(255, 255, 255, 0.08) !important;
-            border-color: rgba(100, 150, 255, 0.3) !important;
-            color: #e4efff !important
-        }
-
-        /* Better Dark Mode */
-        .dark body {
-            background: #000c14;
+        /* STRICT DARK MODE OVERRIDES */
+        .dark body, 
+        .dark .gradient-bg {
+            background: #16171a !important;
+            background-image: none !important;
             color: #ffffff !important;
         }
 
         .dark .glass {
-            background: rgba(0, 32, 69, 0.85);
-            border: 1px solid rgba(100, 150, 255, 0.15);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            background: rgba(30, 30, 36, 0.9) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+            color: #ffffff !important;
         }
 
-        .dark h1,
-        .dark h2,
-        .dark h3,
-        .dark h4,
-        .dark label,
-        .dark p,
-        .dark span {
-            color: inherit !important;
+        /* Ensure text is white but keep graph/status colors */
+        .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6, 
+        .dark p, .dark label, .dark span:not(.material-symbols-outlined):not([style*="color:#0a6c44"]):not([style*="color:#ba1a1a"]):not([style*="color:#f59e0b"]):not(.pulse-dot), 
+        .dark td, .dark th {
+            color: #ffffff !important;
         }
 
-        .dark input,
-        .dark select,
-        .dark textarea {
+        .dark .text-on-surface, .dark .text-on-surface-variant, .dark [style*="color:#43474e"], .dark [style*="color:#002045"], .dark [style*="color:#0d1c2e"], .dark [style*="color:#74777f"] {
+            color: #e0e0e0 !important;
+        }
+
+        /* Override inline background colors of cards */
+        .dark [style*="linear-gradient(135deg,#1a365d,#002045)"],
+        .dark [style*="linear-gradient(135deg,#0a6c44,#054d30)"],
+        .dark [style*="linear-gradient(135deg,#4f2e00,#321b00)"],
+        .dark [style*="linear-gradient(135deg,#ba1a1a,#93000a)"] {
+            background: #1e1e24 !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        /* Sidebar & Navigation */
+        .dark .sidebar-link {
+            color: #e0e0e0 !important;
+        }
+        .dark .sidebar-link.active {
             background: rgba(255, 255, 255, 0.1) !important;
-            color: #fff !important;
-            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
         }
-
-        .dark .sidebar-link:hover,
-        .dark .card-hover:hover {
+        .dark .sidebar-link:hover, .dark .card-hover:hover {
             background: rgba(255, 255, 255, 0.05) !important;
         }
 
-        .dark .sidebar-link.active {
-            background: rgba(100, 150, 255, 0.15) !important;
+        /* Inputs & Tables */
+        .dark input, .dark select, .dark textarea, .dark .settings-input {
+            background-color: #1e1e24 !important;
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
         }
-
-        .dark table th {
+        .dark #searchInput {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+        .dark table th, .dark table td {
             border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
         }
 
-        .dark table td {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-        }
-
-        .dark .action-btn-primary {
+        /* Buttons to Black in dark mode */
+        .dark .action-btn-primary, .dark .btn-primary, .dark .topbar-btn {
             background: #000000 !important;
             color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
         }
-
-        .dark .action-btn-primary:hover {
-            background: #1a1a1a !important;
+        .dark .action-btn-primary:hover, .dark .btn-primary:hover, .dark .topbar-btn:hover {
+            background: #222222 !important;
+        }
+        .dark .action-btn-secondary {
+            background: transparent !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+        .dark .action-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+        .dark .action-btn-danger {
+            background: #ba1a1a !important;
+            color: #ffffff !important;
+        }
+        .dark .action-btn-danger:hover {
+            background: #93000a !important;
         }
 
         /* App-like behavior: disable text selection and focus rings everywhere except inputs */
@@ -650,6 +636,8 @@
             -webkit-user-select: none !important;
             -moz-user-select: none !important;
             outline: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+            caret-color: transparent !important;
         }
 
         input,
@@ -670,7 +658,7 @@
     </style>
 </head>
 
-<body class="gradient-bg antialiased min-h-screen font-sans flex" style="color:#0d1c2e">
+<body class="gradient-bg antialiased min-h-screen font-sans" style="color:#0d1c2e">
 
     <div class="particle-container" id="particleContainer"></div>
 
@@ -712,7 +700,7 @@
     <div class="w-64 h-full glass flex flex-col fixed left-0 top-0 z-[50] transition-transform duration-300 lg:translate-x-0 -translate-x-full border-r border-outline-variant/30"
         id="sidebar">
         <div class="h-20 flex items-center px-6 gap-3 border-b border-outline-variant/30">
-            <div class="dark:bg-white dark:p-1.5 dark:rounded-xl flex items-center justify-center">
+            <div class="flex items-center justify-center">
                 <img alt="NIDANA Logo" class="h-8 w-auto object-contain" style="mix-blend-mode: multiply;"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" />
             </div>
@@ -776,17 +764,17 @@
                 </button>
             </div>
         </div>
-        </nav>
+    </div>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col min-h-screen lg:ml-72 relative z-10">
+        <div class="flex flex-col min-h-screen lg:ml-64 relative z-10">
             <!-- TopBar -->
             <header
-                class="fixed top-0 lg:left-72 left-0 right-0 z-40 flex justify-between items-center px-6 h-16 glass border-b border-outline-variant/30">
+                class="fixed top-0 lg:left-64 left-0 right-0 z-40 flex justify-between items-center px-6 h-16 glass border-b border-outline-variant/30">
                 <div class="flex items-center gap-4 lg:hidden">
                     <button class="topbar-btn" onclick="toggleSidebar()"><span
                             class="material-symbols-outlined">menu</span></button>
-                    <div class="dark:bg-white dark:p-1 dark:rounded-lg flex items-center justify-center">
+                    <div class="flex items-center justify-center">
                         <img alt="NIDANA" class="h-8 w-auto" style="mix-blend-mode: multiply;"
                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" />
                     </div>
@@ -849,9 +837,18 @@
                         <p class="text-lg" style="color:#43474e" id="sectionSubtitle">Monitor clinical trial progress,
                             safety signals, and enrollment metrics.</p>
                     </div>
+                    <div class="mb-8 glass p-4 rounded-2xl flex flex-wrap gap-4 items-center shadow-sm">
+                        <span class="font-bold text-sm uppercase tracking-wider" style="color:#002045; margin-right:auto">Quick Actions:</span>
+                        <button onclick="document.getElementById('patientModal').classList.add('open')" class="action-btn action-btn-primary flex items-center gap-1 text-sm">
+                            <span class="material-symbols-outlined" style="font-size:18px">person_add</span> Add Patient
+                        </button>
+                        <button onclick="document.getElementById('trialModal').classList.add('open')" class="action-btn action-btn-secondary flex items-center gap-1 text-sm">
+                            <span class="material-symbols-outlined" style="font-size:18px">add_circle</span> Create Trial
+                        </button>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="rounded-2xl p-6 shadow-lg card-hover text-white"
-                            style="background:linear-gradient(135deg,#1a365d,#002045)">
+                        <div class="rounded-2xl p-6 shadow-lg card-hover text-white cursor-pointer"
+                            style="background:linear-gradient(135deg,#1a365d,#002045)" onclick="switchSection('studies')">
                             <div class="flex justify-between items-start mb-4">
                                 <div class="p-2.5 rounded-xl" style="background:rgba(255,255,255,0.15)"><span
                                         class="material-symbols-outlined">science</span></div>
@@ -863,8 +860,8 @@
                                 Active Studies</p>
                             <h3 class="text-3xl font-bold" id="stat-activeStudies">—</h3>
                         </div>
-                        <div class="rounded-2xl p-6 shadow-lg card-hover text-white"
-                            style="background:linear-gradient(135deg,#0a6c44,#054d30)">
+                        <div class="rounded-2xl p-6 shadow-lg card-hover text-white cursor-pointer"
+                            style="background:linear-gradient(135deg,#0a6c44,#054d30)" onclick="switchSection('consent')">
                             <div class="flex justify-between items-start mb-4">
                                 <div class="p-2.5 rounded-xl" style="background:rgba(255,255,255,0.15)"><span
                                         class="material-symbols-outlined">group</span></div>
@@ -876,8 +873,8 @@
                                 Patients Joined</p>
                             <h3 class="text-3xl font-bold" id="stat-totalPatients">—</h3>
                         </div>
-                        <div class="rounded-2xl p-6 shadow-lg card-hover text-white"
-                            style="background:linear-gradient(135deg,#4f2e00,#321b00)">
+                        <div class="rounded-2xl p-6 shadow-lg card-hover text-white cursor-pointer"
+                            style="background:linear-gradient(135deg,#4f2e00,#321b00)" onclick="switchSection('ethics')">
                             <div class="flex justify-between items-start mb-4">
                                 <div class="p-2.5 rounded-xl" style="background:rgba(255,255,255,0.15)"><span
                                         class="material-symbols-outlined">pending_actions</span></div>
@@ -888,8 +885,8 @@
                                 Approvals Needed</p>
                             <h3 class="text-3xl font-bold" id="stat-pendingApprovals">—</h3>
                         </div>
-                        <div class="rounded-2xl p-6 shadow-lg card-hover text-white"
-                            style="background:linear-gradient(135deg,#ba1a1a,#93000a)">
+                        <div class="rounded-2xl p-6 shadow-lg card-hover text-white cursor-pointer"
+                            style="background:linear-gradient(135deg,#ba1a1a,#93000a)" onclick="switchSection('safety')">
                             <div class="flex justify-between items-start mb-4">
                                 <div class="p-2.5 rounded-xl" style="background:rgba(255,255,255,0.15)"><span
                                         class="material-symbols-outlined">warning</span></div>
@@ -1256,7 +1253,7 @@
         </div>
 
         <!-- Add Patient Modal -->
-        <div id="patientModal" class="modal-overlay">
+        <div id="patientModal" class="modal-overlay fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50">
             <div class="glass rounded-3xl p-8 max-w-md w-full relative">
                 <button onclick="document.getElementById('patientModal').classList.remove('open')"
                     class="absolute top-4 right-4"><span class="material-symbols-outlined">close</span></button>
@@ -1284,7 +1281,7 @@
         </div>
 
         <!-- Add Trial Modal -->
-        <div id="trialModal" class="modal-overlay">
+        <div id="trialModal" class="modal-overlay fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50">
             <div class="glass rounded-3xl p-8 max-w-md w-full relative max-h-[90vh] overflow-y-auto">
                 <button onclick="document.getElementById('trialModal').classList.remove('open')"
                     class="absolute top-4 right-4"><span class="material-symbols-outlined">close</span></button>
@@ -1351,12 +1348,12 @@
 
             async function initData() {
                 const trialsRes = await apiFetch("/trials");
-                if (trialsRes && trialsRes.success && trialsRes.data && trialsRes.data.length > 0) {
+                if (trialsRes && trialsRes.success && trialsRes.data) {
                     MOCK_TRIALS = trialsRes.data;
                 }
 
                 const patientsRes = await apiFetch("/patients");
-                if (patientsRes && patientsRes.success && patientsRes.data && patientsRes.data.length > 0) {
+                if (patientsRes && patientsRes.success && patientsRes.data) {
                     MOCK_PATIENTS = patientsRes.data;
                 }
                 console.log("Loaded data:", { trials: MOCK_TRIALS.length, patients: MOCK_PATIENTS.length });
