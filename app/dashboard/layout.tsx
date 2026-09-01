@@ -78,7 +78,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="h-16 flex items-center px-6 border-b border-border shrink-0">
           <Link href="/" className="flex items-center gap-2">
             <Leaf className="h-6 w-6 text-brand-600" />
-            <span className="font-heading font-bold text-xl uppercase tracking-wider text-slate-800 dark:text-slate-200">AIIA CTMS</span>
+            <span className="font-heading font-bold text-xl uppercase tracking-wider text-slate-800 dark:text-slate-200">NIDANA</span>
           </Link>
         </div>
         
