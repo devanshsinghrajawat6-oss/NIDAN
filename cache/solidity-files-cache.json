@@ -1,0 +1,41 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\DEVANSH SINGH\\Downloads\\stitch_nidana_ayurveda_ctms_dashboard\\contracts\\CTMSLedger.sol": {
+      "lastModificationDate": 1788253572623,
+      "contentHash": "d353fd91e482a16f39cbdc0a03bd6894",
+      "sourceName": "contracts/CTMSLedger.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "CTMSLedger"
+      ]
+    }
+  }
+}
