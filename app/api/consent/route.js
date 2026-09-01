@@ -25,6 +25,14 @@ export async function POST(request) {
   try {
     await connectDB();
     const body = await request.json();
+
+    if (body.witnessName && /\d/.test(body.witnessName)) {
+      return NextResponse.json({ success: false, error: "Witness name cannot contain numbers." }, { status: 400 });
+    }
+    if (body.investigatorName && /\d/.test(body.investigatorName)) {
+      return NextResponse.json({ success: false, error: "Investigator name cannot contain numbers." }, { status: 400 });
+    }
+
     const consentId = body.consentId || `CON-${Date.now()}`;
 
     // Hash the consent data for integrity

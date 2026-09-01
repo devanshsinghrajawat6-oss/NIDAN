@@ -20,6 +20,8 @@
   --color-card: var(--card-bg);
   --color-card-foreground: var(--card-fg);
   --color-border: var(--border-color);
+  --color-muted: var(--muted-bg);
+  --color-muted-foreground: var(--muted-fg);
 }
 
 :root {
@@ -28,6 +30,9 @@
   --card-bg: #ffffff;
   --card-fg: #0f172a;
   --border-color: #e2e8f0;
+  --muted-bg: #f1f5f9;
+  --muted-fg: #64748b;
+  --sidebar-width: 256px;
 }
 
 .dark {
@@ -36,6 +41,13 @@
   --card-bg: #0f172a;
   --card-fg: #f8fafc;
   --border-color: #1e293b;
+  --muted-bg: #0f172a;
+  --muted-fg: #94a3b8;
+}
+
+/* ─── Base ────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -43,4 +55,181 @@ body {
   color: var(--fg);
   font-family: var(--font-sans), sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Custom Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 99px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ─── Animations ────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes pulse-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);  }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px);   }
+  50%       { transform: translateY(-6px);  }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes count-up {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1);   }
+}
+@keyframes slide-modal {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);     }
+}
+
+.animate-fade-in-up      { animation: fadeInUp      0.45s ease both; }
+.animate-fade-in-down    { animation: fadeInDown     0.35s ease both; }
+.animate-fade-in         { animation: fadeIn         0.35s ease both; }
+.animate-slide-in-right  { animation: slideInRight   0.4s  ease both; }
+.animate-slide-in-left   { animation: slideInLeft    0.4s  ease both; }
+.animate-scale-in        { animation: scaleIn        0.35s ease both; }
+.animate-float           { animation: float          3s ease-in-out infinite; }
+.animate-spin-slow       { animation: spin-slow      8s linear infinite; }
+.animate-count-up        { animation: count-up       0.5s ease both; }
+.animate-slide-modal     { animation: slide-modal    0.3s ease both; }
+
+/* Stagger delays */
+.delay-100  { animation-delay: 0.1s; }
+.delay-150  { animation-delay: 0.15s; }
+.delay-200  { animation-delay: 0.2s; }
+.delay-300  { animation-delay: 0.3s; }
+.delay-400  { animation-delay: 0.4s; }
+.delay-500  { animation-delay: 0.5s; }
+
+/* ─── Shimmer Skeleton ──────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--muted-bg) 25%,
+    var(--border-color) 50%,
+    var(--muted-bg) 75%
+  );
+  background-size: 200% auto;
+  animation: shimmer 1.5s linear infinite;
+  border-radius: 8px;
+}
+
+/* ─── Glassmorphism ─────────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.glass-dark {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Premium Gradient Text ─────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 50%, #4ade80 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-text-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Card hover lift ───────────────────────────────────────── */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px -8px rgba(0,0,0,0.12);
+}
+
+/* ─── Status dot pulse ──────────────────────────────────────── */
+.status-live {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ─── Nav active accent ─────────────────────────────────────── */
+.nav-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #16a34a;
+  border-radius: 0 4px 4px 0;
+}
+
+/* ─── Focus ring ────────────────────────────────────────────── */
+.focus-ring:focus {
+  outline: 2px solid #22c55e;
+  outline-offset: 2px;
+}
+
+/* ─── Recharts overrides (dark mode) ───────────────────────── */
+.dark .recharts-text {
+  fill: #94a3b8;
+}
+.dark .recharts-cartesian-grid-horizontal line,
+.dark .recharts-cartesian-grid-vertical line {
+  stroke: #1e293b;
+}
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
 }

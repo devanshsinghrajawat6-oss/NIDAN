@@ -19,6 +19,11 @@ export async function POST(request) {
   try {
     await connectDB();
     const body = await request.json();
+
+    if (body.name && /^\d+$/.test(body.name.trim())) {
+      return NextResponse.json({ success: false, error: "Milestone name cannot consist of only numbers." }, { status: 400 });
+    }
+
     const milestoneId = body.milestoneId || `MS-${Date.now()}`;
     const milestone = await Milestone.create({ ...body, milestoneId });
     await writeAuditLog({ action: 'CREATE', resource: 'Milestone', resourceId: milestoneId, newValue: body });

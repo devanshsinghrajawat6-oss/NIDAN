@@ -26,6 +26,13 @@ export async function POST(request) {
     const body = await request.json();
     await connectDB();
 
+    if (body.whoDrugName && /^\d+$/.test(body.whoDrugName.trim())) {
+      return NextResponse.json({ success: false, error: "WHODrug name cannot consist of only numbers." }, { status: 400 });
+    }
+    if (body.description && /^\d+$/.test(body.description.trim())) {
+      return NextResponse.json({ success: false, error: "Clinical description cannot consist of only numbers." }, { status: 400 });
+    }
+
     const eventId = body.eventId || `AE-${Date.now()}`;
 
     // 1. Submit hash to Blockchain for ALCOA+ compliance

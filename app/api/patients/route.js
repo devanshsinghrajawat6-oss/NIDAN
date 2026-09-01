@@ -17,6 +17,10 @@ export async function POST(req) {
     try {
         const body = await req.json();
         await connectDB();
+
+        if (body.fullName && /\d/.test(body.fullName)) {
+            return NextResponse.json({ success: false, error: "Patient name cannot contain numbers." }, { status: 400 });
+        }
         
         // 1. Submit consent hash to Blockchain
         const txHash = await storeOnBlockchain(

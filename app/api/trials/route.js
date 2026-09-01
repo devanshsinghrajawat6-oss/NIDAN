@@ -22,6 +22,13 @@ export async function POST(req) {
         await connectDB();
         const body = await req.json();
         
+        if (body.principalInvestigator && /\d/.test(body.principalInvestigator)) {
+            return NextResponse.json({ success: false, error: "Principal Investigator name cannot contain numbers." }, { status: 400 });
+        }
+        if (body.name && /^\d+$/.test(body.name.trim())) {
+            return NextResponse.json({ success: false, error: "Trial title cannot consist of only numbers." }, { status: 400 });
+        }
+        
         const newTrial = new Trial({
             trialId: body.trialId,
             name: body.name,

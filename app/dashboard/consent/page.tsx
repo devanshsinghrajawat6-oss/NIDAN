@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ShieldCheck, Plus, CheckCircle2, AlertTriangle, X, FileText, UserX, ExternalLink, Fingerprint } from "lucide-react";
+import { validatePersonName } from "@/lib/validation";
 
 export default function ConsentHubPage() {
   const [consents, setConsents] = useState<any[]>([]);
@@ -55,6 +56,16 @@ export default function ConsentHubPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setFormError("");
+
+    if (!form.patientId) { setFormError("Patient selection is required."); setIsSubmitting(false); return; }
+    if (!form.trialId) { setFormError("Trial selection is required."); setIsSubmitting(false); return; }
+
+    const witnessErr = validatePersonName(form.witnessName, "Witness Name");
+    if (witnessErr) { setFormError(witnessErr); setIsSubmitting(false); return; }
+
+    const invErr = validatePersonName(form.investigatorName, "Investigator Name");
+    if (invErr) { setFormError(invErr); setIsSubmitting(false); return; }
+
     try {
       const res = await fetch('/api/consent', {
         method: 'POST',
