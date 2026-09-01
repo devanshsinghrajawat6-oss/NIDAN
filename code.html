@@ -540,13 +540,13 @@
         /* STRICT DARK MODE OVERRIDES */
         .dark body, 
         .dark .gradient-bg {
-            background: #16171a !important;
+            background: #000000 !important;
             background-image: none !important;
             color: #ffffff !important;
         }
 
         .dark .glass {
-            background: rgba(30, 30, 36, 0.9) !important;
+            background: #080808 !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
             color: #ffffff !important;
@@ -568,7 +568,7 @@
         .dark [style*="linear-gradient(135deg,#0a6c44,#054d30)"],
         .dark [style*="linear-gradient(135deg,#4f2e00,#321b00)"],
         .dark [style*="linear-gradient(135deg,#ba1a1a,#93000a)"] {
-            background: #1e1e24 !important;
+            background: #111111 !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
         }
@@ -655,7 +655,8 @@
         .chatbot-fab {
             cursor: pointer;
         }
-    </style>
+    .dark img[alt="NIDANA Logo"] { filter: invert(1) sepia(1) hue-rotate(80deg) saturate(5) brightness(1.2) !important; mix-blend-mode: screen !important; } 
+</style>
 </head>
 
 <body class="gradient-bg antialiased min-h-screen font-sans" style="color:#0d1c2e">
@@ -701,7 +702,7 @@
         id="sidebar">
         <div class="h-20 flex items-center px-6 gap-3 border-b border-outline-variant/30">
             <div class="flex items-center justify-center">
-                <img alt="NIDANA Logo" class="h-8 w-auto object-contain" style="mix-blend-mode: multiply;"
+                <img alt="NIDANA Logo" class="h-8 w-auto object-contain" 
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" />
             </div>
             <span class="text-xl font-bold font-headline-md tracking-wide" style="color:#002045">NIDANA</span>
@@ -775,7 +776,7 @@
                     <button class="topbar-btn" onclick="toggleSidebar()"><span
                             class="material-symbols-outlined">menu</span></button>
                     <div class="flex items-center justify-center">
-                        <img alt="NIDANA" class="h-8 w-auto" style="mix-blend-mode: multiply;"
+                        <img alt="NIDANA" class="h-8 w-auto" 
                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" />
                     </div>
                 </div>

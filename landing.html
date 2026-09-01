@@ -663,12 +663,12 @@
         /* STRICT DARK MODE OVERRIDES */
         .dark body, 
         .dark .gradient-bg {
-            background: #16171a !important;
+            background: #000000 !important;
             background-image: none !important;
             color: #ffffff !important;
         }
         .dark .glass, .dark .glass-dark {
-            background: rgba(30, 30, 36, 0.9) !important;
+            background: #080808 !important;
             border-color: rgba(255, 255, 255, 0.1) !important;
             color: #ffffff !important;
         }
@@ -677,6 +677,7 @@
         .dark p, .dark td, .dark th {
             color: #ffffff !important;
         }
+        .dark .particle svg { filter: brightness(2.5) saturate(1.5); opacity: 0.8; } 
         .dark .text-on-surface, .dark .text-on-surface-variant {
             color: #e0e0e0 !important;
         }
@@ -694,9 +695,9 @@
             color: #ffffff !important;
             border-color: rgba(255,255,255,0.2) !important;
         }
-        /* Transparent Logo in Dark Mode */
+        /* Transparent Green Logo in Dark Mode */
         .dark img.logo-img, .dark img[alt="NIDANA Logo"] {
-            filter: brightness(0) invert(1) !important;
+            filter: invert(1) sepia(1) hue-rotate(80deg) saturate(5) brightness(1.2) !important;
             mix-blend-mode: screen !important;
         }
     </style>
@@ -875,7 +876,7 @@
             <!-- Logo -->
             <a href="#" class="flex items-center gap-3 group">
                 <img alt="NIDANA Logo" class="h-10 w-auto object-contain transition-transform group-hover:scale-105"
-                    style="mix-blend-mode: multiply;"
+                    
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" />
                 <span class="text-headline-md font-headline-md font-black text-primary">NIDANA</span>
             </a>
@@ -979,7 +980,7 @@
                                 Patients</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-headline-lg font-headline-lg text-primary counter" data-target="100">0
+                            <div class="text-headline-lg font-headline-lg text-primary counter" data-target="0">0
                             </div>
                             <div class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">%
                                 Compliance</div>
@@ -1359,25 +1360,25 @@
                 </div>
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 reveal">
                     <div class="glass rounded-2xl p-8 text-center hover-lift">
-                        <div class="text-display-lg font-display-lg text-primary counter" data-target="14">0</div>
+                        <div class="text-display-lg font-display-lg text-primary counter" data-target="0">0</div>
                         <div
                             class="text-label-bold font-label-bold text-on-surface-variant uppercase tracking-wider mt-2">
                             Active Trials</div>
                     </div>
                     <div class="glass rounded-2xl p-8 text-center hover-lift">
-                        <div class="text-display-lg font-display-lg text-secondary counter" data-target="6">0</div>
+                        <div class="text-display-lg font-display-lg text-secondary counter" data-target="0">0</div>
                         <div
                             class="text-label-bold font-label-bold text-on-surface-variant uppercase tracking-wider mt-2">
                             Research Sites</div>
                     </div>
                     <div class="glass rounded-2xl p-8 text-center hover-lift">
-                        <div class="text-display-lg font-display-lg text-primary counter" data-target="1248">0</div>
+                        <div class="text-display-lg font-display-lg text-primary counter" data-target="0">0</div>
                         <div
                             class="text-label-bold font-label-bold text-on-surface-variant uppercase tracking-wider mt-2">
                             Patients Enrolled</div>
                     </div>
                     <div class="glass rounded-2xl p-8 text-center hover-lift">
-                        <div class="text-display-lg font-display-lg text-secondary counter" data-target="100">0</div>
+                        <div class="text-display-lg font-display-lg text-secondary counter" data-target="0">0</div>
                         <div
                             class="text-label-bold font-label-bold text-on-surface-variant uppercase tracking-wider mt-2">
                             % Uptime</div>

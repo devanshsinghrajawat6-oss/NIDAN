@@ -86,7 +86,8 @@
         @keyframes typing { 0%, 60%, 100% { transform: translateY(0) } 30% { transform: translateY(-6px) } }
         .topbar-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; color: #43474e }
         .dark .topbar-btn { background: rgba(255, 255, 255, 0.15); color: #c8deff }
-    </style>
+    .dark img[alt="NIDANA Logo"] { filter: invert(1) sepia(1) hue-rotate(80deg) saturate(5) brightness(1.2) !important; mix-blend-mode: screen !important; } 
+</style>
 </head>
 <body class="login-bg flex items-center justify-center min-h-screen p-4 transition-colors duration-500">
 
@@ -106,7 +107,7 @@
 <div class="w-full max-w-2xl fade-in">
     <div class="text-center mb-8">
         <div class="flex justify-center mb-4">
-            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" alt="NIDANA Logo" class="h-14 w-auto object-contain logo-animated" style="mix-blend-mode: multiply;"/>
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPpE1JuANALOtj7pPL5KW7_loWEgai-GDvceG0F96vaX31s_F6W2GqYh7QOYJLlcihNWqUEtWLIXU63nnMSiBfUFGwxG-qI1a6hRy6NXl-TdwFDwURXYyyTh9P7fioBd-nSoG8WMwoPQpdYPxtnwHOFf-6-65-t7xI7Jj69GAreqa4Wu7dvyzyliGMqav4qjh0zJ0ae4Hj66fKbjjC8Kdss0PojysFxtzAKuw7VmVF5rcttNsYc1Tes4y5PmOxXEIv" alt="NIDANA Logo" class="h-14 w-auto object-contain logo-animated" />
         </div>
         <h1 style="font-family:Manrope,sans-serif;font-size:2.5rem;font-weight:900;color:#002045">NIDANA</h1>
         <p class="text-sm mt-1" style="color:#43474e" data-i18n="subtitle">Clinical Trial Management System · Blockchain Secured</p>
