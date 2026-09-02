@@ -9,6 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "node scripts/seed_database.js",
+    "blockchain:node": "hardhat node",
+    "blockchain:deploy": "hardhat run scripts/deploy.js --network localhost",
     "blockchain:show": "node scripts/show_blockchain_data.js"
   },
   "dependencies": {
