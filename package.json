@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "seed": "node scripts/seed_database.js",
     "blockchain:show": "node scripts/show_blockchain_data.js"
   },
   "dependencies": {

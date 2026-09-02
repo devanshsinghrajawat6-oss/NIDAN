@@ -60,7 +60,7 @@ class AyurvedaClinicalTrialContract extends Contract {
     }
 
     // 2. Herb Batch Traceability Contract
-    async registerHerbBatch(ctx, batchID, supplierID, herbType, certificationRef, harvestDate, testResultsHash) {
+    async registerHerbBatch(ctx, batchID, supplierID, herbType, certificationRef, harvestDate, testResultsHash, expiryDate) {
         const batch = {
             docType: 'herbBatch',
             batchID: batchID,
@@ -69,7 +69,9 @@ class AyurvedaClinicalTrialContract extends Contract {
             certificationRef: certificationRef,
             harvestDate: harvestDate,
             testResultsHash: testResultsHash,
-            status: 'CERTIFIED'
+            expiryDate: expiryDate || null,
+            status: 'CERTIFIED',
+            createdAt: new Date().toISOString()
         };
 
         await ctx.stub.putState(batchID, Buffer.from(JSON.stringify(batch)));
@@ -79,25 +81,93 @@ class AyurvedaClinicalTrialContract extends Contract {
     async getHerbBatch(ctx, batchID) {
         const batchAsBytes = await ctx.stub.getState(batchID);
         if (!batchAsBytes || batchAsBytes.length === 0) {
-            throw new Error(`${batchID} does not exist`);
+            throw new Error(`Herb batch ${batchID} does not exist`);
         }
         return JSON.parse(batchAsBytes.toString());
     }
 
-    // 3. Dosage Log Contract with Compliance Rules
-    async logDosage(ctx, logID, patientID, trialID, dosage, herbBatchID, recordedBy) {
-        // Rule: Consent must exist and be valid for patient
+    async flagHerbBatchRecall(ctx, batchID, reason) {
+        const batch = await this.getHerbBatch(ctx, batchID);
+        batch.status = 'RECALLED';
+        batch.recallReason = reason;
+        batch.recalledAt = new Date().toISOString();
+
+        await ctx.stub.putState(batchID, Buffer.from(JSON.stringify(batch)));
+        ctx.stub.setEvent('HerbBatchRecalled', Buffer.from(JSON.stringify(batch)));
+        return JSON.stringify(batch);
+    }
+
+    // 3. Dosage Record & Patient Administration Contract
+    async createDosageRecord(ctx, dosageID, trialID, herbBatchIDsJSON, formulationName, manufacturerDetails) {
+        const herbBatchIDs = JSON.parse(herbBatchIDsJSON);
+        
+        // Compliance Rule: Verify ALL referenced herb batches exist, are CERTIFIED, and not expired/recalled
+        for (const batchID of herbBatchIDs) {
+            const batch = await this.getHerbBatch(ctx, batchID);
+            if (batch.status !== 'CERTIFIED') {
+                throw new Error(`Compliance Breach: Herb batch ${batchID} status is '${batch.status}' (must be CERTIFIED).`);
+            }
+            if (batch.expiryDate && new Date(batch.expiryDate) < new Date()) {
+                throw new Error(`Compliance Breach: Herb batch ${batchID} has expired.`);
+            }
+        }
+
+        const dosageRecord = {
+            docType: 'dosageRecord',
+            dosageID: dosageID,
+            trialID: trialID,
+            herbBatchIDs: herbBatchIDs,
+            formulationName: formulationName,
+            manufacturerDetails: manufacturerDetails,
+            status: 'ACTIVE',
+            createdAt: new Date().toISOString()
+        };
+
+        await ctx.stub.putState(dosageID, Buffer.from(JSON.stringify(dosageRecord)));
+        return JSON.stringify(dosageRecord);
+    }
+
+    async logPatientAdministration(ctx, adminID, patientID, dosageID, trialID, site, timestamp) {
+        // Rule: Verify patient informed consent exists
         const consents = await this.getConsent(ctx, patientID);
         if (!consents || consents.length === 0) {
             throw new Error(`Compliance Breach: No valid consent found for patient ${patientID}`);
         }
 
-        // Rule: Herb batch must be certified
+        // Rule: Verify dosage record exists and is ACTIVE
+        const dosageAsBytes = await ctx.stub.getState(dosageID);
+        if (!dosageAsBytes || dosageAsBytes.length === 0) {
+            throw new Error(`Dosage record ${dosageID} does not exist.`);
+        }
+        const dosageRecord = JSON.parse(dosageAsBytes.toString());
+        if (dosageRecord.status !== 'ACTIVE') {
+            throw new Error(`Compliance Breach: Dosage record ${dosageID} is currently ${dosageRecord.status}.`);
+        }
+
+        const administration = {
+            docType: 'patientAdministration',
+            adminID: adminID,
+            patientID: patientID, // Hashed/Pseudonymized ID
+            dosageID: dosageID,
+            trialID: trialID,
+            site: site,
+            timestamp: timestamp || new Date().toISOString()
+        };
+
+        await ctx.stub.putState(adminID, Buffer.from(JSON.stringify(administration)));
+        return JSON.stringify(administration);
+    }
+
+    async logDosage(ctx, logID, patientID, trialID, dosage, herbBatchID, recordedBy) {
+        // Legacy fallback method for backwards compatibility
+        const consents = await this.getConsent(ctx, patientID);
+        if (!consents || consents.length === 0) {
+            throw new Error(`Compliance Breach: No valid consent found for patient ${patientID}`);
+        }
         const batch = await this.getHerbBatch(ctx, herbBatchID);
         if (batch.status !== 'CERTIFIED') {
             throw new Error(`Compliance Breach: Herb batch ${herbBatchID} is not certified.`);
         }
-
         const dosageLog = {
             docType: 'dosageLog',
             patientID: patientID,
@@ -107,7 +177,6 @@ class AyurvedaClinicalTrialContract extends Contract {
             timestamp: new Date().toISOString(),
             recordedBy: recordedBy
         };
-
         await ctx.stub.putState(logID, Buffer.from(JSON.stringify(dosageLog)));
         return JSON.stringify(dosageLog);
     }

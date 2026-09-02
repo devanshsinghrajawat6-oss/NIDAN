@@ -27,6 +27,7 @@ const NAV_GROUPS = [
   {
     label: "Compliance & Safety",
     items: [
+      { name: "Herb Traceability",    href: "/dashboard/traceability",icon: Leaf,        roles: ["Admin","Investigator","Coordinator","Monitor","Pharmacovigilance","Regulator","Ethics Committee"] },
       { name: "e-Consent Hub",        href: "/dashboard/consent",   icon: ShieldCheck,  roles: ["Admin","Investigator","Coordinator","Ethics Committee","Regulator"] },
       { name: "Safety & NPvCC",       href: "/dashboard/safety",    icon: AlertTriangle,roles: ["Admin","Pharmacovigilance","Regulator","Investigator","Ethics Committee"] },
       { name: "Audit Trail (ALCOA+)", href: "/dashboard/audit",     icon: ShieldCheck,  roles: ["Admin","Regulator","Ethics Committee"] },
@@ -146,7 +147,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             if (visible.length === 0) return null;
             return (
               <div key={group.label}>
-                <p className="px-3 mb-1.5 text-[9px] font-extrabold text-slate-400 dark:text-slate-600 uppercase tracking-widest">{group.label}</p>
+                <p className="px-3 mb-1.5 text-[9px] font-extrabold text-slate-400 dark:text-slate-600 uppercase tracking-widest">{t(group.label)}</p>
                 <div className="space-y-0.5">
                   {visible.map((item) => {
                     const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
@@ -215,7 +216,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <input
                 type="text"
                 className="w-full pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                placeholder="Search studies, patients, MedDRA codes…"
+                placeholder={t("Search studies, patients, MedDRA codes…")}
               />
               <kbd className="absolute right-3 text-[10px] text-slate-400 font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700">⌘K</kbd>
             </div>

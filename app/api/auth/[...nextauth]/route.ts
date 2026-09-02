@@ -3,7 +3,9 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { connectDB, User } from "@/lib/db";
 
-const handler = NextAuth({
+import { AuthOptions } from "next-auth";
+
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -75,6 +77,7 @@ const handler = NextAuth({
     }
   },
   secret: process.env.NEXTAUTH_SECRET || "default_secret_for_development_only",
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

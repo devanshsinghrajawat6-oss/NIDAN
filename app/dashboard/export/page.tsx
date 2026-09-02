@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { Download, FileJson, Database, FileText, Shield } from "lucide-react";
 
 const EXPORTS = [
-  { id: 'sdtm', label: 'CDISC SDTM', description: 'DM, AE, DS, SV domains — submission-ready', icon: FileText, color: 'bg-blue-600', api: '/api/export/sdtm' },
-  { id: 'adam', label: 'CDISC ADaM', description: 'ADSL & ADAE analysis datasets', icon: Database, color: 'bg-purple-600', api: '/api/export/adam' },
-  { id: 'fhir-study', label: 'FHIR R4 — ResearchStudy', description: 'HL7 FHIR R4 Bundle for EDC / ABDM', icon: FileJson, color: 'bg-emerald-600', api: '/api/fhir/ResearchStudy' },
-  { id: 'fhir-ae', label: 'FHIR R4 — AdverseEvent', description: 'HL7 FHIR R4 AdverseEvent Bundle', icon: Shield, color: 'bg-red-600', api: '/api/fhir/AdverseEvent' },
-  { id: 'fhir-consent', label: 'FHIR R4 — Consent', description: 'HL7 FHIR R4 Consent resources', icon: FileJson, color: 'bg-teal-600', api: '/api/fhir/Consent' },
+  { id: 'sdtm', label: 'CDISC SDTM', description: 'DM, AE, DS, SV domains — submission-ready', icon: FileText, color: 'bg-blue-600', api: '/api/export/sdtm', ext: 'json' },
+  { id: 'adam', label: 'CDISC ADaM', description: 'ADSL & ADAE analysis datasets', icon: Database, color: 'bg-purple-600', api: '/api/export/adam', ext: 'json' },
+  { id: 'fhir-study', label: 'FHIR R4 — ResearchStudy', description: 'HL7 FHIR R4 Bundle for EDC / ABDM', icon: FileJson, color: 'bg-emerald-600', api: '/api/fhir/ResearchStudy', ext: 'json' },
+  { id: 'fhir-ae', label: 'FHIR R4 — AdverseEvent', description: 'HL7 FHIR R4 AdverseEvent Bundle', icon: Shield, color: 'bg-red-600', api: '/api/fhir/AdverseEvent', ext: 'json' },
+  { id: 'fhir-consent', label: 'FHIR R4 — Consent', description: 'HL7 FHIR R4 Consent resources', icon: FileJson, color: 'bg-teal-600', api: '/api/fhir/Consent', ext: 'json' },
+  { id: 'csv', label: 'CSV Export', description: 'Raw flat-file tabular patient data for analysis', icon: Database, color: 'bg-orange-600', api: '/api/export/csv', ext: 'csv' },
+  { id: 'excel', label: 'Excel (XLS)', description: 'Formatted spreadsheet for quick review', icon: FileText, color: 'bg-emerald-600', api: '/api/export/excel', ext: 'xls' },
 ];
 
 export default function ExportPage() {
@@ -30,7 +32,7 @@ export default function ExportPage() {
       const blob = await res.blob();
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `${exp.id}_${selectedTrial || 'all'}_${Date.now()}.json`;
+      a.download = `${exp.id}_${selectedTrial || 'all'}_${Date.now()}.${exp.ext}`;
       a.click();
     } catch (err) {
       console.error(err);
@@ -72,7 +74,7 @@ export default function ExportPage() {
               {exporting === exp.id ? (
                 <><div className="h-4 w-4 border-2 border-white dark:border-slate-900 border-t-transparent rounded-full animate-spin" />Exporting...</>
               ) : (
-                <><Download className="h-4 w-4" />Download JSON</>
+                <><Download className="h-4 w-4" />Download {exp.ext.toUpperCase()}</>
               )}
             </button>
           </div>

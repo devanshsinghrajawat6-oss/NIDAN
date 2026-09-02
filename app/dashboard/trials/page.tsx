@@ -7,6 +7,7 @@ import {
   Users, Calendar, Leaf, Activity, MapPin, ExternalLink, LayoutGrid, List, Filter
 } from "lucide-react";
 import { validatePersonName, validateText, validateIdCode, validatePositiveNumber } from "@/lib/validation";
+import { useSession } from "next-auth/react";
 
 const PHASE_COLORS: Record<string, string> = {
   "Phase 1":      "bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400 border-blue-200 dark:border-blue-800",
@@ -137,6 +138,8 @@ function TrialCard({ trial }: { trial: any }) {
 }
 
 export default function TrialsPage() {
+  const { data: session } = useSession();
+  const userRole = (session?.user as any)?.role || "Investigator";
   const [trials, setTrials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -230,9 +233,11 @@ export default function TrialsPage() {
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage and monitor all AIIA Ayurveda clinical research protocols.</p>
         </div>
-        <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm shadow-emerald-500/20">
-          <Plus className="h-4 w-4" /> New Trial Protocol
-        </button>
+        {(userRole === "Investigator" || userRole === "Admin") && (
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm shadow-emerald-500/20">
+            <Plus className="h-4 w-4" /> New Trial Protocol
+          </button>
+        )}
       </div>
 
       {/* Summary Chips */}

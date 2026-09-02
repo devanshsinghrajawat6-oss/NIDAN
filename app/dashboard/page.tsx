@@ -224,41 +224,114 @@ export default function DashboardOverview() {
       <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-sm">
         <div className="flex items-center gap-2">
           <Zap className="h-4 w-4 text-amber-500" />
-          <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">Quick Actions</span>
+          <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest">{t("Quick Actions")}</span>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <button onClick={() => setIsPatientModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors shadow-sm">
-            <Users className="h-4 w-4" /> Enroll Patient
-          </button>
-          <button onClick={() => setIsTrialModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors">
-            <Plus className="h-4 w-4" /> New Trial
-          </button>
-          <button onClick={handleRunComplianceCheck} disabled={isCheckingCompliance} className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-sm font-semibold rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900 transition-colors disabled:opacity-60">
-            <RefreshCw className={`h-4 w-4 ${isCheckingCompliance ? 'animate-spin' : ''}`} />
-            {isCheckingCompliance ? "Auditing…" : "Run Compliance Check"}
-          </button>
-          <Link href="/dashboard/safety" className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 text-sm font-semibold rounded-xl hover:bg-red-100 border border-red-200 dark:border-red-900 transition-colors">
-            <AlertTriangle className="h-4 w-4" /> Report AE/SAE
-          </Link>
+          {(userRole === "Investigator" || userRole === "Admin" || userRole === "Coordinator") && (
+            <button onClick={() => setIsPatientModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors shadow-sm">
+              <Users className="h-4 w-4" /> {t("Enroll Patient")}
+            </button>
+          )}
+          {(userRole === "Investigator" || userRole === "Admin") && (
+            <button onClick={() => setIsTrialModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors">
+              <Plus className="h-4 w-4" /> {t("New Trial")}
+            </button>
+          )}
+          {(userRole === "Admin" || userRole === "Regulator" || userRole === "Ethics Committee") && (
+            <button onClick={handleRunComplianceCheck} disabled={isCheckingCompliance} className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-sm font-semibold rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900 transition-colors disabled:opacity-60">
+              <RefreshCw className={`h-4 w-4 ${isCheckingCompliance ? 'animate-spin' : ''}`} />
+              {isCheckingCompliance ? "Auditing…" : t("Run Compliance Check")}
+            </button>
+          )}
+          {(userRole === "Pharmacovigilance" || userRole === "Investigator" || userRole === "Admin") && (
+            <Link href="/dashboard/safety" className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 text-sm font-semibold rounded-xl hover:bg-red-100 border border-red-200 dark:border-red-900 transition-colors">
+              <AlertTriangle className="h-4 w-4" /> {t("Report AE/SAE")}
+            </Link>
+          )}
         </div>
       </div>
 
       {/* ── Stats Grid ──────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Active Studies" value={loading ? "—" : trials.length} trendLabel="+2%" bg="bg-slate-800" sparkData={sparkData.studies} icon={Activity} />
-        <StatCard title="Patients Enrolled" value={loading ? "—" : patients.length.toLocaleString()} trendLabel="+12%" bg="bg-[#0b6034]" sparkData={sparkData.patients} icon={Users} />
-        <StatCard title="Approvals Pending" value={loading ? "—" : trials.filter(t => t.iecApprovalStatus === 'Pending').length} trendLabel="Due Soon" bg="bg-[#7c3a00]" sparkData={sparkData.approvals} icon={Clock} />
-        <StatCard title="Protocol Deviations" value={loading ? "—" : trials.reduce((a, t) => a + (t.protocolDeviations || 0), 0)} trendLabel="Action Req" bg="bg-[#a51c1c]" sparkData={sparkData.deviations} icon={AlertTriangle} />
+        <StatCard title={t("Active Studies")} value={loading ? "—" : trials.length} trendLabel="+2%" bg="bg-slate-800" sparkData={sparkData.studies} icon={Activity} />
+        <StatCard title={t("Patients Enrolled")} value={loading ? "—" : patients.length.toLocaleString()} trendLabel="+12%" bg="bg-[#0b6034]" sparkData={sparkData.patients} icon={Users} />
+        <StatCard title={t("Approvals Pending")} value={loading ? "—" : trials.filter(t => t.iecApprovalStatus === 'Pending').length} trendLabel={t("due soon")} bg="bg-[#7c3a00]" sparkData={sparkData.approvals} icon={Clock} />
+        <StatCard title={t("Protocol Deviations")} value={loading ? "—" : trials.reduce((a, t) => a + (t.protocolDeviations || 0), 0)} trendLabel={t("Action Req")} bg="bg-[#a51c1c]" sparkData={sparkData.deviations} icon={AlertTriangle} />
       </div>
 
       {/* ── Middle Section ──────────────────────────────────────── */}
       <div className="grid lg:grid-cols-3 gap-6">
 
+        {/* Role-Specific: Investigator / Coordinator */}
+        {(userRole === "Investigator" || userRole === "Coordinator") && (
+          <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+            <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+              <Users className="h-5 w-5 text-blue-600" /> {t("My Clinical Tasks")}
+            </h3>
+            <div className="space-y-3">
+              <div className="p-3 border border-blue-100 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-950/20 rounded-xl">
+                <p className="text-xs font-bold text-blue-700 dark:text-blue-400">Patient Follow-up (Trial #TR-249)</p>
+                <p className="text-[10px] text-slate-500 mt-1">3 patients require dosage adjustment review.</p>
+              </div>
+              <div className="p-3 border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30 rounded-xl">
+                <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Submit Progress Report</p>
+                <p className="text-[10px] text-slate-500 mt-1">Due in 2 days for Phase 2 Ashwagandha study.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Role-Specific: Ethics Committee */}
+        {userRole === "Ethics Committee" && (
+          <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+            <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+              <Scale className="h-5 w-5 text-emerald-600" /> {t("Pending IEC Approvals")}
+            </h3>
+            {trials.filter(t => t.iecApprovalStatus === 'Pending').length === 0 ? (
+              <p className="text-sm text-slate-500 text-center py-4">No pending approvals.</p>
+            ) : (
+              <div className="space-y-3">
+                {trials.filter(t => t.iecApprovalStatus === 'Pending').slice(0,2).map(t => (
+                  <div key={t._id} className="p-3 border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20 rounded-xl flex justify-between items-center">
+                    <div>
+                      <p className="text-xs font-bold text-amber-700 dark:text-amber-400">{t.name || "Trial"}</p>
+                      <p className="text-[10px] text-slate-500 mt-1">{t.trialId}</p>
+                    </div>
+                    <button className="text-[10px] font-bold bg-amber-600 text-white px-2 py-1 rounded hover:bg-amber-700 transition-colors">Review</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <Link href="/dashboard/trials" className="text-xs text-emerald-600 dark:text-emerald-400 font-bold mt-4 inline-block hover:underline">View study portfolio &rarr;</Link>
+          </div>
+        )}
+
+        {/* Role-Specific: Pharmacovigilance / Admin */}
+        {(userRole === "Pharmacovigilance" || userRole === "Admin") && (
+          <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+            <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+              <AlertTriangle className="h-5 w-5 text-red-600" /> {t("Safety Signals Watchlist")}
+            </h3>
+            <div className="space-y-3">
+              <div className="p-3 border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 rounded-xl">
+                <div className="flex justify-between items-start mb-1">
+                  <span className="text-[10px] font-bold bg-red-200 dark:bg-red-900 text-red-800 dark:text-red-300 px-1.5 rounded">SAE</span>
+                  <span className="text-[10px] text-slate-500">2h ago</span>
+                </div>
+                <p className="text-xs font-bold text-red-700 dark:text-red-400">Suspected unexpected serious adverse reaction (SUSAR)</p>
+                <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-1">Trial: TR-102 · Requires immediate review</p>
+              </div>
+            </div>
+            <Link href="/dashboard/safety" className="text-xs text-red-600 dark:text-red-400 font-bold mt-4 inline-block hover:underline">View all reports &rarr;</Link>
+          </div>
+        )}
+
         {/* Compliance Score */}
+        {(userRole === "Admin" || userRole === "Regulator" || userRole === "Ethics Committee") && (
         <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-emerald-600" /> Compliance Score
+              <ShieldCheck className="h-5 w-5 text-emerald-600" /> {t("Compliance Score")}
             </h3>
             <button
               onClick={handleRunComplianceCheck}
@@ -299,6 +372,7 @@ export default function DashboardOverview() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Study Phase Distribution */}
         <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
@@ -326,6 +400,7 @@ export default function DashboardOverview() {
         </div>
 
         {/* Blockchain Network */}
+        {(userRole === "Admin" || userRole === "Regulator" || userRole === "Ethics Committee") && (
         <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -351,6 +426,7 @@ export default function DashboardOverview() {
             ))}
           </div>
         </div>
+        )}
       </div>
 
       {/* ── Bottom Section ───────────────────────────────────────── */}

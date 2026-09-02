@@ -7,6 +7,7 @@ import {
   Leaf, Lock, Mail, Eye, EyeOff, UserSquare2, Scale, Activity, 
   TrendingUp, ShieldCheck, CheckCircle2, ArrowRight, Database, Globe
 } from "lucide-react";
+import { useLanguage } from "@/app/components/LanguageContext";
 
 const roles = [
   { id: "Investigator",       title: "Lead Doctor",        subtitle: "Full Clinical Access",   icon: UserSquare2, color: "from-blue-500 to-blue-700",     prefix: "investigator@demo.com" },
@@ -27,6 +28,7 @@ const complianceItems = [
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t, lang, setLang } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -84,9 +86,9 @@ export default function LoginPage() {
         <div className="relative z-10">
           <div className="mb-10 animate-fade-in-up delay-100">
             <h2 className="text-4xl font-extrabold text-white leading-tight mb-4">
-              Research With<br />
+              {t("Research With")}<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200">
-                Precision & Trust
+                {t("Precision & Trust")}
               </span>
             </h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-md">
@@ -126,6 +128,14 @@ export default function LoginPage() {
 
       {/* ── Right Panel — Login Form ────────────────────────────── */}
       <div className="flex-1 flex flex-col justify-center items-center bg-[#f8fafc] dark:bg-[#0a0a0a] p-6 sm:p-10 relative">
+        {/* Language Toggle */}
+        <button 
+          onClick={() => setLang(lang === "EN" ? "HI" : "EN")}
+          className="absolute top-6 right-6 h-10 w-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-sm font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 shadow-sm transition-colors"
+        >
+          {lang === "EN" ? "हि" : "EN"}
+        </button>
+
         {/* Mobile logo */}
         <div className="lg:hidden flex items-center gap-2 mb-8">
           <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
@@ -137,8 +147,8 @@ export default function LoginPage() {
         <div className="w-full max-w-md animate-scale-in">
           {/* Heading */}
           <div className="mb-8">
-            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Welcome back</h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sign in to your secure CTMS portal</p>
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("Welcome back")}</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{t("Sign in to NIDANA")}</p>
           </div>
 
           {/* Role selector */}

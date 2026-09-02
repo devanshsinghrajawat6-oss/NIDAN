@@ -7,6 +7,7 @@ import {
   Zap, FileText, TrendingUp, Eye
 } from "lucide-react";
 import { validateText } from "@/lib/validation";
+import { useSession } from "next-auth/react";
 
 const COMMON_MEDDRA = [
   { code: "10028813", pt: "Nausea",               soc: "Gastrointestinal disorders" },
@@ -51,6 +52,8 @@ function PRRGauge({ prr }: { prr: number }) {
 }
 
 export default function SafetyPage() {
+  const { data: session } = useSession();
+  const userRole = (session?.user as any)?.role || "Investigator";
   const [events, setEvents]   = useState<any[]>([]);
   const [trials, setTrials]   = useState<any[]>([]);
   const [patients, setPatients] = useState<any[]>([]);
@@ -153,9 +156,11 @@ export default function SafetyPage() {
           <button onClick={() => window.location.href = '/api/export/safety-report'} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors shadow-sm">
             <Download className="h-4 w-4" /> Export CIOMS
           </button>
-          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm shadow-red-500/20">
-            <Plus className="h-4 w-4" /> Report AE/SAE
-          </button>
+          {(userRole === "Pharmacovigilance" || userRole === "Investigator" || userRole === "Admin") && (
+            <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm shadow-red-500/20">
+              <Plus className="h-4 w-4" /> Report AE/SAE
+            </button>
+          )}
         </div>
       </div>
 

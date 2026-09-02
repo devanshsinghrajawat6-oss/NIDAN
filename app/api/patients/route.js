@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server';
 import { connectDB, Patient } from '@/lib/db';
 import { storeOnBlockchain } from '@/lib/blockchain';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET() {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+
         await connectDB();
         const patients = await Patient.find({}).sort({ createdAt: -1 });
         return NextResponse.json({ success: true, data: patients }, { status: 200 });
@@ -15,6 +20,14 @@ export async function GET() {
 
 export async function POST(req) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+        
+        const allowedRoles = ["Admin", "Investigator", "Coordinator"];
+        if (!allowedRoles.includes(session.user.role)) {
+            return NextResponse.json({ success: false, error: "Forbidden: Insufficient permissions" }, { status: 403 });
+        }
+
         const body = await req.json();
         await connectDB();
 
