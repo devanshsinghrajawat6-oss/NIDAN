@@ -109,7 +109,7 @@ export default function AnalyticsPage() {
       <div className="grid lg:grid-cols-2 gap-6">
         
         {/* Enrolment Trend (Area Chart) */}
-        <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <div className="paper-card rounded-2xl p-6 shadow-sm">
           <h2 className="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-blue-600" /> Cumulative Enrolment Trend
           </h2>
@@ -138,7 +138,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* AE by SOC (Horizontal Bar) */}
-        <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <div className="paper-card rounded-2xl p-6 shadow-sm">
           <h2 className="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" /> AE Distribution by System Organ Class
           </h2>
@@ -163,7 +163,7 @@ export default function AnalyticsPage() {
       <div className="grid lg:grid-cols-2 gap-6">
         
         {/* ALCOA+ Radar */}
-        <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <div className="paper-card rounded-2xl p-6 shadow-sm">
           <h2 className="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-emerald-600" /> ALCOA+ Data Integrity Radar
           </h2>
@@ -188,7 +188,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Multi-Site Compliance Bar */}
-        <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <div className="paper-card rounded-2xl p-6 shadow-sm">
           <h2 className="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
             <MapPin className="h-5 w-5 text-purple-600" /> Multi-Centre Site GCP Compliance
           </h2>
@@ -228,7 +228,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* PRR Signal Table */}
-      <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+      <div className="paper-card rounded-2xl p-6 shadow-sm">
         <h2 className="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-red-600" />
           NPvCC Pharmacovigilance Signal Disproportionality — PRR Analysis

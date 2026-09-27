@@ -5,26 +5,66 @@ import { connectDB, Trial, Patient, AdverseEvent, Visit } from '@/lib/db';
 
 function generateDM(patients, trials) {
   return patients.map(p => {
-    const trial = trials.find(t => t.trialId === p.trialId) || {};
     return {
       STUDYID: p.trialId,
       DOMAIN: 'DM',
       USUBJID: p.pseudonymizedId,
       SUBJID: p.patientId,
-      RFSTDTC: p.enrolmentDate?.toISOString?.() || '',
-      RFENDTC: p.completionDate?.toISOString?.() || p.withdrawalDate?.toISOString?.() || '',
+      RFSTDTC: p.enrolmentDate ? new Date(p.enrolmentDate).toISOString() : '',
+      RFENDTC: p.completionDate ? new Date(p.completionDate).toISOString() : p.withdrawalDate ? new Date(p.withdrawalDate).toISOString() : '',
       SITEID: p.site || '',
       ARM: p.armAssigned || '',
       ARMCD: p.armAssigned || '',
       ACTARM: p.armAssigned || '',
       COUNTRY: 'IN',
-      DTHFL: '',
-      AGE: '', // Not collected to minimise PII in SDTM
+      DTHFL: p.saeOccurred && p.stage === 'Withdrawn' ? 'Y' : 'N',
+      AGE: p.age !== undefined ? String(p.age) : '',
+      AGEU: 'YEARS',
       SEX: p.gender === 'Male' ? 'M' : p.gender === 'Female' ? 'F' : 'U',
-      RACE: '',
-      ETHNIC: '',
+      ABHA_ID: p.abhaId || '',
+      HOSP_REG_NO: p.hospitalRegNumber || '',
+      AV_CONSENT_RECORDED: p.audioVisualRecordingDone ? 'Y' : 'N',
+      STATUTORY_COMPENSATION_INR: p.calculatedCompensation !== undefined ? p.calculatedCompensation : 0,
+      RISK_FACTOR_R: p.diseaseRiskFactor !== undefined ? p.diseaseRiskFactor : 4.0
     };
   });
+}
+
+function generateVS(patients) {
+  const records = [];
+  patients.forEach((p, idx) => {
+    const vitals = p.baselineVitals || {};
+    if (vitals.bloodPressureSystolic) {
+      records.push({ STUDYID: p.trialId, DOMAIN: 'VS', USUBJID: p.pseudonymizedId, VSTESTCD: 'SYSBP', VSTEST: 'Systolic Blood Pressure', VSORRES: String(vitals.bloodPressureSystolic), VSORRESU: 'mmHg' });
+    }
+    if (vitals.bloodPressureDiastolic) {
+      records.push({ STUDYID: p.trialId, DOMAIN: 'VS', USUBJID: p.pseudonymizedId, VSTESTCD: 'DIABP', VSTEST: 'Diastolic Blood Pressure', VSORRES: String(vitals.bloodPressureDiastolic), VSORRESU: 'mmHg' });
+    }
+    if (vitals.pulseRate) {
+      records.push({ STUDYID: p.trialId, DOMAIN: 'VS', USUBJID: p.pseudonymizedId, VSTESTCD: 'PULSE', VSTEST: 'Pulse Rate', VSORRES: String(vitals.pulseRate), VSORRESU: 'beats/min' });
+    }
+    if (vitals.weight) {
+      records.push({ STUDYID: p.trialId, DOMAIN: 'VS', USUBJID: p.pseudonymizedId, VSTESTCD: 'WEIGHT', VSTEST: 'Weight', VSORRES: String(vitals.weight), VSORRESU: 'kg' });
+    }
+  });
+  return records;
+}
+
+function generateLB(patients) {
+  const records = [];
+  patients.forEach(p => {
+    const labs = p.baselineLabData || {};
+    if (labs.haemoglobin) {
+      records.push({ STUDYID: p.trialId, DOMAIN: 'LB', USUBJID: p.pseudonymizedId, LBTESTCD: 'HGB', LBTEST: 'Hemoglobin', LBORRES: String(labs.haemoglobin), LBORRESU: 'g/dL' });
+    }
+    if (labs.wbcCount) {
+      records.push({ STUDYID: p.trialId, DOMAIN: 'LB', USUBJID: p.pseudonymizedId, LBTESTCD: 'WBC', LBTEST: 'Leukocytes', LBORRES: String(labs.wbcCount), LBORRESU: 'cells/mcL' });
+    }
+    if (labs.serumCreatinine) {
+      records.push({ STUDYID: p.trialId, DOMAIN: 'LB', USUBJID: p.pseudonymizedId, LBTESTCD: 'CREAT', LBTEST: 'Creatinine', LBORRES: String(labs.serumCreatinine), LBORRESU: 'mg/dL' });
+    }
+  });
+  return records;
 }
 
 function generateAE(events) {
@@ -53,16 +93,16 @@ function generateDS(patients) {
   const records = [];
   for (const p of patients) {
     if (p.enrolmentDate) {
-      records.push({ STUDYID: p.trialId, DOMAIN: 'DS', USUBJID: p.pseudonymizedId, DSSEQ: 1, DSDECOD: 'ENROLLED', DSSTDTC: p.enrolmentDate.toISOString() });
+      records.push({ STUDYID: p.trialId, DOMAIN: 'DS', USUBJID: p.pseudonymizedId, DSSEQ: 1, DSDECOD: 'ENROLLED', DSSTDTC: new Date(p.enrolmentDate).toISOString() });
     }
     if (p.randomizationDate) {
-      records.push({ STUDYID: p.trialId, DOMAIN: 'DS', USUBJID: p.pseudonymizedId, DSSEQ: 2, DSDECOD: 'RANDOMIZED', DSSTDTC: p.randomizationDate.toISOString() });
+      records.push({ STUDYID: p.trialId, DOMAIN: 'DS', USUBJID: p.pseudonymizedId, DSSEQ: 2, DSDECOD: 'RANDOMIZED', DSSTDTC: new Date(p.randomizationDate).toISOString() });
     }
-    if (p.withdrawalDate) {
-      records.push({ STUDYID: p.trialId, DOMAIN: 'DS', USUBJID: p.pseudonymizedId, DSSEQ: 3, DSDECOD: 'WITHDRAWN', DSTERM: p.withdrawalReason || '', DSSTDTC: p.withdrawalDate.toISOString() });
+    if (p.withdrawalDate || p.stage === 'Withdrawn' || p.stage === 'Dropped Out') {
+      records.push({ STUDYID: p.trialId, DOMAIN: 'DS', USUBJID: p.pseudonymizedId, DSSEQ: 3, DSDECOD: 'WITHDRAWN', DSTERM: p.withdrawalReason || 'Protocol withdrawal', DSSTDTC: p.withdrawalDate ? new Date(p.withdrawalDate).toISOString() : new Date().toISOString() });
     }
     if (p.completionDate) {
-      records.push({ STUDYID: p.trialId, DOMAIN: 'DS', USUBJID: p.pseudonymizedId, DSSEQ: 3, DSDECOD: 'COMPLETED', DSSTDTC: p.completionDate.toISOString() });
+      records.push({ STUDYID: p.trialId, DOMAIN: 'DS', USUBJID: p.pseudonymizedId, DSSEQ: 3, DSDECOD: 'COMPLETED', DSSTDTC: new Date(p.completionDate).toISOString() });
     }
   }
   return records;
@@ -98,6 +138,8 @@ export async function GET(request) {
 
     const datasets = {};
     if (domain === 'ALL' || domain === 'DM') datasets.DM = generateDM(patients, trials);
+    if (domain === 'ALL' || domain === 'VS') datasets.VS = generateVS(patients);
+    if (domain === 'ALL' || domain === 'LB') datasets.LB = generateLB(patients);
     if (domain === 'ALL' || domain === 'AE') datasets.AE = generateAE(events);
     if (domain === 'ALL' || domain === 'DS') datasets.DS = generateDS(patients);
     if (domain === 'ALL' || domain === 'SV') datasets.SV = generateSV(visits);
@@ -118,3 +160,4 @@ export async function GET(request) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
+

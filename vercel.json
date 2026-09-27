@@ -1,9 +1,4 @@
 {
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" },
-    { "source": "/dashboard", "destination": "/code.html" },
-    { "source": "/", "destination": "/landing.html" }
-  ],
   "headers": [
     {
       "source": "/api/(.*)",

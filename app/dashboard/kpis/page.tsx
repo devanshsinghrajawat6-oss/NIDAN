@@ -25,31 +25,31 @@ function MiniSparkline({ data, color }: { data: number[]; color: string }) {
 
 function KPICard({ title, value, subtitle, icon: Icon, colorClass, trend, alert, sparkData, sparkColor }: any) {
   return (
-    <div className={`relative rounded-2xl p-5 border shadow-sm overflow-hidden card-hover transition-all ${
+    <div className={`relative rounded-xl p-5 border shadow-2xs overflow-hidden transition-all ${
       alert 
-        ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20' 
-        : 'bg-white dark:bg-[#0d1117] border-slate-200 dark:border-slate-800'
+        ? 'border-red-200 dark:border-red-900 bg-red-50/70 dark:bg-red-950/30 text-stone-900 dark:text-stone-100' 
+        : 'paper-card'
     }`}>
       <div className="flex items-start justify-between mb-3">
-        <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${colorClass}`}>
-          <Icon className="h-5 w-5 text-white" />
+        <div className={`h-9 w-9 rounded-md flex items-center justify-center ${colorClass}`}>
+          <Icon className="h-4.5 w-4.5 text-white" />
         </div>
         {trend !== undefined && (
-          <span className={`text-xs font-bold px-2 py-1 rounded-xl ${
-            trend >= 80 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' 
-                       : trend >= 60 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400'
-                       : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400'
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${
+            trend >= 80 ? 'bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800' 
+                       : trend >= 60 ? 'bg-amber-50 text-amber-900 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800'
+                       : 'bg-red-50 text-red-900 border-red-200 dark:bg-red-950/60 dark:text-red-300 dark:border-red-800'
           }`}>
             {trend}%
           </span>
         )}
       </div>
-      <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{value}</p>
-      <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">{title}</p>
-      {subtitle && <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{subtitle}</p>}
+      <p className="text-3xl font-serif font-bold text-stone-900 dark:text-stone-100">{value}</p>
+      <p className="text-[10px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider mt-1">{title}</p>
+      {subtitle && <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{subtitle}</p>}
       {sparkData && (
-        <div className="mt-3 opacity-60">
-          <MiniSparkline data={sparkData} color={sparkColor || '#16a34a'} />
+        <div className="mt-3 opacity-70">
+          <MiniSparkline data={sparkData} color={sparkColor || '#15803d'} />
         </div>
       )}
     </div>
@@ -58,14 +58,13 @@ function KPICard({ title, value, subtitle, icon: Icon, colorClass, trend, alert,
 
 function AlertBadge({ severity }: { severity: string }) {
   const classes: Record<string, string> = {
-    critical: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400 border-red-200 dark:border-red-800',
-    warning:  'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800',
-    info:     'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 border-blue-200 dark:border-blue-800',
+    critical: 'bg-red-50 text-red-900 dark:bg-red-950/60 dark:text-red-300 border-red-200 dark:border-red-800',
+    warning:  'bg-amber-50 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    info:     'bg-blue-50 text-blue-900 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800',
   };
-  const icons: Record<string, string> = { critical: '🔴', warning: '⚠️', info: 'ℹ️' };
   return (
-    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase border ${classes[severity] || classes.info}`}>
-      {icons[severity] || ''} {severity}
+    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-bold uppercase border ${classes[severity] || classes.info}`}>
+      {severity}
     </span>
   );
 }
@@ -88,8 +87,8 @@ export default function KPIPage() {
   if (loading) return (
     <div className="flex items-center justify-center h-64">
       <div className="flex flex-col items-center gap-3">
-        <div className="h-10 w-10 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs text-slate-400">Computing KPIs…</p>
+        <div className="h-8 w-8 border-2 border-emerald-800 dark:border-emerald-400 border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs font-semibold text-stone-500 dark:text-stone-400">Computing Portfolio KPIs…</p>
       </div>
     </div>
   );
@@ -98,74 +97,79 @@ export default function KPIPage() {
   const alerts = data?.alerts || {};
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
-      <div className="flex items-center justify-between">
+    <div className="max-w-7xl mx-auto space-y-6">
+
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200 dark:border-stone-800">
         <div>
-          <h1 className="font-heading text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <BarChart2 className="h-6 w-6 text-brand-600" /> Portfolio KPIs
+          <h1 className="font-serif font-bold text-2xl sm:text-3xl text-stone-900 dark:text-stone-100 flex items-center gap-2">
+            <BarChart2 className="h-6 w-6 text-emerald-800 dark:text-emerald-400" /> Portfolio KPIs
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+          <p className="text-stone-500 dark:text-stone-400 text-xs mt-1">
             Real-time clinical trial performance metrics · Last computed: {data?.computedAt ? new Date(data.computedAt).toLocaleString('en-IN') : '—'}
           </p>
         </div>
-        <button onClick={refresh} className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 rounded-xl border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition-colors">
-          <RefreshCw className="h-3.5 w-3.5" /> Refresh
+        <button onClick={refresh} className="flex items-center gap-2 px-3.5 py-2 text-xs font-bold bg-emerald-800 hover:bg-emerald-900 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-white rounded-md transition-colors shadow-2xs">
+          <RefreshCw className="h-3.5 w-3.5" /> Refresh Metrics
         </button>
       </div>
 
       {/* KPI Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard title="Active Trials"            value={s.activeTrials ?? '—'} icon={Activity}      colorClass="bg-slate-800"  sparkData={[8,9,10,11,12,s.activeTrials||14]} sparkColor="#94a3b8" />
-        <KPICard title="Patients Enrolled"        value={s.totalPatients ?? '—'} subtitle={`of ${s.totalTarget ?? '—'} target`} icon={Users}  colorClass="bg-emerald-700" trend={s.enrolmentRate}  sparkData={[800,900,1000,1100,1200,s.totalPatients||1248]} sparkColor="#22c55e" />
-        <KPICard title="SAE Reporting Compliance" value={`${s.saeReportingCompliance ?? '—'}%`} icon={ShieldCheck} colorClass="bg-blue-700" trend={s.saeReportingCompliance}  sparkData={[90,92,94,95,96,97,s.saeReportingCompliance||98]} sparkColor="#3b82f6" />
-        <KPICard title="Open SAEs"                value={s.openSAEs ?? '—'}       icon={AlertTriangle}  colorClass="bg-red-700"   alert={s.openSAEs > 0} />
-        <KPICard title="Visit Compliance"         value={`${s.visitCompliance ?? '—'}%`}  icon={Clock}      colorClass="bg-purple-700" trend={s.visitCompliance} sparkData={[80,82,84,85,86,88,s.visitCompliance||89]} sparkColor="#a855f7" />
-        <KPICard title="Protocol Deviations"      value={s.totalDeviations ?? '—'} icon={FileText}    colorClass="bg-orange-700" />
-        <KPICard title="Open Data Queries"        value={s.openQueries ?? '—'}     subtitle={`${s.dataQueryRate ?? '—'}% query rate`} icon={TrendingDown} colorClass="bg-yellow-700" />
-        <KPICard title="Delayed Milestones"       value={s.delayedMilestones ?? '—'} icon={Clock}    colorClass="bg-slate-700"  alert={s.delayedMilestones > 0} />
+        <KPICard title="Active Trials"            value={s.activeTrials ?? '—'} icon={Activity}      colorClass="bg-stone-800 dark:bg-stone-700"  sparkData={[8,9,10,11,12,s.activeTrials||14]} sparkColor="#78716c" />
+        <KPICard title="Patients Enrolled"        value={s.totalPatients ?? '—'} subtitle={`of ${s.totalTarget ?? '—'} target`} icon={Users}  colorClass="bg-emerald-800 dark:bg-emerald-700" trend={s.enrolmentRate}  sparkData={[800,900,1000,1100,1200,s.totalPatients||1248]} sparkColor="#15803d" />
+        <KPICard title="SAE Compliance"          value={`${s.saeReportingCompliance ?? '—'}%`} icon={ShieldCheck} colorClass="bg-blue-800 dark:bg-blue-700" trend={s.saeReportingCompliance}  sparkData={[90,92,94,95,96,97,s.saeReportingCompliance||98]} sparkColor="#0284c7" />
+        <KPICard title="Open SAEs"                value={s.openSAEs ?? '—'}       icon={AlertTriangle}  colorClass="bg-red-800 dark:bg-red-700"   alert={s.openSAEs > 0} />
+        <KPICard title="Visit Compliance"         value={`${s.visitCompliance ?? '—'}%`}  icon={Clock}      colorClass="bg-purple-800 dark:bg-purple-700" trend={s.visitCompliance} sparkData={[80,82,84,85,86,88,s.visitCompliance||89]} sparkColor="#7c3aed" />
+        <KPICard title="Protocol Deviations"      value={s.totalDeviations ?? '—'} icon={FileText}    colorClass="bg-amber-800 dark:bg-amber-700" />
+        <KPICard title="Open Data Queries"        value={s.openQueries ?? '—'}     subtitle={`${s.dataQueryRate ?? '—'}% query rate`} icon={TrendingDown} colorClass="bg-stone-700 dark:bg-stone-600" />
+        <KPICard title="Delayed Milestones"       value={s.delayedMilestones ?? '—'} icon={Clock}    colorClass="bg-stone-700 dark:bg-stone-600"  alert={s.delayedMilestones > 0} />
       </div>
 
       {/* Per-Trial Enrolment */}
-      <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+      <div className="paper-card p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-emerald-600" /> Enrolment Progress by Trial
+          <h2 className="font-serif font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2 text-base">
+            <TrendingUp className="h-5 w-5 text-emerald-800 dark:text-emerald-400" /> Enrolment Progress by Trial
           </h2>
-          <Link href="/dashboard/trials" className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
-            View all <ArrowRight className="h-3 w-3" />
+          <Link href="/dashboard/trials" className="text-xs font-bold text-emerald-800 dark:text-emerald-400 hover:underline flex items-center gap-1">
+            View all trials <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
         {data?.trialKPIs?.length === 0 && (
-          <div className="text-center py-10 text-slate-400">
-            <Activity className="h-10 w-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">No trials found. Create your first trial.</p>
+          <div className="text-center py-10 text-stone-400">
+            <Activity className="h-8 w-8 mx-auto mb-2 opacity-30" />
+            <p className="text-xs">No active trials found.</p>
           </div>
         )}
-        <div className="space-y-5">
+        <div className="space-y-4">
           {data?.trialKPIs?.map((t: any) => (
-            <div key={t.trialId}>
+            <div key={t.trialId} className="p-3 bg-stone-50 dark:bg-[#182434] border border-stone-200 dark:border-stone-800 rounded-md">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Link href={`/dashboard/trials/${t.trialId}`} className="text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline">{t.name}</Link>
-                  <span className="text-[10px] text-slate-400 font-mono">({t.trialId})</span>
+                  <Link href={`/dashboard/trials/${t.trialId}`} className="text-xs font-serif font-bold text-stone-900 dark:text-stone-100 hover:text-emerald-800 dark:hover:text-emerald-400">
+                    {t.name}
+                  </Link>
+                  <span className="text-[10px] text-stone-400 font-mono">({t.trialId})</span>
                 </div>
                 <div className="flex items-center gap-2">
                   {t.enrolmentLag && (
-                    <span className="text-[10px] font-bold text-red-600 bg-red-50 dark:bg-red-950/30 px-2 py-0.5 rounded-lg border border-red-200 dark:border-red-900 flex items-center gap-1">
+                    <span className="text-[10px] font-bold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-2 py-0.5 rounded border border-red-200 dark:border-red-900">
                       ⚠ Lag
                     </span>
                   )}
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{t.enrolled} / {t.target}</span>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${t.rate >= 80 ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30' : t.rate >= 50 ? 'text-amber-600 bg-amber-50 dark:bg-amber-950/30' : 'text-red-600 bg-red-50 dark:bg-red-950/30'}`}>{t.rate}%</span>
+                  <span className="text-xs font-mono font-bold text-stone-700 dark:text-stone-300">{t.enrolled} / {t.target}</span>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${t.rate >= 80 ? 'text-emerald-800 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300' : t.rate >= 50 ? 'text-amber-800 bg-amber-50 dark:bg-amber-950/60 dark:text-amber-300' : 'text-red-800 bg-red-50 dark:bg-red-950/60 dark:text-red-300'}`}>
+                    {t.rate}%
+                  </span>
                 </div>
               </div>
-              <div className="h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-2 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-700 ${t.rate >= 80 ? 'bg-gradient-to-r from-emerald-400 to-emerald-600' : t.rate >= 50 ? 'bg-gradient-to-r from-amber-400 to-amber-600' : 'bg-gradient-to-r from-red-400 to-red-600'}`}
+                  className={`h-full rounded-full transition-all duration-700 ${t.rate >= 80 ? 'bg-emerald-700 dark:bg-emerald-500' : t.rate >= 50 ? 'bg-amber-600 dark:bg-amber-500' : 'bg-red-600 dark:bg-red-500'}`}
                   style={{ width: `${Math.min(t.rate, 100)}%` }}
                 />
               </div>
-              <p className="text-[10px] text-slate-400 mt-1.5">{t.daysToClose !== null ? `${t.daysToClose} days remaining to close-out` : 'No close-out date set'}</p>
             </div>
           ))}
         </div>
@@ -175,30 +179,30 @@ export default function KPIPage() {
       <div className="grid lg:grid-cols-2 gap-6">
         
         {/* Overdue Reports */}
-        <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <div className="paper-card p-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Bell className="h-5 w-5 text-red-500" /> Overdue Regulatory Reports
+            <h2 className="font-serif font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2 text-base">
+              <Bell className="h-4.5 w-4.5 text-red-700 dark:text-red-400" /> Overdue Regulatory Reports
             </h2>
-            <Link href="/dashboard/safety" className="text-xs font-bold text-red-600 dark:text-red-400 hover:underline flex items-center gap-1">
+            <Link href="/dashboard/safety" className="text-xs font-bold text-red-700 dark:text-red-400 hover:underline flex items-center gap-1">
               View Safety <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
           {(!alerts.overdueReports || alerts.overdueReports.length === 0) ? (
-            <div className="flex items-center gap-3 p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border border-emerald-100 dark:border-emerald-900/50">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+            <div className="flex items-center gap-3 p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-md border border-emerald-200 dark:border-emerald-800">
+              <CheckCircle2 className="h-5 w-5 text-emerald-800 dark:text-emerald-400 shrink-0" />
               <div>
-                <p className="text-sm font-bold text-emerald-800 dark:text-emerald-300">All Reports On Time</p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400">No overdue SAE/AE reports. Excellent compliance!</p>
+                <p className="text-xs font-bold text-emerald-950 dark:text-emerald-300">All Reports On Time</p>
+                <p className="text-[11px] text-emerald-800 dark:text-emerald-400">No overdue SAE/AE reports. GCP compliance maintained.</p>
               </div>
             </div>
           ) : (
             <div className="space-y-3">
               {alerts.overdueReports?.map((r: any) => (
-                <div key={r.eventId} className="flex items-start justify-between p-3.5 bg-red-50 dark:bg-red-950/20 rounded-xl border border-red-100 dark:border-red-900">
+                <div key={r.eventId} className="flex items-start justify-between p-3 bg-red-50 dark:bg-red-950/30 rounded-md border border-red-200 dark:border-red-900">
                   <div>
-                    <p className="text-sm font-bold text-red-800 dark:text-red-300">{r.eventId} ({r.eventType})</p>
-                    <p className="text-xs text-red-600 dark:text-red-400 mt-0.5">{r.hoursOverdue}h overdue · {r.trialId}</p>
+                    <p className="text-xs font-bold text-red-900 dark:text-red-300">{r.eventId} ({r.eventType})</p>
+                    <p className="text-[11px] text-red-700 dark:text-red-400 mt-0.5">{r.hoursOverdue}h overdue · {r.trialId}</p>
                   </div>
                   <AlertBadge severity="critical" />
                 </div>
@@ -208,39 +212,39 @@ export default function KPIPage() {
         </div>
 
         {/* Regulatory Alerts */}
-        <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <div className="paper-card p-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-amber-500" /> Regulatory Alerts
+            <h2 className="font-serif font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2 text-base">
+              <ShieldCheck className="h-4.5 w-4.5 text-amber-700 dark:text-amber-400" /> Regulatory Alerts
             </h2>
-            <Link href="/dashboard/milestones" className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1">
+            <Link href="/dashboard/milestones" className="text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline flex items-center gap-1">
               View Milestones <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
           {(!alerts.iecAlerts?.length && !alerts.ctriAlerts?.length) ? (
-            <div className="flex items-center gap-3 p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border border-emerald-100 dark:border-emerald-900/50">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+            <div className="flex items-center gap-3 p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-md border border-emerald-200 dark:border-emerald-800">
+              <CheckCircle2 className="h-5 w-5 text-emerald-800 dark:text-emerald-400 shrink-0" />
               <div>
-                <p className="text-sm font-bold text-emerald-800 dark:text-emerald-300">No Regulatory Alerts</p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400">All IEC approvals and CTRI updates are current.</p>
+                <p className="text-xs font-bold text-emerald-950 dark:text-emerald-300">No Regulatory Alerts</p>
+                <p className="text-[11px] text-emerald-800 dark:text-emerald-400">All IEC approvals and CTRI updates are current.</p>
               </div>
             </div>
           ) : (
             <div className="space-y-3">
               {alerts.iecAlerts?.map((a: any) => (
-                <div key={a.trialId + '-iec'} className="flex items-start justify-between p-3.5 bg-yellow-50 dark:bg-yellow-950/20 rounded-xl border border-yellow-100 dark:border-yellow-900">
+                <div key={a.trialId + '-iec'} className="flex items-start justify-between p-3 bg-amber-50 dark:bg-amber-950/30 rounded-md border border-amber-200 dark:border-amber-900">
                   <div>
-                    <p className="text-sm font-bold text-yellow-800 dark:text-yellow-300">IEC Expiry: {a.name}</p>
-                    <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-0.5">{a.daysLeft} days remaining</p>
+                    <p className="text-xs font-bold text-amber-900 dark:text-amber-300">IEC Expiry: {a.name}</p>
+                    <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-0.5">{a.daysLeft} days remaining</p>
                   </div>
                   <AlertBadge severity={a.critical ? 'critical' : 'warning'} />
                 </div>
               ))}
               {alerts.ctriAlerts?.map((a: any) => (
-                <div key={a.trialId + '-ctri'} className="flex items-start justify-between p-3.5 bg-orange-50 dark:bg-orange-950/20 rounded-xl border border-orange-100 dark:border-orange-900">
+                <div key={a.trialId + '-ctri'} className="flex items-start justify-between p-3 bg-amber-50 dark:bg-amber-950/30 rounded-md border border-amber-200 dark:border-amber-900">
                   <div>
-                    <p className="text-sm font-bold text-orange-800 dark:text-orange-300">CTRI Update Due: {a.name}</p>
-                    <p className="text-xs text-orange-600 dark:text-orange-400 mt-0.5">{a.overdue ? `${Math.abs(a.daysLeft)}d overdue` : `${a.daysLeft}d remaining`}</p>
+                    <p className="text-xs font-bold text-amber-900 dark:text-amber-300">CTRI Update Due: {a.name}</p>
+                    <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-0.5">{a.overdue ? `${Math.abs(a.daysLeft)}d overdue` : `${a.daysLeft}d remaining`}</p>
                   </div>
                   <AlertBadge severity={a.overdue ? 'critical' : 'warning'} />
                 </div>

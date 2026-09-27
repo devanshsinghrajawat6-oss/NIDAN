@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { ethers } from 'ethers';
-import fs from 'fs';
-import path from 'path';
 import { connectDB, Trial, Patient, AdverseEvent, Consent, AuditLog } from '@/lib/db';
 import { computePortfolioKPIs } from '@/lib/kpi';
+import { CTMS_LEDGER_ABI } from '@/lib/contractAbi';
 
 export async function POST() {
   const startTime = Date.now();
@@ -40,17 +39,11 @@ export async function POST() {
       if (contractAddress) {
         const code = await provider.getCode(contractAddress);
         isBlockchainOk = code !== "0x" && code !== "";
-      } else {
-        isBlockchainOk = true;
-      }
-
-      // Check record count
-      const artifactPath = path.join(process.cwd(), 'artifacts', 'contracts', 'CTMSLedger.sol', 'CTMSLedger.json');
-      if (fs.existsSync(artifactPath)) {
-        const artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
-        const contract = new ethers.Contract(contractAddress, artifact.abi, provider);
+        const contract = new ethers.Contract(contractAddress, CTMS_LEDGER_ABI, provider);
         const logs = await contract.queryFilter(contract.filters.RecordAdded(), 0, 'latest');
         txCount = logs.length;
+      } else {
+        isBlockchainOk = true;
       }
     } catch (bcErr) {
       console.warn("Blockchain check warning:", bcErr.message);

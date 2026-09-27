@@ -146,7 +146,7 @@ export default function MilestonesPage() {
 
       {/* Filters */}
       {showFilters && (
-        <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-wrap gap-4 animate-fade-in-down shadow-sm">
+        <div className="paper-card rounded-2xl p-4 flex flex-wrap gap-4 animate-fade-in-down shadow-sm">
           <div>
             <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Category</label>
             <div className="flex flex-wrap gap-2">
@@ -176,7 +176,7 @@ export default function MilestonesPage() {
 
       {/* Gantt-style milestone groups */}
       {!loading && Object.entries(grouped).length === 0 ? (
-        <div className="text-center py-20 bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
+        <div className="text-center py-20 paper-card rounded-2xl shadow-sm">
           <Clock className="h-14 w-14 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
           <p className="text-slate-500 dark:text-slate-400 font-semibold">No milestones found</p>
           <p className="text-sm text-slate-400 mt-1">Add your first milestone to start tracking study progress</p>
@@ -190,7 +190,7 @@ export default function MilestonesPage() {
         const completed = items.filter(m => m.status === 'Completed').length;
         const pct = items.length > 0 ? Math.round((completed / items.length) * 100) : 0;
         return (
-          <div key={trialName} className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+          <div key={trialName} className="paper-card rounded-2xl shadow-sm overflow-hidden">
             {/* Trial header */}
             <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>

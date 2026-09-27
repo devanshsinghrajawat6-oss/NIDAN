@@ -3,27 +3,26 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  Leaf, Lock, Mail, Eye, EyeOff, UserSquare2, Scale, Activity, 
-  TrendingUp, ShieldCheck, CheckCircle2, ArrowRight, Database, Globe
+import {
+  Lock, Mail, Eye, EyeOff, UserSquare2, Scale, Activity,
+  TrendingUp, ShieldCheck, CheckCircle2, ArrowRight, Database,
+  Globe, BookOpen, ChevronRight
 } from "lucide-react";
 import { useLanguage } from "@/app/components/LanguageContext";
+import Link from "next/link";
 
 const roles = [
-  { id: "Investigator",       title: "Lead Doctor",        subtitle: "Full Clinical Access",   icon: UserSquare2, color: "from-blue-500 to-blue-700",     prefix: "investigator@demo.com" },
-  { id: "Ethics Committee",   title: "Ethics Committee",   subtitle: "IEC & Approvals",        icon: Scale,        color: "from-emerald-500 to-emerald-700", prefix: "ec@demo.com" },
-  { id: "Pharmacovigilance",  title: "Pharmacovigilance",  subtitle: "Safety & AE Tracking",   icon: Activity,    color: "from-orange-500 to-orange-700",   prefix: "pv@demo.com" },
-  { id: "Regulator",          title: "Leadership",         subtitle: "KPIs & Portfolio View",  icon: TrendingUp,   color: "from-purple-500 to-purple-700",   prefix: "regulator@demo.com" },
-  { id: "Admin",              title: "Administrator",      subtitle: "Full System Control",    icon: ShieldCheck,  color: "from-slate-600 to-slate-800",     prefix: "admin@demo.com" },
+  { id: "Investigator",     title: "Lead Doctor",       subtitle: "Full Clinical Access",  icon: UserSquare2, prefix: "investigator@demo.com" },
+  { id: "Ethics Committee", title: "Ethics Committee",  subtitle: "IEC & Approvals",       icon: Scale,       prefix: "ec@demo.com" },
+  { id: "Pharmacovigilance",title: "Pharmacovigilance", subtitle: "Safety & AE Tracking",  icon: Activity,    prefix: "pv@demo.com" },
+  { id: "Regulator",        title: "Leadership",        subtitle: "KPIs & Portfolio View", icon: TrendingUp,  prefix: "regulator@demo.com" },
+  { id: "Admin",            title: "Administrator",     subtitle: "Full System Control",   icon: ShieldCheck, prefix: "admin@demo.com" },
 ];
 
-const complianceItems = [
-  { label: "CTRI Registration Tracking", icon: "📋" },
-  { label: "GCP-ASU Compliant Workflow", icon: "✅" },
-  { label: "ALCOA+ Audit Trail",         icon: "🔗" },
-  { label: "MedDRA / WHODrug Coded",     icon: "⚕️" },
-  { label: "HL7 FHIR R4 Ready",          icon: "🌐" },
-  { label: "DPDP Act 2023 Aligned",      icon: "🔒" },
+const trustBadges = [
+  { icon: Database, label: "Blockchain Secured" },
+  { icon: Lock, label: "E2E Encrypted" },
+  { icon: Globe, label: "ISO 27001 Hosted" },
 ];
 
 export default function LoginPage() {
@@ -63,145 +62,127 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex overflow-hidden">
-      {/* ── Left Panel ─────────────────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[48%] xl:w-[52%] relative bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 flex-col justify-between p-12 overflow-hidden">
-        {/* Background orbs */}
-        <div className="absolute top-1/4 -left-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-0 right-1/3 w-48 h-48 bg-emerald-400/5 rounded-full blur-2xl" />
+    <div className="min-h-screen flex bg-[#faf9f5] text-stone-900 font-sans">
 
-        {/* Header */}
-        <div className="relative z-10 animate-fade-in">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-              <Leaf className="h-5 w-5 text-white" />
+      {/* ── Left Paper Panel ────────────────────────────────────────────── */}
+      <div className="hidden lg:flex lg:w-[48%] xl:w-[50%] bg-[#081c15] text-stone-100 relative flex-col justify-between p-12 border-r border-emerald-950">
+        
+        {/* Top Brand */}
+        <div className="relative z-10">
+          <Link href="/" className="flex items-center gap-3 w-fit">
+            <div className="h-9 w-9 rounded-lg bg-emerald-700 flex items-center justify-center text-white shadow-xs">
+              <BookOpen className="h-5 w-5 text-emerald-100" />
             </div>
-            <span className="font-heading text-2xl font-bold text-white tracking-tight">NIDANA</span>
-          </div>
-          <p className="text-emerald-400/80 text-sm font-medium">All India Institute of Ayurveda — Clinical Trial Management System</p>
+            <span className="font-serif font-bold text-2xl text-white tracking-wider">NIDANA</span>
+          </Link>
+          <p className="mt-2 text-emerald-300 text-xs font-semibold uppercase tracking-wider">
+            All India Institute of Ayurveda — Clinical Trial Ledger
+          </p>
         </div>
 
-        {/* Center content */}
-        <div className="relative z-10">
-          <div className="mb-10 animate-fade-in-up delay-100">
-            <h2 className="text-4xl font-extrabold text-white leading-tight mb-4">
-              {t("Research With")}<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200">
-                {t("Precision & Trust")}
+        {/* Center Paper Sheet Preview */}
+        <div className="relative z-10 my-auto py-8">
+          <div className="bg-[#0f2e22] border border-emerald-800 rounded-xl p-8 shadow-md">
+            <h2 className="text-3xl font-serif font-bold text-white leading-tight mb-4">
+              Paper-Grade Integrity,<br />
+              <span className="text-emerald-300 font-sans font-extrabold text-2xl uppercase tracking-wide">
+                Blockchain-Sealed
               </span>
             </h2>
-            <p className="text-slate-400 text-base leading-relaxed max-w-md">
-              India's first blockchain-secured CTMS for Ayurveda clinical research — purpose-built for AIIA's growing multi-centre portfolio and NPvCC responsibilities.
+            <p className="text-emerald-200/80 text-sm leading-relaxed mb-6">
+              NIDANA provides an immutable audit trail for Ayurveda trials. Every CRF entry, dosha measurement, and herbal dosage is cryptographically anchored at entry.
             </p>
-          </div>
 
-          {/* Compliance grid */}
-          <div className="grid grid-cols-2 gap-3 animate-fade-in-up delay-200">
-            {complianceItems.map((item) => (
-              <div key={item.label} className="flex items-center gap-2.5 p-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                <span className="text-base">{item.icon}</span>
-                <span className="text-xs font-semibold text-slate-300">{item.label}</span>
-              </div>
-            ))}
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-emerald-800/80">
+              {[
+                { v: "14+", l: "Active Studies" },
+                { v: "100%", l: "ALCOA+ Trace" },
+                { v: "NPvCC", l: "GCP Hosted" },
+              ].map((s) => (
+                <div key={s.l} className="text-left">
+                  <p className="text-xl font-serif font-bold text-white">{s.v}</p>
+                  <p className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider mt-0.5">{s.l}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Bottom stats */}
-        <div className="relative z-10 flex items-center gap-6 animate-fade-in delay-300">
-          {[
-            { v: "14+", l: "Active Studies" },
-            { v: "98%", l: "Compliance" },
-            { v: "NPvCC", l: "Hosted" },
-          ].map((s) => (
-            <div key={s.l} className="text-center">
-              <p className="text-2xl font-extrabold text-white">{s.v}</p>
-              <p className="text-[11px] text-slate-400 font-medium mt-0.5">{s.l}</p>
-            </div>
-          ))}
-          <div className="ml-auto flex items-center gap-2 text-xs text-emerald-400/70">
-            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            Blockchain Active
-          </div>
+        {/* Bottom Status */}
+        <div className="relative z-10 flex items-center gap-2 text-xs font-mono font-semibold text-emerald-300">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          CTMS Ledger System Active · EVM Testnet
         </div>
       </div>
 
-      {/* ── Right Panel — Login Form ────────────────────────────── */}
-      <div className="flex-1 flex flex-col justify-center items-center bg-[#f8fafc] dark:bg-[#0a0a0a] p-6 sm:p-10 relative">
-        {/* Language Toggle */}
-        <button 
+      {/* ── Right Form Panel ────────────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col justify-center items-center px-6 sm:px-12 py-16 relative bg-[#faf9f5]">
+
+        {/* Language Switcher */}
+        <button
           onClick={() => setLang(lang === "EN" ? "HI" : "EN")}
-          className="absolute top-6 right-6 h-10 w-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-sm font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 shadow-sm transition-colors"
+          className="absolute top-6 right-6 h-8 px-3 rounded-md bg-white border border-stone-300 flex items-center justify-center text-xs font-bold text-stone-700 hover:bg-stone-50 transition-all shadow-2xs"
         >
-          {lang === "EN" ? "हि" : "EN"}
+          {lang === "EN" ? "हिन्दी" : "EN"}
         </button>
 
-        {/* Mobile logo */}
-        <div className="lg:hidden flex items-center gap-2 mb-8">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-            <Leaf className="h-5 w-5 text-white" />
+        {/* Mobile Header */}
+        <div className="lg:hidden flex items-center gap-2.5 mb-8">
+          <div className="h-8 w-8 rounded bg-emerald-800 flex items-center justify-center text-white">
+            <BookOpen className="h-4 w-4" />
           </div>
-          <span className="font-heading text-xl font-bold text-slate-900 dark:text-white">NIDANA</span>
+          <span className="font-serif font-bold text-xl text-stone-900">NIDANA</span>
         </div>
 
-        <div className="w-full max-w-md animate-scale-in">
-          {/* Heading */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t("Welcome back")}</h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{t("Sign in to NIDANA")}</p>
+        <div className="w-full max-w-md bg-white border border-stone-300 rounded-xl p-8 shadow-sm">
+
+          {/* Form Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-serif font-bold text-stone-900 tracking-tight">{t("Welcome back")}</h1>
+            <p className="text-stone-500 text-xs mt-1">{t("Sign in to NIDANA")}</p>
           </div>
 
-          {/* Role selector */}
-          <div className="mb-7">
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">Select your role</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          {/* Role Selector */}
+          <div className="mb-6">
+            <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-2.5">Select Role Persona</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {roles.map((role) => (
                 <button
                   key={role.id}
                   type="button"
                   onClick={() => handleRoleSelect(role)}
-                  className={`relative flex flex-col items-center justify-center p-3.5 rounded-2xl border-2 transition-all duration-200 text-left ${
+                  className={`flex flex-col items-center justify-center p-2.5 rounded-md border text-left transition-all ${
                     selectedRole === role.id
-                      ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 shadow-lg shadow-emerald-500/10 scale-[1.02]"
-                      : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-sm"
+                      ? "border-emerald-700 bg-emerald-50 text-emerald-950 font-bold shadow-2xs"
+                      : "border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700"
                   }`}
                 >
-                  <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${role.color} text-white flex items-center justify-center mb-2 shadow-md`}>
-                    <role.icon className="h-4.5 w-4.5" />
-                  </div>
-                  <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 text-center leading-tight">{role.title}</span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 text-center mt-0.5 leading-tight hidden sm:block">{role.subtitle}</span>
-                  {selectedRole === role.id && (
-                    <div className="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-emerald-500 flex items-center justify-center">
-                      <CheckCircle2 className="h-2.5 w-2.5 text-white" />
-                    </div>
-                  )}
+                  <role.icon className={`h-4 w-4 mb-1.5 ${selectedRole === role.id ? "text-emerald-800" : "text-stone-500"}`} />
+                  <span className="text-[10px] font-semibold text-center leading-tight">{role.title}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Error */}
+          {/* Error Banner */}
           {error && (
-            <div className="mb-5 p-3.5 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-xl text-sm flex items-center gap-2">
-              <div className="h-4 w-4 rounded-full border border-red-400 flex items-center justify-center shrink-0">
-                <span className="text-[9px] font-bold">!</span>
-              </div>
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 rounded-md text-xs font-semibold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-600" />
               {error}
             </div>
           )}
 
-          {/* Form */}
+          {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Username / Email</label>
+              <label className="block text-[10px] font-bold text-stone-600 uppercase tracking-wider mb-1.5">Username / Email</label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
                 <input
                   type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all placeholder:text-slate-400"
+                  className="w-full pl-9 pr-3 py-2.5 bg-stone-50 border border-stone-300 focus:border-emerald-700 rounded-md text-xs text-stone-900 font-medium focus:outline-none transition-all"
                   placeholder="Select a role or enter email"
                   required
                 />
@@ -209,21 +190,21 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Password</label>
+              <label className="block text-[10px] font-bold text-stone-600 uppercase tracking-wider mb-1.5">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all placeholder:text-slate-400"
+                  className="w-full pl-9 pr-10 py-2.5 bg-stone-50 border border-stone-300 focus:border-emerald-700 rounded-md text-xs text-stone-900 font-medium focus:outline-none transition-all"
                   placeholder="••••••••"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-0.5"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 p-0.5"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -233,44 +214,35 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 mt-2"
+              className="w-full bg-emerald-800 hover:bg-emerald-900 disabled:opacity-70 text-white font-bold py-3 rounded-md text-xs transition-all shadow-xs flex items-center justify-center gap-2 mt-2"
             >
               {loading ? (
-                <>
-                  <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Authenticating...
-                </>
+                <>Authenticating…</>
               ) : (
                 <>
-                  <ShieldCheck className="h-4 w-4" />
-                  Sign In Securely
+                  <ShieldCheck className="h-4 w-4 text-emerald-200" />
+                  Sign In to Ledger
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Demo tip */}
-          <div className="mt-6 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl flex items-start gap-3">
-            <div className="h-6 w-6 rounded-full bg-blue-100 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 flex items-center justify-center shrink-0 mt-0.5">
-              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">i</span>
-            </div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              <strong className="text-slate-800 dark:text-slate-200">Demo mode:</strong> Click any role above to auto-fill credentials. 
-              Password is <code className="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded font-mono text-emerald-700 dark:text-emerald-400">nidana2024</code>
-            </p>
+          {/* Demo Note */}
+          <div className="mt-4 p-3 bg-stone-50 border border-stone-200 rounded-md text-stone-600 text-[11px] leading-relaxed">
+            <span className="font-bold text-stone-900">Demo Note:</span> Click any role persona above to auto-fill. Password is <code className="bg-stone-200 text-stone-800 px-1 py-0.5 rounded font-mono">nidana2024</code>.
           </div>
 
-          {/* Compliance note */}
-          <div className="mt-5 flex items-center justify-center gap-4 text-[10px] text-slate-400">
-            <span className="flex items-center gap-1"><Database className="h-3 w-3" /> Blockchain Secured</span>
-            <span>·</span>
-            <span className="flex items-center gap-1"><Lock className="h-3 w-3" /> E2E Encrypted</span>
-            <span>·</span>
-            <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> ISO 27001 Hosted</span>
+          {/* Back Link */}
+          <div className="mt-5 text-center">
+            <Link href="/" className="text-xs text-stone-500 hover:text-stone-800 font-semibold transition-colors">
+              ← Return to NIDANA Landing Page
+            </Link>
           </div>
+
         </div>
       </div>
+
     </div>
   );
 }

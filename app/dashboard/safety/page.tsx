@@ -54,6 +54,7 @@ function PRRGauge({ prr }: { prr: number }) {
 export default function SafetyPage() {
   const { data: session } = useSession();
   const userRole = (session?.user as any)?.role || "Investigator";
+  const [activeTab, setActiveTab] = useState<"events" | "compensation" | "psur">("events");
   const [events, setEvents]   = useState<any[]>([]);
   const [trials, setTrials]   = useState<any[]>([]);
   const [patients, setPatients] = useState<any[]>([]);
@@ -64,6 +65,19 @@ export default function SafetyPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
   const [viewEvent, setViewEvent] = useState<any>(null);
+
+  // CDSCO Statutory Compensation State (Rule 122DAB / Schedule Y App XII)
+  const [compAge, setCompAge] = useState<number>(45);
+  const [compRisk, setCompRisk] = useState<number>(4.0);
+  const [compMortality90, setCompMortality90] = useState<boolean>(false);
+  const [compPatientId, setCompPatientId] = useState<string>("");
+  const [compConcomitant, setCompConcomitant] = useState<string>("None");
+  const [compResult, setCompResult] = useState<any>(null);
+  const [calculatingComp, setCalculatingComp] = useState<boolean>(false);
+
+  // PSUR State (CDSCO 2014 Office Order)
+  const [psurReports, setPsurReports] = useState<any[]>([]);
+  const [selectedPsurTrial, setSelectedPsurTrial] = useState<string>("");
 
   const [form, setForm] = useState({
     eventId: "", trialId: "", patientId: "",
@@ -76,18 +90,44 @@ export default function SafetyPage() {
 
   const fetchData = async () => {
     try {
-      const [eventsRes, trialsRes, patientsRes] = await Promise.all([
-        fetch('/api/safety'), fetch('/api/trials'), fetch('/api/patients')
+      const [eventsRes, trialsRes, patientsRes, psurRes] = await Promise.all([
+        fetch('/api/safety'), fetch('/api/trials'), fetch('/api/patients'), fetch('/api/safety/psur')
       ]);
-      const [ej, tj, pj] = await Promise.all([eventsRes.json(), trialsRes.json(), patientsRes.json()]);
+      const [ej, tj, pj, psj] = await Promise.all([eventsRes.json(), trialsRes.json(), patientsRes.json(), psurRes.json()]);
       if (ej.success) setEvents(ej.data);
       if (tj.success) { setTrials(tj.data); if (tj.data.length > 0) setForm(f => ({ ...f, trialId: tj.data[0].trialId })); }
       if (pj.success) { setPatients(pj.data); if (pj.data.length > 0) setForm(f => ({ ...f, patientId: pj.data[0].patientId })); }
+      if (psj.success) { setPsurReports(psj.data); if (psj.data.length > 0) setSelectedPsurTrial(psj.data[0].trialId); }
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
   };
 
   useEffect(() => { fetchData(); }, []);
+
+  const handleCalculateComp = async () => {
+    setCalculatingComp(true);
+    try {
+      const res = await fetch('/api/safety/compensation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          patientId: compPatientId,
+          age: compAge,
+          riskFactor: compRisk,
+          expectedMortality90Percent: compMortality90,
+          concomitantMedications: compConcomitant
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCompResult(data.data.calcResult);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCalculatingComp(false);
+    }
+  };
 
   const handleMedDRAChoose = (item: typeof COMMON_MEDDRA[0]) => {
     setForm(f => ({ ...f, medDraCode: item.code, medDraPreferredTerm: item.pt, medDraSystemOrganClass: item.soc }));
@@ -143,13 +183,13 @@ export default function SafetyPage() {
     <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
           <h1 className="font-heading text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <ShieldAlert className="h-6 w-6 text-red-500" /> Safety & NPvCC Module
+            <ShieldAlert className="h-6 w-6 text-red-500" /> Safety, SAE & Pharmacovigilance Hub
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-            Adverse Event / SAE reporting · MedDRA & WHODrug coding · Regulatory timeline tracking · DSMB feed
+            CDSCO Rule 122DAB Statutory SAE Compensation · 12-Section PSUR Cadence · MedDRA Coding · CIOMS Export
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -164,162 +204,200 @@ export default function SafetyPage() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {[
-          { label: "Total Events", value: events.length,    color: "text-slate-800 dark:text-slate-100", bg: "bg-slate-100 dark:bg-slate-800" },
-          { label: "Open SAEs",    value: openSAEs,         color: "text-red-700 dark:text-red-400",     bg: "bg-red-100 dark:bg-red-950/40",    pulse: openSAEs > 0 },
-          { label: "Overdue Rpts", value: overdueRpts,      color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-100 dark:bg-amber-950/40", pulse: overdueRpts > 0 },
-          { label: "Total ADRs",   value: totalADR,         color: "text-orange-700 dark:text-orange-400", bg: "bg-orange-100 dark:bg-orange-950/40" },
-        ].map(s => (
-          <div key={s.label} className={`${s.bg} rounded-2xl p-4 flex items-center gap-3 relative overflow-hidden`}>
-            {s.pulse && <div className="absolute inset-0 bg-current opacity-5 animate-pulse" />}
-            <div>
-              <p className={`text-3xl font-extrabold ${s.color}`}>{loading ? "—" : s.value}</p>
-              <p className={`text-[10px] font-bold uppercase tracking-widest mt-0.5 ${s.color} opacity-70`}>{s.label}</p>
-            </div>
-          </div>
-        ))}
+      {/* Safety Subnavigation Tabs */}
+      <div className="flex overflow-x-auto gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+        <button
+          onClick={() => setActiveTab("events")}
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold shrink-0 transition-all ${
+            activeTab === "events"
+              ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
+              : "bg-white dark:bg-[#0d1117] text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
+          }`}
+        >
+          Safety Events & Line Listings
+        </button>
+        <button
+          onClick={() => setActiveTab("compensation")}
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold shrink-0 transition-all ${
+            activeTab === "compensation"
+              ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
+              : "bg-white dark:bg-[#0d1117] text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
+          }`}
+        >
+          CDSCO SAE Statutory Compensation Calculator (Rule 122DAB)
+        </button>
+        <button
+          onClick={() => setActiveTab("psur")}
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold shrink-0 transition-all ${
+            activeTab === "psur"
+              ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm"
+              : "bg-white dark:bg-[#0d1117] text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
+          }`}
+        >
+          Periodic Safety Update Reports (PSUR Generator)
+        </button>
       </div>
 
-      {/* NPvCC Signal Summary */}
-      <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-purple-600" /> NPvCC Signal Disproportionality Dashboard (PRR)
-          </h3>
-          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-900">
-            0 Signals Above Threshold (PRR &lt; 2.0)
-          </span>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {[
-            { soc: "Gastrointestinal",  prr: 1.12, count: events.filter(e => e.medDraSystemOrganClass?.includes('Gastro')).length || 3 },
-            { soc: "Skin disorders",     prr: 1.05, count: events.filter(e => e.medDraSystemOrganClass?.includes('Skin')).length || 2 },
-            { soc: "Nervous system",     prr: 0.85, count: events.filter(e => e.medDraSystemOrganClass?.includes('Nervous')).length || 1 },
-            { soc: "General disorders",  prr: 0.92, count: events.filter(e => e.medDraSystemOrganClass?.includes('General')).length || 1 },
-          ].map(s => (
-            <div key={s.soc} className="p-3.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{s.soc}</p>
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-400 ml-2 shrink-0">{s.count} events</span>
+      {activeTab === "events" && (
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { label: "Total Events", value: events.length,    color: "text-slate-800 dark:text-slate-100", bg: "bg-slate-100 dark:bg-slate-800" },
+              { label: "Open SAEs",    value: openSAEs,         color: "text-red-700 dark:text-red-400",     bg: "bg-red-100 dark:bg-red-950/40",    pulse: openSAEs > 0 },
+              { label: "Overdue Rpts", value: overdueRpts,      color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-100 dark:bg-amber-950/40", pulse: overdueRpts > 0 },
+              { label: "Total ADRs",   value: totalADR,         color: "text-orange-700 dark:text-orange-400", bg: "bg-orange-100 dark:bg-orange-950/40" },
+            ].map(s => (
+              <div key={s.label} className={`${s.bg} rounded-2xl p-4 flex items-center gap-3 relative overflow-hidden`}>
+                {s.pulse && <div className="absolute inset-0 bg-current opacity-5 animate-pulse" />}
+                <div>
+                  <p className={`text-3xl font-extrabold ${s.color}`}>{loading ? "—" : s.value}</p>
+                  <p className={`text-[10px] font-bold uppercase tracking-widest mt-0.5 ${s.color} opacity-70`}>{s.label}</p>
+                </div>
               </div>
-              <PRRGauge prr={s.prr} />
-              <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1.5">✓ Safe (PRR {s.prr.toFixed(2)})</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Events List */}
-      <div className="bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
-        {/* Controls */}
-        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          <div className="relative flex-1 min-w-0">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <input
-              type="text" placeholder="Search by event ID, trial, MedDRA term, patient…"
-              value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            {["ALL","SAE","AE","ADR","SUSAR"].map(t => (
-              <button key={t} onClick={() => setFilterType(t)} className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${filterType === t ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}>{t}</button>
             ))}
           </div>
-        </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-bold tracking-wider text-slate-500">
-              <tr>
-                <th className="px-5 py-3.5 text-left">Event ID</th>
-                <th className="px-5 py-3.5 text-left">Type / Severity</th>
-                <th className="px-5 py-3.5 text-left">MedDRA Term</th>
-                <th className="px-5 py-3.5 text-left">Drug (WHODrug)</th>
-                <th className="px-5 py-3.5 text-left">Causality</th>
-                <th className="px-5 py-3.5 text-left">Reporting Deadline</th>
-                <th className="px-5 py-3.5 text-left">Outcome</th>
-                <th className="px-5 py-3.5 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
-              {loading ? (
-                <tr><td colSpan={8} className="px-6 py-12 text-center"><div className="flex flex-col items-center gap-3"><div className="h-8 w-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" /><p className="text-xs text-slate-400">Loading safety events…</p></div></td></tr>
-              ) : filtered.length === 0 ? (
-                <tr><td colSpan={8} className="px-6 py-16 text-center">
-                  <CheckCircle2 className="h-12 w-12 text-emerald-400 mx-auto mb-3" />
-                  <p className="text-sm font-bold text-slate-700 dark:text-slate-300">No Safety Events Recorded</p>
-                  <p className="text-xs text-slate-400 mt-1">No adverse events match your criteria. Excellent safety profile!</p>
-                  <button onClick={() => setIsModalOpen(true)} className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-xl hover:bg-red-700 transition-colors">
-                    <Plus className="h-3.5 w-3.5" /> Report First AE
-                  </button>
-                </td></tr>
-              ) : (
-                filtered.map((ev: any) => {
-                  const typeCfg = TYPE_CONFIG[ev.eventType] || TYPE_CONFIG["AE"];
-                  const sevCfg  = SEVERITY_CONFIG[ev.severity] || SEVERITY_CONFIG["Mild"];
-                  const deadline = ev.reportingDeadline ? new Date(ev.reportingDeadline) : null;
-                  const isOverdue = deadline && deadline < new Date() && ev.outcome !== 'Recovered';
-                  const daysLeft = deadline ? Math.round((deadline.getTime() - Date.now()) / 86400000) : null;
-                  return (
-                    <tr key={ev._id} className={`hover:bg-slate-50 dark:hover:bg-slate-900/20 transition-colors ${isOverdue ? 'bg-red-50/30 dark:bg-red-950/10' : ''}`}>
-                      <td className="px-5 py-4">
-                        <p className="font-mono font-bold text-xs text-slate-800 dark:text-slate-200">{ev.eventId}</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">{ev.trialId} · {ev.patientId}</p>
-                      </td>
-                      <td className="px-5 py-4">
-                        <div className="flex flex-col gap-1.5">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase ${typeCfg.bg} ${typeCfg.text}`}>{ev.eventType}</span>
-                          <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg ${sevCfg.bg} ${sevCfg.text}`}>
-                            <div className={`h-1.5 w-1.5 rounded-full ${sevCfg.dot}`} />{ev.severity}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-5 py-4">
-                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">{ev.medDraPreferredTerm || '—'}</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">{ev.medDraSystemOrganClass}</p>
-                        {ev.medDraCode && <p className="text-[10px] font-mono text-slate-400">#{ev.medDraCode}</p>}
-                      </td>
-                      <td className="px-5 py-4">
-                        <p className="text-xs text-slate-700 dark:text-slate-300 max-w-[120px] truncate">{ev.whoDrugName || '—'}</p>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400">{ev.causality || 'Unknown'}</span>
-                      </td>
-                      <td className="px-5 py-4">
-                        {deadline ? (
-                          <div>
-                            <p className={`text-xs font-bold ${isOverdue ? 'text-red-600 dark:text-red-400' : daysLeft !== null && daysLeft <= 2 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-700 dark:text-slate-300'}`}>
-                              {isOverdue ? `⚠ ${Math.abs(daysLeft!)}d overdue` : daysLeft !== null ? `${daysLeft}d remaining` : '—'}
-                            </p>
-                            <p className="text-[10px] text-slate-400 mt-0.5">{deadline.toLocaleDateString('en-IN')}</p>
-                          </div>
-                        ) : <span className="text-xs text-slate-400">Not set</span>}
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg ${ev.outcome === 'Recovered' ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400' : ev.outcome === 'Resolving' ? 'bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400' : 'bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-400'}`}>{ev.outcome || 'Unknown'}</span>
-                      </td>
-                      <td className="px-5 py-4 text-center">
-                        <button onClick={() => setViewEvent(ev)} className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
-                          <Eye className="h-3.5 w-3.5" /> View
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+          {/* NPvCC Signal Summary */}
+          <div className="paper-card rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-purple-600" /> NPvCC Signal Disproportionality Dashboard (PRR)
+              </h3>
+              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-900">
+                0 Signals Above Threshold (PRR &lt; 2.0)
+              </span>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[
+                { soc: "Gastrointestinal",  prr: 1.12, count: events.filter(e => e.medDraSystemOrganClass?.includes('Gastro')).length || 3 },
+                { soc: "Skin disorders",     prr: 1.05, count: events.filter(e => e.medDraSystemOrganClass?.includes('Skin')).length || 2 },
+                { soc: "Nervous system",     prr: 0.85, count: events.filter(e => e.medDraSystemOrganClass?.includes('Nervous')).length || 1 },
+                { soc: "General disorders",  prr: 0.92, count: events.filter(e => e.medDraSystemOrganClass?.includes('General')).length || 1 },
+              ].map(s => (
+                <div key={s.soc} className="p-3.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{s.soc}</p>
+                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400 ml-2 shrink-0">{s.count} events</span>
+                  </div>
+                  <PRRGauge prr={s.prr} />
+                  <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1.5">✓ Safe (PRR {s.prr.toFixed(2)})</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Events List */}
+          <div className="paper-card rounded-2xl shadow-sm overflow-hidden">
+            {/* Controls */}
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <div className="relative flex-1 min-w-0">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <input
+                  type="text" placeholder="Search by event ID, trial, MedDRA term, patient…"
+                  value={search} onChange={e => setSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                {["ALL","SAE","AE","ADR","SUSAR"].map(t => (
+                  <button key={t} onClick={() => setFilterType(t)} className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${filterType === t ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}>{t}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-bold tracking-wider text-slate-500">
+                  <tr>
+                    <th className="px-5 py-3.5 text-left">Event ID</th>
+                    <th className="px-5 py-3.5 text-left">Type / Severity</th>
+                    <th className="px-5 py-3.5 text-left">MedDRA Term</th>
+                    <th className="px-5 py-3.5 text-left">Drug (WHODrug)</th>
+                    <th className="px-5 py-3.5 text-left">Causality</th>
+                    <th className="px-5 py-3.5 text-left">Reporting Deadline</th>
+                    <th className="px-5 py-3.5 text-left">Outcome</th>
+                    <th className="px-5 py-3.5 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
+                  {loading ? (
+                    <tr><td colSpan={8} className="px-6 py-12 text-center"><div className="flex flex-col items-center gap-3"><div className="h-8 w-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" /><p className="text-xs text-slate-400">Loading safety events…</p></div></td></tr>
+                  ) : filtered.length === 0 ? (
+                    <tr><td colSpan={8} className="px-6 py-16 text-center">
+                      <CheckCircle2 className="h-12 w-12 text-emerald-400 mx-auto mb-3" />
+                      <p className="text-sm font-bold text-slate-700 dark:text-slate-300">No Safety Events Recorded</p>
+                      <p className="text-xs text-slate-400 mt-1">No adverse events match your criteria. Excellent safety profile!</p>
+                      <button onClick={() => setIsModalOpen(true)} className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-xl hover:bg-red-700 transition-colors">
+                        <Plus className="h-3.5 w-3.5" /> Report First AE
+                      </button>
+                    </td></tr>
+                  ) : (
+                    filtered.map((ev: any) => {
+                      const typeCfg = TYPE_CONFIG[ev.eventType] || TYPE_CONFIG["AE"];
+                      const sevCfg  = SEVERITY_CONFIG[ev.severity] || SEVERITY_CONFIG["Mild"];
+                      const deadline = ev.reportingDeadline ? new Date(ev.reportingDeadline) : null;
+                      const isOverdue = deadline && deadline < new Date() && ev.outcome !== 'Recovered';
+                      const daysLeft = deadline ? Math.round((deadline.getTime() - Date.now()) / 86400000) : null;
+                      return (
+                        <tr key={ev._id} className={`hover:bg-slate-50 dark:hover:bg-slate-900/20 transition-colors ${isOverdue ? 'bg-red-50/30 dark:bg-red-950/10' : ''}`}>
+                          <td className="px-5 py-4">
+                            <p className="font-mono font-bold text-xs text-slate-800 dark:text-slate-200">{ev.eventId}</p>
+                            <p className="text-[10px] text-slate-400 mt-0.5">{ev.trialId} · {ev.patientId}</p>
+                          </td>
+                          <td className="px-5 py-4">
+                            <div className="flex flex-col gap-1.5">
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase ${typeCfg.bg} ${typeCfg.text}`}>{ev.eventType}</span>
+                              <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg ${sevCfg.bg} ${sevCfg.text}`}>
+                                <div className={`h-1.5 w-1.5 rounded-full ${sevCfg.dot}`} />{ev.severity}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-5 py-4">
+                            <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">{ev.medDraPreferredTerm || '—'}</p>
+                            <p className="text-[10px] text-slate-400 mt-0.5">{ev.medDraSystemOrganClass}</p>
+                            {ev.medDraCode && <p className="text-[10px] font-mono text-slate-400">#{ev.medDraCode}</p>}
+                          </td>
+                          <td className="px-5 py-4">
+                            <p className="text-xs text-slate-700 dark:text-slate-300 max-w-[120px] truncate">{ev.whoDrugName || '—'}</p>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400">{ev.causality || 'Unknown'}</span>
+                          </td>
+                          <td className="px-5 py-4">
+                            {deadline ? (
+                              <div>
+                                <p className={`text-xs font-bold ${isOverdue ? 'text-red-600 dark:text-red-400' : daysLeft !== null && daysLeft <= 2 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                                  {isOverdue ? `⚠ ${Math.abs(daysLeft!)}d overdue` : daysLeft !== null ? `${daysLeft}d remaining` : '—'}
+                                </p>
+                                <p className="text-[10px] text-slate-400 mt-0.5">{deadline.toLocaleDateString('en-IN')}</p>
+                              </div>
+                            ) : <span className="text-xs text-slate-400">Not set</span>}
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg ${ev.outcome === 'Recovered' ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400' : ev.outcome === 'Resolving' ? 'bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400' : 'bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-400'}`}>{ev.outcome || 'Unknown'}</span>
+                          </td>
+                          <td className="px-5 py-4 text-center">
+                            <button onClick={() => setViewEvent(ev)} className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+                              <Eye className="h-3.5 w-3.5" /> View
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Report AE/SAE Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-[#0d1117] rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-slide-modal">
+          <div className="bg-white dark:bg-[#121c2b] border border-stone-300 dark:border-stone-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-slide-modal">
             <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
               <div className="flex items-center gap-2.5">
                 <div className="h-9 w-9 rounded-xl bg-red-100 dark:bg-red-950/50 flex items-center justify-center">
@@ -443,7 +521,7 @@ export default function SafetyPage() {
       {/* View Event Modal */}
       {viewEvent && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-[#0d1117] rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-slide-modal">
+          <div className="bg-white dark:bg-[#121c2b] border border-stone-300 dark:border-stone-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-slide-modal">
             <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800">
               <h2 className="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2"><FileText className="h-5 w-5 text-red-500" />{viewEvent.eventId}</h2>
               <button onClick={() => setViewEvent(null)} className="text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 p-2 rounded-xl transition-colors"><X className="h-5 w-5" /></button>

@@ -1,19 +1,9 @@
 import { NextResponse } from 'next/server';
 import { ethers } from 'ethers';
-import fs from 'fs';
-import path from 'path';
+import { CTMS_LEDGER_ABI } from '@/lib/contractAbi';
 
 function getContractABI() {
-  try {
-    const artifactPath = path.join(process.cwd(), 'artifacts', 'contracts', 'CTMSLedger.sol', 'CTMSLedger.json');
-    if (fs.existsSync(artifactPath)) {
-      const artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
-      return artifact.abi;
-    }
-  } catch (error) {
-    console.warn("Could not load CTMSLedger ABI.");
-  }
-  return [];
+  return CTMS_LEDGER_ABI;
 }
 
 export async function GET() {
